@@ -170,13 +170,13 @@ int cr_std_string_trim(string_t *str, int direction) {
     return 1;
 }
 
-int cr_std_string_is_char_white_space(char c) {
-    return c == ' ' ||
-           c == '\n' ||
-           c == '\t' ||
-           c == '\r' ||
-           c == '\v' ||
-           c == '\f';
+int cr_std_string_is_char_white_space(char ch) {
+    return ch == ' ' ||
+           ch == '\n' ||
+           ch == '\t' ||
+           ch == '\r' ||
+           ch == '\v' ||
+           ch == '\f';
 }
 
 int cr_std_string_find_char(string_t *str, char ch) {

@@ -88,7 +88,7 @@ int cr_std_string_trim(string_t *str, int direction);
  * @return `1` if it is white space.
  * @return `0` if is is not white space.
  */
-int cr_std_string_is_char_white_space(char c);
+int cr_std_string_is_char_white_space(char ch);
 
 /**
  * @brief Finds the first index of a character in a given string.

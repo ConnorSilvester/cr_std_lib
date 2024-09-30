@@ -5,6 +5,7 @@
 #include <dirent.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 string_t *cr_std_filesystem_read_file_as_string(const char *file_path) {
     FILE *file = fopen(file_path, "r");
@@ -76,13 +77,13 @@ vector_t *cr_std_filesystem_read_file_as_vector(const char *file_path) {
 vector_t *cr_std_filesystem_get_dir_files(const char *file_path) {
     // Unwanted entries.
     string_t *current_dir = cr_std_string_new(".");
-    string_t *partent_dir = cr_std_string_new("..");
+    string_t *parent_dir = cr_std_string_new("..");
 
     vector_t *vector = cr_std_vector_new(sizeof(string_t *));
     DIR *dir = opendir(file_path);
     if (!dir) {
         cr_std_string_free(current_dir);
-        cr_std_string_free(partent_dir);
+        cr_std_string_free(parent_dir);
         cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_filesystem_get_dir_files -> failed to open dir -> %s", file_path);
         return NULL;
     }
@@ -91,7 +92,7 @@ vector_t *cr_std_filesystem_get_dir_files(const char *file_path) {
     while (entry != NULL) {
         string_t *file_name = cr_std_string_new(entry->d_name);
         if (cr_std_string_compare(file_name, current_dir) != 1 &&
-            cr_std_string_compare(file_name, partent_dir) != 1) {
+            cr_std_string_compare(file_name, parent_dir) != 1) {
             cr_std_vector_push_back(vector, file_name);
         } else {
             cr_std_string_free(file_name);
@@ -100,7 +101,7 @@ vector_t *cr_std_filesystem_get_dir_files(const char *file_path) {
     }
     closedir(dir);
     cr_std_string_free(current_dir);
-    cr_std_string_free(partent_dir);
+    cr_std_string_free(parent_dir);
 
     return vector;
 }
