@@ -1,0 +1,12 @@
+*
+
+!.gitignore
+!README.md
+
+!src/
+!src/**
+
+!include/
+!include/**
+
+src/main.c
