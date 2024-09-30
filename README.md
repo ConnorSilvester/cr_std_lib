@@ -52,11 +52,12 @@ string_t *str = cr_std_string_new("Hello, %s", "World"); //Same formatting as pr
 string_t *str = cr_std_string_new("Hello, %s%d", "World", 4);
 ```
 ```bash
-cr_std_string_concat(string, ", This", " Has", " Been", " Concatenated"); //Works with any amount of arguments.
-cr_std_string_contains_string(string, "Been");
-cr_std_string_split(string, " ");
+//Works with any amount of arguments.
+cr_std_string_concat(str, ", This", " Has", " Been", " Concatenated");
+cr_std_string_contains_string(str, "Been");
+cr_std_string_split(str, " ");
 
-cr_std_string_free(string);
+cr_std_string_free(str);
 ```
 
 **Vectors** : Prefix is cr_std_vector *
