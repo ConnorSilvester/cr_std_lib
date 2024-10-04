@@ -1,6 +1,7 @@
 #include "cr_std_string.h"
 #include "cr_std_logger.h"
 #include "cr_std_vector.h"
+#include <ctype.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -56,9 +57,21 @@ int cr_std_string_free(string_t *string) {
     return 0;
 }
 
+string_t *cr_std_string_make_copy(string_t *src_string) {
+    if (!src_string) {
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_make_copy -> string pointer is NULL");
+        return NULL;
+    }
+    if (!src_string->c_str) {
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_make_copy -> string->c_str pointer is NULL");
+        return NULL;
+    }
+    return cr_std_string_new(src_string->c_str);
+}
+
 int cr_std_string_concat_null_terminated(string_t *string, ...) {
     if (!string) {
-        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_WARNING, "cr_std_string_concat_null_terminated -> String pointer is NULL");
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_WARNING, "cr_std_string_concat_null_terminated -> string pointer is NULL");
         return 0;
     }
 

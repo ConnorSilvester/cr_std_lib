@@ -33,6 +33,15 @@ string_t *cr_std_string_new(const char *format, ...);
 int cr_std_string_free(string_t *string);
 
 /**
+ * @brief Copy the contents of a `string_t` struct to another one.
+ *
+ * @param `src_string` A pointer to the source `string_t` struct.
+ *
+ * @return `string_t` of the copied source, NULL if failed.
+ */
+string_t *cr_std_string_make_copy(string_t *src_string);
+
+/**
  * @brief Concatenates multiple strings and stores the result in an existing `string_t` struct.
  *
  * @param `string` A pointer to the `string_t` struct to be updated.

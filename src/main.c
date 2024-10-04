@@ -8,7 +8,7 @@
 // Use `make run` to run this.
 int main(int argc, char **argv) {
 
-    string_t* string = cr_std_string_new("Hello, %s", "World");
+    string_t *string = cr_std_string_new("Hello, %s", "World");
     cr_std_string_concat(string, ", This", " Has", " Been", " Concatenated");
     printf("%s\n", string->c_str);
 
