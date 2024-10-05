@@ -7,6 +7,11 @@
 #include <stdlib.h>
 
 string_t *cr_std_string_new(const char *format, ...) {
+    if (!format) {
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_new -> char* input was NULL");
+        return NULL;
+    }
+
     string_t *string = (string_t *)malloc(sizeof(string_t));
 
     if (!string) {
@@ -30,6 +35,7 @@ string_t *cr_std_string_new(const char *format, ...) {
     if (!c_str) {
         cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_new -> failed to allocate memory for buffer");
         cr_std_string_free(string);
+        va_end(args);
         return NULL;
     }
 
@@ -54,6 +60,7 @@ int cr_std_string_free(string_t *string) {
 
         return 1;
     }
+    cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_WARNING, "cr_std_string_free -> tried to free a NULL string_t*");
     return 0;
 }
 
@@ -71,7 +78,7 @@ string_t *cr_std_string_make_copy(string_t *src_string) {
 
 int cr_std_string_concat_null_terminated(string_t *string, ...) {
     if (!string) {
-        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_WARNING, "cr_std_string_concat_null_terminated -> string pointer is NULL");
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_concat_null_terminated -> string pointer is NULL");
         return 0;
     }
 
@@ -193,6 +200,10 @@ int cr_std_string_is_char_white_space(char ch) {
 }
 
 int cr_std_string_find_char(string_t *str, char ch) {
+    if (!str) {
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_find_char -> string pointer is NULL");
+        return -1;
+    }
     for (int i = 0; i <= str->length; i++) {
         if (str->c_str[i] == ch) {
             return i;
@@ -202,6 +213,10 @@ int cr_std_string_find_char(string_t *str, char ch) {
 }
 
 int cr_std_string_find_char_last(string_t *str, char ch) {
+    if (!str) {
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_find_char_last -> string pointer is NULL");
+        return -1;
+    }
     for (int i = str->length; i >= 0; i--) {
         if (str->c_str[i] == ch) {
             return i;
@@ -211,6 +226,10 @@ int cr_std_string_find_char_last(string_t *str, char ch) {
 }
 
 int cr_std_string_contains_string(string_t *str, char *phrase) {
+    if (!str) {
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_contains_string -> string pointer is NULL");
+        return 0;
+    }
     int phrase_length = 0;
     while (phrase[phrase_length] != '\0') {
         phrase_length++;
@@ -236,6 +255,10 @@ int cr_std_string_contains_string(string_t *str, char *phrase) {
 }
 
 int cr_std_string_contains_char(string_t *str, char ch) {
+    if (!str) {
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_contains_char -> string pointer is NULL");
+        return 0;
+    }
     for (int i = 0; i <= str->length; i++) {
         if (str->c_str[i] == ch) {
             return 1;
@@ -245,6 +268,10 @@ int cr_std_string_contains_char(string_t *str, char ch) {
 }
 
 unsigned long cr_std_string_hash_code(string_t *str) {
+    if (!str) {
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_hash_code -> string pointer is NULL");
+        return 0;
+    }
     unsigned long hash = 5381; // Initial hash value
 
     for (size_t i = 0; i < str->length; i++) {
@@ -255,6 +282,10 @@ unsigned long cr_std_string_hash_code(string_t *str) {
 }
 
 vector_t *cr_std_string_split(string_t *str, char delimiter) {
+    if (!str) {
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_split -> string pointer is NULL");
+        return NULL;
+    }
     vector_t *vector = cr_std_vector_new(sizeof(string_t *));
     char buffer[str->length + 1];
     int buffer_index = 0;

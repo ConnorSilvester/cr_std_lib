@@ -148,7 +148,8 @@ int cr_std_string_contains_char(string_t *str, char ch);
  *
  * @param `str` The string to calculate the hash code for.
  *
- * @return The hash code of the string.
+ * @return `hash` code of the string.
+ * @return `-1` if error
  */
 unsigned long cr_std_string_hash_code(string_t *str);
 
@@ -159,6 +160,7 @@ unsigned long cr_std_string_hash_code(string_t *str);
  * @param `delimiter` The character to split the string by.
  *
  * @return A pointer to a new `vector_t` of the split strings.
+ * @return `NULL` if error
  */
 vector_t *cr_std_string_split(string_t *str, char delimiter);
 
