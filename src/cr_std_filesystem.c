@@ -75,18 +75,17 @@ vector_t *cr_std_filesystem_read_file_as_vector(const char *file_path) {
 }
 
 vector_t *cr_std_filesystem_get_dir_files(const char *file_path) {
+    DIR *dir = opendir(file_path);
+    if (!dir) {
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_filesystem_get_dir_files -> failed to open dir -> %s", file_path);
+        return NULL;
+    }
+
     // Unwanted entries.
     string_t *current_dir = cr_std_string_new(".");
     string_t *parent_dir = cr_std_string_new("..");
 
     vector_t *vector = cr_std_vector_new(sizeof(string_t *));
-    DIR *dir = opendir(file_path);
-    if (!dir) {
-        cr_std_string_free(current_dir);
-        cr_std_string_free(parent_dir);
-        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_filesystem_get_dir_files -> failed to open dir -> %s", file_path);
-        return NULL;
-    }
 
     struct dirent *entry = readdir(dir);
     while (entry != NULL) {
