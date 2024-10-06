@@ -75,7 +75,7 @@ int cr_std_string_compare(string_t *arg, string_t *arg1);
 /**
  * @brief Trims a string of white space in both directions of the string.
  *
- * @param `str` The string to trim.
+ * @param `string` The string to trim.
  * @param `direction` Which dir you want to cut or both
  *
  * Defined as `CR_STD_STRING_TRIM_LEFT`
@@ -87,12 +87,12 @@ int cr_std_string_compare(string_t *arg, string_t *arg1);
  * @return `1` if the string is trimmed successfully.
  * @return `0` if the string failed to be trimmed.
  */
-int cr_std_string_trim(string_t *str, int direction);
+int cr_std_string_trim(string_t *string, int direction);
 
 /**
  * @brief Checks to see if a given char is considered white space.
  *
- * @param `c` The char to check.
+ * @param `ch` The char to check.
  *
  * @return `1` if it is white space.
  * @return `0` if is is not white space.
@@ -102,66 +102,89 @@ int cr_std_string_is_char_white_space(char ch);
 /**
  * @brief Finds the first index of a character in a given string.
  *
- * @param `str` The string to search through.
+ * @param `string` The string to search through.
  * @param `ch` The character to locate.
  *
  * @return The index of the character in the string.
  * @return `-1` if the character is not found.
  */
-int cr_std_string_find_char(string_t *str, char ch);
+int cr_std_string_find_char(string_t *string, char ch);
 
 /**
  * @brief Finds the last index of a character in a given string.
  *
- * @param `str` The string to search through.
+ * @param `string` The string to search through.
  * @param `ch` The character to locate.
  *
  * @return The index of the character in the string.
  * @return `-1` if the character is not found.
  */
-int cr_std_string_find_char_last(string_t *str, char ch);
+int cr_std_string_find_char_last(string_t *string, char ch);
 
 /**
  * @brief Check if a string contains a phrase.
  *
- * @param `str` The string to search through.
+ * @param `string` The string to search through.
  * @param `phrase` The phrase / string to locate.
  *
  * @return `1` if the string contains the phrase
  * @return `0` if the string does not contain the phrase
  */
-int cr_std_string_contains_string(string_t *str, char *phrase);
+int cr_std_string_contains_string(string_t *string, char *phrase);
 
 /**
  * @brief Check if a string contains a char.
  *
- * @param `str` The string to search through.
+ * @param `string` The string to search through.
  * @param `ch` The char to locate.
  *
- * @return `1` if the string contains the char
- * @return `0` if the string does not contain the char
+ * @return `1` if the string contains the char.
+ * @return `0` if the string does not contain the char.
  */
-int cr_std_string_contains_char(string_t *str, char ch);
+int cr_std_string_contains_char(string_t *string, char ch);
 
 /**
  * @brief Calculate the hash code of a string.
  *
- * @param `str` The string to calculate the hash code for.
+ * @param `string` The string to calculate the hash code for.
  *
  * @return `hash` code of the string.
- * @return `-1` if error
+ * @return `-1` if error.
  */
-unsigned long cr_std_string_hash_code(string_t *str);
+unsigned long cr_std_string_hash_code(string_t *string);
 
 /**
  * @brief Splits a string into a `vector_t`.
  *
- * @param `str` The string to split.
+ * @param `string` The string to split.
  * @param `delimiter` The character to split the string by.
  *
  * @return A pointer to a new `vector_t` of the split strings.
- * @return `NULL` if error
+ * @return `NULL` if error.
  */
-vector_t *cr_std_string_split(string_t *str, char delimiter);
+vector_t *cr_std_string_split(string_t *string, char delimiter);
+
+/**
+ * @Convert a string to upper case.
+ *
+ * @param `string` The string to work on.
+ *
+ * @return `1` if the string is changed.
+ * @return `0` if error.
+ */
+int cr_std_string_to_upper(string_t *string);
+
+/**
+ * @Convert a string to lower case.
+ *
+ * @param `string` The string to work on.
+ *
+ * @return `1` if the string is changed.
+ * @return `0` if error.
+ */
+int cr_std_string_to_lower(string_t *string);
+
+
+
 
 #endif // CR_STD_STRING
