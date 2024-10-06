@@ -117,7 +117,7 @@ int cr_std_string_find_char_last(string_t *string, char ch);
  * @param `string` The string to search through.
  * @param `phrase` The phrase / string to locate.
  *
- * @return `1` if the string contains the phrase
+ * @return `number of occurrences` if the string contains the phrase
  * @return `0` if the string does not contain the phrase
  */
 int cr_std_string_contains_string(string_t *string, char *phrase);
@@ -128,7 +128,7 @@ int cr_std_string_contains_string(string_t *string, char *phrase);
  * @param `string` The string to search through.
  * @param `ch` The char to locate.
  *
- * @return `1` if the string contains the char.
+ * @return `number of occurrences` if the string contains the char.
  * @return `0` if the string does not contain the char.
  */
 int cr_std_string_contains_char(string_t *string, char ch);
@@ -174,7 +174,16 @@ int cr_std_string_to_upper(string_t *string);
  */
 int cr_std_string_to_lower(string_t *string);
 
-
-
+/**
+ * @brief Replaces all occurrences of `from` with `to` in a given string.
+ *
+ * @param `string` The string to work on.
+ * @param `from` The string you want to replace.
+ * @param `to` The string you want to replace `from` with.
+ *
+ * @return `number of replaced words`.
+ * @return `0` if nothing is replaced.
+ */
+int cr_std_string_replace_string(string_t *string, char *from, char *to);
 
 #endif // CR_STD_STRING

@@ -5,6 +5,7 @@
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <wctype.h>
 
 string_t *cr_std_string_new(const char *format, ...) {
@@ -87,43 +88,34 @@ int cr_std_string_concat_null_terminated(string_t *string, ...) {
     va_start(args, string);
 
     size_t total_length = string->length;
-    char *current_char;
-    while ((current_char = va_arg(args, char *)) != NULL) {
-        size_t index = 0;
-        while (current_char[index] != '\0') {
-            index++;
-        }
-        total_length += index;
+    char *current_string;
+    while ((current_string = va_arg(args, char *)) != NULL) {
+        total_length += strlen(current_string);
     }
     va_end(args);
 
-    char *c_str = (char *)malloc(sizeof(char) * (total_length + 1));
-    if (!c_str) {
+    char *new_c_str = (char *)malloc(sizeof(char) * (total_length + 1));
+    if (!new_c_str) {
         cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_concat_null_terminated -> Failed to allocate memory for new string_t struct");
         return 0;
     }
 
     size_t c_str_current_pos = 0;
-    for (size_t i = 0; i < string->length; i++) {
-        c_str[c_str_current_pos] = string->c_str[i];
-        c_str_current_pos++;
-    }
+    memcpy(new_c_str, string->c_str, string->length);
+    c_str_current_pos += string->length;
 
     va_start(args, string);
-    while ((current_char = va_arg(args, char *)) != NULL) {
-        size_t index = 0;
-        while (current_char[index] != '\0') {
-            c_str[c_str_current_pos] = current_char[index];
-            c_str_current_pos++;
-            index++;
-        }
+    while ((current_string = va_arg(args, char *)) != NULL) {
+        size_t current_length = strlen(current_string);
+        memcpy(new_c_str + c_str_current_pos, current_string, current_length);
+        c_str_current_pos += current_length;
     }
     va_end(args);
 
-    c_str[c_str_current_pos] = '\0';
+    new_c_str[c_str_current_pos] = '\0';
 
     free(string->c_str);
-    string->c_str = c_str;
+    string->c_str = new_c_str;
     string->length = total_length;
 
     return 1;
@@ -179,9 +171,7 @@ int cr_std_string_trim(string_t *string, int direction) {
         return 0;
     }
 
-    for (int i = 0; i < new_length; i++) {
-        new_str[i] = string->c_str[start + i];
-    }
+    memcpy(new_str, string->c_str + start, new_length);
     new_str[new_length] = '\0';
 
     free(string->c_str);
@@ -222,15 +212,13 @@ int cr_std_string_contains_string(string_t *string, char *phrase) {
         cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_contains_string -> string pointer is NULL");
         return 0;
     }
-    int phrase_length = 0;
-    while (phrase[phrase_length] != '\0') {
-        phrase_length++;
-    }
 
+    int phrase_length = strlen(phrase);
     if (phrase_length > string->length) {
         return 0;
     }
 
+    int occurrences = 0;
     for (int string_index = 0; string_index <= string->length - phrase_length; string_index++) {
         int found = 1;
         for (int phrase_index = 0; phrase_index < phrase_length; phrase_index++) {
@@ -240,10 +228,10 @@ int cr_std_string_contains_string(string_t *string, char *phrase) {
             }
         }
         if (found) {
-            return 1;
+            occurrences++;
         }
     }
-    return 0;
+    return occurrences;
 }
 
 int cr_std_string_contains_char(string_t *string, char ch) {
@@ -251,12 +239,14 @@ int cr_std_string_contains_char(string_t *string, char ch) {
         cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_contains_char -> string pointer is NULL");
         return 0;
     }
+
+    int occurrences = 0;
     for (int i = 0; i <= string->length; i++) {
         if (string->c_str[i] == ch) {
-            return 1;
+            occurrences++;
         }
     }
-    return 0;
+    return occurrences;
 }
 
 unsigned long cr_std_string_hash_code(string_t *string) {
@@ -325,4 +315,58 @@ int cr_std_string_to_lower(string_t *string) {
         string->c_str[i] = tolower(string->c_str[i]);
     }
     return 1;
+}
+
+int cr_std_string_replace_string(string_t *string, char *from, char *to) {
+    if (!string) {
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_replace_string -> string pointer is NULL");
+        return 0;
+    }
+
+    int occurrences = cr_std_string_contains_string(string, from);
+    if (occurrences == 0) {
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_WARNING, "cr_std_string_replace_string -> string does not contain phrase");
+        return 0;
+    }
+
+    int from_length = strlen(from);
+    int to_length = strlen(to);
+
+    int new_length = string->length + (to_length - from_length) * occurrences;
+    char *new_string = malloc(sizeof(char) * (new_length + 1));
+    if (!new_string) {
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_replace_string -> malloc allocation failed for new_string");
+        return 0;
+    }
+
+    // src = start of string
+    char *src = string->c_str;
+    char *dest = new_string;
+    char *current_pos_in_string = strstr(src, from);
+
+    int successfully_changed_words = 0;
+    while (current_pos_in_string != NULL) {
+        // Copy everything before the from match
+        int bytes_before_match = current_pos_in_string - src;
+        memcpy(dest, src, bytes_before_match);
+        dest += bytes_before_match;
+
+        // Copy the to string in place of from
+        memcpy(dest, to, to_length);
+        dest += to_length;
+
+        // Move the source pointer past the from string
+        src = current_pos_in_string + from_length;
+        current_pos_in_string = strstr(src, from);
+        successfully_changed_words++;
+    }
+
+    // Copy rest of the string
+    strcpy(dest, src);
+
+    free(string->c_str);
+    string->c_str = new_string;
+    string->length = new_length;
+
+    return successfully_changed_words;
 }
