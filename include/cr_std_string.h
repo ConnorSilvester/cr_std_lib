@@ -90,16 +90,6 @@ int cr_std_string_compare(string_t *arg, string_t *arg1);
 int cr_std_string_trim(string_t *string, int direction);
 
 /**
- * @brief Checks to see if a given char is considered white space.
- *
- * @param `ch` The char to check.
- *
- * @return `1` if it is white space.
- * @return `0` if is is not white space.
- */
-int cr_std_string_is_char_white_space(char ch);
-
-/**
  * @brief Finds the first index of a character in a given string.
  *
  * @param `string` The string to search through.

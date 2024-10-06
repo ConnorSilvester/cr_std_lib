@@ -5,6 +5,7 @@
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <wctype.h>
 
 string_t *cr_std_string_new(const char *format, ...) {
     if (!format) {
@@ -157,13 +158,13 @@ int cr_std_string_trim(string_t *string, int direction) {
     int end = string->length - 1;
 
     if (direction == CR_STD_STRING_TRIM_LEFT || direction == CR_STD_STRING_TRIM_BOTH) {
-        while (start <= end && cr_std_string_is_char_white_space(string->c_str[start])) {
+        while (start <= end && iswspace(string->c_str[start])) {
             start++;
         }
     }
 
     if (direction == CR_STD_STRING_TRIM_RIGHT || direction == CR_STD_STRING_TRIM_BOTH) {
-        while (end >= start && cr_std_string_is_char_white_space(string->c_str[end])) {
+        while (end >= start && iswspace(string->c_str[end])) {
             end--;
         }
     }
@@ -188,15 +189,6 @@ int cr_std_string_trim(string_t *string, int direction) {
     string->length = new_length;
 
     return 1;
-}
-
-int cr_std_string_is_char_white_space(char ch) {
-    return ch == ' ' ||
-           ch == '\n' ||
-           ch == '\t' ||
-           ch == '\r' ||
-           ch == '\v' ||
-           ch == '\f';
 }
 
 int cr_std_string_find_char(string_t *string, char ch) {
