@@ -14,6 +14,8 @@ void cr_std_logger_get_current_time(char *buffer, size_t buffer_size) {
 }
 
 void cr_std_logger_out(int log_type, const char *formatted_str, ...) {
+// Define this to block all output from the logger
+#ifndef CR_STD_TESTING_MODE
     char time_str[9]; // HH:MM:SS + null terminator
     cr_std_logger_get_current_time(time_str, sizeof(time_str));
 
@@ -40,4 +42,5 @@ void cr_std_logger_out(int log_type, const char *formatted_str, ...) {
     default:
         break;
     }
+#endif
 }

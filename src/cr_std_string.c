@@ -28,7 +28,7 @@ string_t *cr_std_string_new(const char *format, ...) {
 
     if (string->length < 0) {
         cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_new -> vsnprintf failed during length calculation");
-        cr_std_string_free(string);
+        cr_std_string_free(&string);
         va_end(args);
         return NULL;
     }
@@ -36,7 +36,7 @@ string_t *cr_std_string_new(const char *format, ...) {
     char *c_str = (char *)malloc(sizeof(char) * (string->length + 1));
     if (!c_str) {
         cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_new -> failed to allocate memory for buffer");
-        cr_std_string_free(string);
+        cr_std_string_free(&string);
         va_end(args);
         return NULL;
     }
@@ -50,16 +50,15 @@ string_t *cr_std_string_new(const char *format, ...) {
     return string;
 }
 
-int cr_std_string_free(string_t *string) {
-    if (string) {
-        if (string->c_str) {
-            free(string->c_str);
-            string->c_str = NULL;
+int cr_std_string_free(string_t **string_ptr) {
+    if (string_ptr && *string_ptr) {
+        if ((*string_ptr)->c_str) {
+            free((*string_ptr)->c_str);
+            (*string_ptr)->c_str = NULL;
         }
 
-        free(string);
-        string = NULL;
-
+        free(*string_ptr);
+        *string_ptr = NULL;
         return 1;
     }
     cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_WARNING, "cr_std_string_free -> tried to free a NULL string_t*");
@@ -214,7 +213,7 @@ int cr_std_string_contains_string(string_t *string, char *phrase) {
     }
 
     int phrase_length = strlen(phrase);
-    if (phrase_length > string->length) {
+    if (phrase_length > string->length || phrase_length < 1) {
         return 0;
     }
 
@@ -252,7 +251,7 @@ int cr_std_string_contains_char(string_t *string, char ch) {
 unsigned long cr_std_string_hash_code(string_t *string) {
     if (!string) {
         cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_hash_code -> string pointer is NULL");
-        return 0;
+        return -1;
     }
     unsigned long hash = 5381; // Initial hash value
 
@@ -268,7 +267,7 @@ vector_t *cr_std_string_split(string_t *string, char delimiter) {
         cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_split -> string pointer is NULL");
         return NULL;
     }
-    vector_t *vector = cr_std_vector_new(sizeof(string_t *));
+    vector_t *vector = cr_std_vector_new(sizeof(string_t *), cr_std_string_free_ptr);
     char buffer[string->length + 1];
     int buffer_index = 0;
     for (size_t i = 0; i < string->length; i++) {

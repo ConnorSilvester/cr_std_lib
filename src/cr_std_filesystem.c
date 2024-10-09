@@ -41,7 +41,7 @@ vector_t *cr_std_filesystem_read_file_as_vector(const char *file_path) {
         return NULL;
     }
 
-    vector_t *vector = cr_std_vector_new(sizeof(string_t *));
+    vector_t *vector = cr_std_vector_new(sizeof(string_t *), cr_std_string_free_ptr);
     if (!vector) {
         cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_filesystem_read_file_as_vector -> failed to allocate memory for vector_t struct");
         fclose(file);
@@ -62,7 +62,7 @@ vector_t *cr_std_filesystem_read_file_as_vector(const char *file_path) {
             cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_filesystem_read_file_as_vector -> failed to allocate memory for string_t struct");
             free(line);
             fclose(file);
-            cr_std_vector_free(vector);
+            cr_std_vector_free(&vector);
             return NULL;
         }
         cr_std_vector_push_back(vector, new_string);
@@ -85,7 +85,7 @@ vector_t *cr_std_filesystem_get_dir_files(const char *file_path) {
     string_t *current_dir = cr_std_string_new(".");
     string_t *parent_dir = cr_std_string_new("..");
 
-    vector_t *vector = cr_std_vector_new(sizeof(string_t *));
+    vector_t *vector = cr_std_vector_new(sizeof(string_t *), cr_std_string_free_ptr);
 
     struct dirent *entry = readdir(dir);
     while (entry != NULL) {
@@ -94,13 +94,13 @@ vector_t *cr_std_filesystem_get_dir_files(const char *file_path) {
             cr_std_string_compare(file_name, parent_dir) != 1) {
             cr_std_vector_push_back(vector, file_name);
         } else {
-            cr_std_string_free(file_name);
+            cr_std_string_free(&file_name);
         }
         entry = readdir(dir);
     }
     closedir(dir);
-    cr_std_string_free(current_dir);
-    cr_std_string_free(parent_dir);
+    cr_std_string_free(&current_dir);
+    cr_std_string_free(&parent_dir);
 
     return vector;
 }

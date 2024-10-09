@@ -24,13 +24,15 @@ typedef struct string_t {
 string_t *cr_std_string_new(const char *format, ...);
 
 /**
- * @brief Free a `string_t` struct.
+ * @brief Free a `string_t` struct, sets pointer to `NULL`.
  *
- * @param `string` A pointer to the `string_t` struct.
+ * @param `string` A pointer to a pointer containing a `string_t` struct.
  *
- * @return `1` on success, `0` on failure.
+ * @return `1` on success.
+ * @return `0` on failure.
  */
-int cr_std_string_free(string_t *string);
+int cr_std_string_free(string_t **string_ptr);
+#define cr_std_string_free_ptr ((int (*)(void **))cr_std_string_free)
 
 /**
  * @brief Copy the contents of a `string_t` struct to another one.

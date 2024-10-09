@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-vector_t *cr_std_vector_new(size_t type_size) {
+vector_t *cr_std_vector_new(size_t type_size, int (*free_function)(void **)) {
     vector_t *vector = malloc(sizeof(vector_t));
 
     if (!vector) {
@@ -16,26 +16,34 @@ vector_t *cr_std_vector_new(size_t type_size) {
     vector->type_size = type_size;
     vector->is_pointer = vector->type_size == sizeof(void *);
     vector->elements = malloc(vector->capacity * sizeof(void *));
+    vector->free_function = free_function;
 
     return vector;
 }
 
-int cr_std_vector_free(vector_t *vector) {
-    if (!vector) {
+int cr_std_vector_free(vector_t **vector_ptr) {
+    if (!vector_ptr || !*vector_ptr) {
         cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_vector_free -> tried to free a NULL vector");
         return 0;
     }
 
-    // If the vector holds pointers, free each element
+    vector_t *vector = *vector_ptr;
+
+    // If the vector holds pointers, free each element using the custom free function
     if (vector->is_pointer) {
         for (size_t i = 0; i < vector->size; i++) {
-            free(((void **)vector->elements)[i]);
+            void *element = ((void **)vector->elements)[i];
+            if (vector->free_function) { // Check if a custom free function is provided
+                vector->free_function(&element);
+            } else {
+                free(element); // Fall back to default free if no custom function
+            }
         }
     }
 
     free(vector->elements);
     free(vector);
-
+    *vector_ptr = NULL;
     return 1;
 }
 
@@ -81,7 +89,7 @@ int cr_std_vector_remove_element(vector_t *vector, size_t index) {
     }
 
     if (vector->is_pointer) {
-        // Free current element, then move shift each element down.
+        // Free current element, then move each element down.
         free(((void **)vector->elements)[index]);
         for (size_t i = index; i < vector->size - 1; i++) {
             ((void **)vector->elements)[i] = ((void **)vector->elements)[i + 1];

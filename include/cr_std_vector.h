@@ -2,31 +2,35 @@
 #define CR_STD_VECTOR
 
 #include <stdio.h>
+#include <stdbool.h>
 typedef struct vector_t {
     void *elements;
     size_t size;
     size_t capacity;
     size_t type_size;
-    int is_pointer;
+    bool is_pointer;
+    int (*free_function)(void **);
 } vector_t;
 
 /**
  * @brief Creates a new `vector_t` struct.
  *
  * @param `type_size` The `sizeof` the element you want to store (e.g. `sizeof(int)`, `sizeof(string_t *)`).
+ * @param `free_function` The custom free function to be called when freeing the vector, use `NULL` if not required.
  *
  * @return A pointer to the new `vector_t` struct, or `NULL` if allocation fails.
  */
-vector_t *cr_std_vector_new(size_t type_size);
+vector_t *cr_std_vector_new(size_t type_size, int (*free_function)(void **));
 
 /**
  * @brief Frees a `vector_t` struct.
  *
- * @param `vector` The vector struct to free.
+ * @param `vector` A pointer to a pointer containing the `vector_t` struct
  *
- * @return `1` on success, `0` on failure.
+ * @return `1` on success.
+ * @return `0` on failure.
  */
-int cr_std_vector_free(vector_t *vector);
+int cr_std_vector_free(vector_t **vector_ptr);
 
 /**
  * @brief Adds an element to the vector.

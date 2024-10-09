@@ -6,15 +6,13 @@ CFLAGS = -Wall
 
 # Executable name
 EXEC = bin/main
+TEST_EXEC = bin/tests
 
-# Source directory
+# Source directories
 SRC_DIR = src
-
-# Include directory
 INC_DIR = include
-
-# Object directory
 OBJ_DIR = obj
+TEST_DIR = tests
 
 # Library name
 LIB_NAME = cr_std
@@ -22,9 +20,11 @@ LIB_FILE = lib$(LIB_NAME).a
 
 # Source files
 SRCS = $(wildcard $(SRC_DIR)/*.c)
+TEST_SRCS = $(wildcard $(TEST_DIR)/*.c)
 
 # Object files
 OBJS = $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(SRCS))
+TEST_OBJS = $(patsubst $(TEST_DIR)/%.c, $(OBJ_DIR)/test_%.o, $(TEST_SRCS))
 
 # Installation directories
 LIB_DEST_DIR = /usr/local/lib
@@ -40,9 +40,14 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	mkdir -p $(OBJ_DIR)
 	$(CC) $(CFLAGS) -I$(INC_DIR) -c $< -o $@
 
-# Create the static library
-$(LIB_FILE): $(OBJS)
-	ar rcs $@ $(OBJS)
+# Compile test source files
+$(OBJ_DIR)/test_%.o: $(TEST_DIR)/%.c
+	mkdir -p $(OBJ_DIR)
+	$(CC) $(CFLAGS) -I$(INC_DIR) -c $< -o $@
+
+# Create the static library, excluding main.o
+$(LIB_FILE): $(filter-out $(OBJ_DIR)/main.o, $(OBJS))
+	ar rcs $@ $(filter-out $(OBJ_DIR)/main.o, $(OBJS))
 
 # Install the library and headers
 install: $(LIB_FILE)
@@ -57,12 +62,22 @@ install: $(LIB_FILE)
 run: $(EXEC)
 	$(EXEC)
 
+# Build tests with CR_STD_TESTING_MODE define to block output from logger
+$(TEST_EXEC): $(TEST_OBJS) $(LIB_FILE)
+	mkdir -p bin
+	$(CC) $(CFLAGS) $(TEST_OBJS) -L. -l$(LIB_NAME) -o $(TEST_EXEC)
+
+run_tests: CFLAGS += -DCR_STD_TESTING_MODE
+run_tests: clean $(TEST_EXEC)
+	$(TEST_EXEC)
+
 # Clean
 clean:
 	rm -rf $(OBJ_DIR) bin $(LIB_FILE)
 
 # Debug build
-debug: CFLAGS += -DDEBUG
+debug: CFLAGS += -g
 debug: $(EXEC)
 
-.PHONY: all clean run install debug
+.PHONY: all clean run install debug run_tests
+
