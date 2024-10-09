@@ -41,6 +41,7 @@ Once installed you can add the following to your program depending what your nee
 #include <cr_std_logger.h>
 #include <cr_std_string.h>
 #include <cr_std_vector.h>
+#include <cr_std_testing.h>
 ```
 
 ## Code Examples
@@ -57,13 +58,13 @@ cr_std_string_concat(str, ", This", " Has", " Been", " Concatenated");
 cr_std_string_contains_string(str, "Been");
 cr_std_string_split(str, " ");
 
-cr_std_string_free(str);
+cr_std_string_free(&str);
 ```
 
 **Vectors** : Prefix is cr_std_vector *
 ```bash
-vector_t *int_vector = cr_std_vector_new(sizeof(int));
-vector_t *string_vector = cr_std_vector_new(sizeof(string_t *));
+vector_t *int_vector = cr_std_vector_new(sizeof(int), NULL);
+vector_t *string_vector = cr_std_vector_new(sizeof(string_t *), cr_std_string_free_ptr);
 ```
 ```bash
 int number = 4;
@@ -72,7 +73,7 @@ cr_std_vector_push_back(int_vector, &number);
 int result = *(int *)cr_std_vector_get_element(int_vector, 0);
 cr_std_vector_remove_element(int_vector, 0);
 
-cr_std_vector_free(int_vector);
+cr_std_vector_free(&int_vector);
 ```
 
 **Filesystem** : Prefix is cr_std_filesystem *
@@ -96,6 +97,23 @@ cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_INFO, "This is a info message");
 cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "This is a error message with filename : %s", file_name); //Same formatting as printf
 ```
 
+
+**Testing** : Prefix is cr_std_testing *
+
+For best examples see the /tests directory.
+```bash
+// Make vector of test_cases
+vector_t *tests = cr_std_vector_new(sizeof(test_case_t *), NULL);
+
+// cr_std_string_test_new_string_normal is a function pointer to test with. (1 for pass 0 for fail)
+cr_std_vector_push_back(tests, cr_std_testing_new_test("Make String -> Normal", cr_std_string_test_new_string_normal));
+cr_std_vector_push_back(tests, cr_std_testing_new_test("Make String -> Empty", cr_std_string_test_new_string_empty));
+cr_std_vector_push_back(tests, cr_std_testing_new_test("Make String -> Formatted", cr_std_string_test_new_string_formatted));
+
+cr_std_testing_run_tests(tests);
+cr_std_vector_free(&tests);
+
+```
 ## Try Before Install
 If you would like to test the library before install you can use the main.c file included.
 

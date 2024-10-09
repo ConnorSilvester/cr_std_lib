@@ -19,7 +19,8 @@ typedef struct string_t {
  * @param `format` The format string used to format like `printf` (`%s`, `%d`, etc.).
  * @param `...` The arguments to format according to the format string.
  *
- * @return A pointer to the new `string_t` struct, or `NULL` if allocation fails.
+ * @return A pointer to the new `string_t` struct.
+ * @return `NULL` if allocation fails.
  */
 string_t *cr_std_string_new(const char *format, ...);
 
@@ -39,7 +40,8 @@ int cr_std_string_free(string_t **string_ptr);
  *
  * @param `src_string` A pointer to the source `string_t` struct.
  *
- * @return `string_t` of the copied source, NULL if failed.
+ * @return A pointer to the new `string_t` struct.
+ * @return `NULL` if copy fails.
  */
 string_t *cr_std_string_make_copy(string_t *src_string);
 
@@ -49,7 +51,8 @@ string_t *cr_std_string_make_copy(string_t *src_string);
  * @param `string` A pointer to the `string_t` struct to be updated.
  * @param `...` The strings to concatenate, terminated with a `NULL`.
  *
- * @return `1` on success, `0` on failure.
+ * @return `1` on success.
+ * @return `0` on failure.
  */
 int cr_std_string_concat_null_terminated(string_t *string, ...);
 

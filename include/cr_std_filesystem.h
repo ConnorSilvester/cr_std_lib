@@ -9,7 +9,8 @@ typedef struct vector_t vector_t;
  *
  * @param `file_path` A raw string of the file path.
  *
- * @return A pointer to a new `string_t` struct containing the file contents.
+ * @return A pointer to the new `string_t` struct containing the file contents.
+ * @return `NULL` on failure.
  */
 string_t *cr_std_filesystem_read_file_as_string(const char *file_path);
 
@@ -19,6 +20,7 @@ string_t *cr_std_filesystem_read_file_as_string(const char *file_path);
  * @param `file_path` A raw string of the file path.
  *
  * @return A pointer to a new `vector_t` struct containing the file contents.
+ * @return `NULL` on failure.
  */
 vector_t *cr_std_filesystem_read_file_as_vector(const char *file_path);
 
@@ -27,7 +29,8 @@ vector_t *cr_std_filesystem_read_file_as_vector(const char *file_path);
  *
  * @param `file_path` A raw string of the file path.
  *
- * @return A pointer to a new `vector_t` struct containing `string_t` struct of the file names in the dir.
+ * @return A pointer to a new `vector_t`struct containing `string_t` struct of the file names in the dir.
+ * @return `NULL` on failure.
  */
 vector_t *cr_std_filesystem_get_dir_files(const char *file_path);
 #endif // CR_STD_FILESYSTEM

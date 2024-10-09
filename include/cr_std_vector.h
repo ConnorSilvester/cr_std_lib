@@ -1,8 +1,8 @@
 #ifndef CR_STD_VECTOR
 #define CR_STD_VECTOR
 
-#include <stdio.h>
 #include <stdbool.h>
+#include <stdio.h>
 typedef struct vector_t {
     void *elements;
     size_t size;
@@ -18,7 +18,8 @@ typedef struct vector_t {
  * @param `type_size` The `sizeof` the element you want to store (e.g. `sizeof(int)`, `sizeof(string_t *)`).
  * @param `free_function` The custom free function to be called when freeing the vector, use `NULL` if not required.
  *
- * @return A pointer to the new `vector_t` struct, or `NULL` if allocation fails.
+ * @return A pointer to the new `vector_t` struct.
+ * @return `NULL` if allocation fails.
  */
 vector_t *cr_std_vector_new(size_t type_size, int (*free_function)(void **));
 
@@ -38,7 +39,8 @@ int cr_std_vector_free(vector_t **vector_ptr);
  * @param `vector` The vector you want to add to.
  * @param `element` The element you want to add.
  *
- * @return `1` on success, `0` on failure.
+ * @return `1` on success.
+ * @return `0` on failure.
  */
 int cr_std_vector_push_back(vector_t *vector, void *element);
 
@@ -48,7 +50,8 @@ int cr_std_vector_push_back(vector_t *vector, void *element);
  * @param `vector` The vector you want to remove from.
  * @param `index` The index of the element you want to remove.
  *
- * @return `1` on success, `0` on failure.
+ * @return `1` on success.
+ * @return `0` on failure.
  */
 int cr_std_vector_remove_element(vector_t *vector, size_t index);
 
@@ -58,7 +61,8 @@ int cr_std_vector_remove_element(vector_t *vector, size_t index);
  * @param `vector` The vector you want to fetch from.
  * @param `index` The index of the element inside the vector.
  *
- * @return A `void *` to the element at the given index, or `NULL` if the index is not valid.
+ * @return A `void *` to the element at the given index.
+ * @return `NULL` if the index is not valid.
  */
 void *cr_std_vector_get_element(vector_t *vector, size_t index);
 
