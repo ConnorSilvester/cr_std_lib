@@ -42,6 +42,7 @@ Once installed you can add the following to your program depending what your nee
 #include <cr_std_string.h>
 #include <cr_std_vector.h>
 #include <cr_std_testing.h>
+#include <cr_std_utils.h>
 ```
 
 ## Code Examples
@@ -64,7 +65,8 @@ cr_std_string_free(&str);
 **Vectors** : Prefix is cr_std_vector *
 ```bash
 vector_t *int_vector = cr_std_vector_new(sizeof(int), NULL);
-vector_t *string_vector = cr_std_vector_new(sizeof(string_t *), cr_std_string_free_ptr);
+vector_t *string_vector = cr_std_vector_new(sizeof(string_t *), cr_std_string_free_ptr); //string_t custom free function
+vector_t *tests_vector = cr_std_vector_new(sizeof(test_case_t *), cr_std_free_ptr); //general use free function
 ```
 ```bash
 int number = 4;
@@ -103,7 +105,7 @@ cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "This is a error message with fi
 For best examples see the /tests directory.
 ```bash
 // Make vector of test_cases
-vector_t *tests = cr_std_vector_new(sizeof(test_case_t *), NULL);
+vector_t *tests = cr_std_vector_new(sizeof(test_case_t *), cr_std_free_ptr);
 
 // cr_std_string_test_new_string_normal is a function pointer to test with. (1 for pass 0 for fail)
 cr_std_vector_push_back(tests, cr_std_testing_new_test("Make String -> Normal", cr_std_string_test_new_string_normal));

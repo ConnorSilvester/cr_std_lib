@@ -25,6 +25,7 @@ string_t *cr_std_string_new(const char *format, ...) {
     va_start(args, format);
 
     string->length = vsnprintf(NULL, 0, format, args);
+    va_end(args);
 
     if (string->length < 0) {
         cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_new -> vsnprintf failed during length calculation");

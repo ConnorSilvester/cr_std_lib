@@ -24,7 +24,7 @@ void cr_std_testing_run_tests(vector_t *tests) {
         test_case_t *test = (test_case_t *)cr_std_vector_get_element(tests, i);
 
         if (test) {
-            if (tests->size > 10 && i + 1 < 10) {
+            if (tests->size >= 10 && i + 1 < 10) {
                 printf("Running test (0%d / %ld) : %s ", i + 1, tests->size, test->name);
             } else {
                 printf("Running test (%d / %ld) : %s ", i + 1, tests->size, test->name);

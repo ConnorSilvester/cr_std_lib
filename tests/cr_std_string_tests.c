@@ -2,13 +2,14 @@
 #include "cr_std_string.h"
 #include "cr_std_testing.h"
 #include "cr_std_vector.h"
+#include "cr_std_utils.h"
 #include <stdio.h>
 #include <stdlib.h>
 
 void cr_std_string_test_all() {
     printf("%s\n", "Running String Tests:");
 
-    vector_t *tests = cr_std_vector_new(sizeof(test_case_t *), NULL);
+    vector_t *tests = cr_std_vector_new(sizeof(test_case_t *), cr_std_free_ptr);
 
     // New String
     cr_std_vector_push_back(tests, cr_std_testing_new_test("Make String -> Normal", cr_std_string_test_new_string_normal));

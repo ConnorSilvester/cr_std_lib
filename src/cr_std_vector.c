@@ -1,9 +1,15 @@
 #include "cr_std_vector.h"
 #include "cr_std_logger.h"
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 vector_t *cr_std_vector_new(size_t type_size, int (*free_function)(void **)) {
+    if (type_size == 0) {
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_vector_new -> type_size cannot be zero");
+        return NULL;
+    }
+
     vector_t *vector = malloc(sizeof(vector_t));
 
     if (!vector) {
@@ -34,9 +40,13 @@ int cr_std_vector_free(vector_t **vector_ptr) {
         for (size_t i = 0; i < vector->size; i++) {
             void *element = ((void **)vector->elements)[i];
             if (vector->free_function) { // Check if a custom free function is provided
-                vector->free_function(&element);
-            } else {
-                free(element); // Fall back to default free if no custom function
+                int result = vector->free_function(&element);
+                if (result == 0) {
+                    cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_vector_free -> failed on custom free_function call : element index = %ld", i);
+                    return 0;
+                }
+            } else if (element) {
+                cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_WARNING, "cr_std_vector_free -> no custom free_function was found for pointer type, element was not freed");
             }
         }
     }
@@ -55,7 +65,10 @@ int cr_std_vector_push_back(vector_t *vector, void *element) {
 
     if (vector->size >= vector->capacity) {
         vector->capacity *= 2;
-        void *temp = realloc(vector->elements, vector->capacity * vector->type_size);
+
+        size_t new_size = vector->capacity * vector->type_size;
+
+        void *temp = realloc(vector->elements, new_size);
         if (!temp) {
             cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_vector_push_back -> failed to realloc memory for vector_t");
             return 0;
@@ -89,8 +102,14 @@ int cr_std_vector_remove_element(vector_t *vector, size_t index) {
     }
 
     if (vector->is_pointer) {
-        // Free current element, then move each element down.
-        free(((void **)vector->elements)[index]);
+        void *element = ((void **)vector->elements)[index];
+        if (vector->free_function && element) {
+            int result = vector->free_function(&element);
+            if (result == 0) {
+                cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_vector_remove_element -> failed on custom free_function call : element index = %ld", index);
+                return 0;
+            }
+        }
         for (size_t i = index; i < vector->size - 1; i++) {
             ((void **)vector->elements)[i] = ((void **)vector->elements)[i + 1];
         }

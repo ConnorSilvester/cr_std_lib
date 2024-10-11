@@ -16,7 +16,10 @@ typedef struct vector_t {
  * @brief Creates a new `vector_t` struct.
  *
  * @param `type_size` The `sizeof` the element you want to store (e.g. `sizeof(int)`, `sizeof(string_t *)`).
- * @param `free_function` The custom free function to be called when freeing the vector, use `NULL` if not required.
+ * @param `free_function` The custom free function to be called when freeing the vector,
+ *                        Use `cr_std_free_ptr` for generic cr_std types that do not have a custom free function, 
+ *                        Use `NULL` if you don't want any sub elements freed.
+ *                        Use `NULL` for all primitive types.
  *
  * @return A pointer to the new `vector_t` struct.
  * @return `NULL` if allocation fails.
