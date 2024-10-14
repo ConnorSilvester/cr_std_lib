@@ -50,8 +50,8 @@ Once installed you can add the following to your program depending what your nee
 **Strings** : Prefix is cr_std_string *
 ```bash
 string_t *str = cr_std_string_new("Hello, World");
-string_t *str = cr_std_string_new("Hello, %s", "World"); //Same formatting as printf
-string_t *str = cr_std_string_new("Hello, %s%d", "World", 4);
+string_t *str = cr_std_string_newf("Hello, %s", "World"); //Same formatting as printf
+string_t *str = cr_std_string_newf("Hello, %s%d", "World", 4);
 ```
 ```bash
 //Works with any amount of arguments.

@@ -1,8 +1,8 @@
 #include "cr_std_string_tests.h"
 #include "cr_std_string.h"
 #include "cr_std_testing.h"
-#include "cr_std_vector.h"
 #include "cr_std_utils.h"
+#include "cr_std_vector.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -88,6 +88,30 @@ void cr_std_string_test_all() {
     cr_std_vector_push_back(tests, cr_std_testing_new_test("Replace String -> NULL Value", cr_std_string_test_replace_string_null_value));
     cr_std_vector_push_back(tests, cr_std_testing_new_test("Replace String -> Empty", cr_std_string_test_replace_string_empty));
 
+    // New String Builder
+    cr_std_vector_push_back(tests, cr_std_testing_new_test("Make String Builder -> Normal", cr_std_string_builder_test_new_normal));
+    cr_std_vector_push_back(tests, cr_std_testing_new_test("Make String Builder -> Empty", cr_std_string_builder_test_new_empty));
+    cr_std_vector_push_back(tests, cr_std_testing_new_test("Make String Builder -> Formatted", cr_std_string_builder_test_new_formatted));
+
+    // Free String Builder
+    cr_std_vector_push_back(tests, cr_std_testing_new_test("Free String Builder -> Normal", cr_std_string_builder_test_free));
+    cr_std_vector_push_back(tests, cr_std_testing_new_test("Free String Builder -> Null Value", cr_std_string_builder_test_free_null_value));
+
+    // String Builder Append
+    cr_std_vector_push_back(tests, cr_std_testing_new_test("String Builder Append -> Normal", cr_std_string_builder_test_append));
+    cr_std_vector_push_back(tests, cr_std_testing_new_test("String Builder Append -> Formatted", cr_std_string_builder_test_appendf));
+    cr_std_vector_push_back(tests, cr_std_testing_new_test("String Builder Append -> Single", cr_std_string_builder_test_append_single));
+    cr_std_vector_push_back(tests, cr_std_testing_new_test("String Builder Append -> Empty", cr_std_string_builder_test_append_empty));
+    cr_std_vector_push_back(tests, cr_std_testing_new_test("String Builder Append -> NULL Value", cr_std_string_builder_test_append_null_value));
+
+    // String Builder Reset
+    cr_std_vector_push_back(tests, cr_std_testing_new_test("String Builder Reset -> Normal", cr_std_string_builder_test_reset));
+    cr_std_vector_push_back(tests, cr_std_testing_new_test("String Builder Reset -> NULL Value", cr_std_string_builder_test_reset_null_value));
+
+    // String Builder To String
+    cr_std_vector_push_back(tests, cr_std_testing_new_test("String Builder To String -> Normal", cr_std_string_builder_test_to_string));
+    cr_std_vector_push_back(tests, cr_std_testing_new_test("String Builder To String -> NULL Value", cr_std_string_builder_test_to_string_null_value));
+
     cr_std_testing_run_tests(tests);
     cr_std_vector_free(&tests);
 }
@@ -107,14 +131,14 @@ int cr_std_string_test_new_string_empty() {
 }
 
 int cr_std_string_test_new_string_formatted() {
-    string_t *string = cr_std_string_new("Hello %s", "World");
+    string_t *string = cr_std_string_newf("Hello %s", "World");
     int result = string != NULL;
     cr_std_string_free(&string);
     return result;
 }
 
 int cr_std_string_test_free() {
-    string_t *string = cr_std_string_new("Hello %s", "World");
+    string_t *string = cr_std_string_newf("Hello %s", "World");
     int function_result = cr_std_string_free(&string);
     int result = function_result == 1 && string == NULL;
     return result;
@@ -596,5 +620,119 @@ int cr_std_string_test_replace_string_empty() {
     int result = string != NULL && string_expected != NULL && compare_result == expected_compare_result && function_result == expected_function_result;
     cr_std_string_free(&string);
     cr_std_string_free(&string_expected);
+    return result;
+}
+
+int cr_std_string_builder_test_new_normal() {
+    string_builder_t *sb = cr_std_string_builder_new("Hello World");
+    int result = sb != NULL;
+    cr_std_string_builder_free(&sb);
+    return result;
+}
+
+int cr_std_string_builder_test_new_empty() {
+    string_builder_t *sb = cr_std_string_builder_new("");
+    int result = sb != NULL;
+    cr_std_string_builder_free(&sb);
+    return result;
+}
+
+int cr_std_string_builder_test_new_formatted() {
+    string_builder_t *sb = cr_std_string_builder_newf("Hello %s", "World");
+    int result = sb != NULL;
+    cr_std_string_builder_free(&sb);
+    return result;
+}
+
+int cr_std_string_builder_test_free() {
+    string_builder_t *sb = cr_std_string_builder_new("Hello World");
+    int function_result = cr_std_string_builder_free(&sb);
+    int result = sb == NULL && function_result == 1;
+    return result;
+}
+
+int cr_std_string_builder_test_free_null_value() {
+    string_builder_t *sb = NULL;
+    int function_result = cr_std_string_builder_free(&sb);
+    int result = sb == NULL && function_result == 0;
+    return result;
+}
+
+int cr_std_string_builder_test_append() {
+    string_builder_t *sb = cr_std_string_builder_new("Hello World");
+    int expected_size = 11 + 15 + 7;
+    int function_result = cr_std_string_builder_append(sb, " This is a test", " Test 2");
+    int result = sb != NULL && function_result == 1 && sb->size == expected_size;
+    cr_std_string_builder_free(&sb);
+    return result;
+}
+
+int cr_std_string_builder_test_appendf() {
+    string_builder_t *sb = cr_std_string_builder_new("Hello World");
+    int expected_size = 11 + 15 + 7;
+    int function_result = cr_std_string_builder_appendf(sb, " This is a test%s", " Test 2");
+    int result = sb != NULL && function_result == 1 && sb->size == expected_size;
+    cr_std_string_builder_free(&sb);
+    return result;
+}
+
+int cr_std_string_builder_test_append_single() {
+    string_builder_t *sb = cr_std_string_builder_new("Hello World");
+    int expected_size = 11 + 15;
+    int function_result = cr_std_string_builder_append_single(sb, " This is a test");
+    int result = sb != NULL && function_result == 1 && sb->size == expected_size;
+    cr_std_string_builder_free(&sb);
+    return result;
+}
+
+int cr_std_string_builder_test_append_empty() {
+    string_builder_t *sb = cr_std_string_builder_new("Hello World");
+    int expected_size = 11;
+    int function_result = cr_std_string_builder_append(sb, "");
+    int result = sb != NULL && function_result == 1 && sb->size == expected_size;
+    cr_std_string_builder_free(&sb);
+    return result;
+}
+
+int cr_std_string_builder_test_append_null_value() {
+    string_builder_t *sb = cr_std_string_builder_new("Hello World");
+    int expected_size = 11;
+    int function_result = cr_std_string_builder_append(sb, NULL);
+    int result = sb != NULL && function_result == 1 && sb->size == expected_size;
+    cr_std_string_builder_free(&sb);
+    return result;
+}
+
+int cr_std_string_builder_test_reset() {
+    string_builder_t *sb = cr_std_string_builder_new("Hello World");
+    int expected_size = 0;
+    int function_result = cr_std_string_builder_reset(sb);
+    int result = sb != NULL && function_result == 1 && sb->size == expected_size;
+    cr_std_string_builder_free(&sb);
+    return result;
+}
+
+int cr_std_string_builder_test_reset_null_value() {
+    string_builder_t *sb = NULL;
+    int function_result = cr_std_string_builder_reset(sb);
+    int result = sb == NULL && function_result == 0;
+    cr_std_string_builder_free(&sb);
+    return result;
+}
+
+int cr_std_string_builder_test_to_string() {
+    string_builder_t *sb = cr_std_string_builder_new("Hello World");
+    int expected_size = 11;
+    string_t *string = cr_std_string_builder_to_string(sb);
+    int result = sb != NULL && string != NULL && sb->size == expected_size && string->length == expected_size;
+    cr_std_string_builder_free(&sb);
+    cr_std_string_free(&string);
+    return result;
+}
+
+int cr_std_string_builder_test_to_string_null_value() {
+    string_builder_t *sb = NULL;
+    string_t *string = cr_std_string_builder_to_string(sb);
+    int result = sb == NULL && string == NULL;
     return result;
 }
