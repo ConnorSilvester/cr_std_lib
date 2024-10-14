@@ -9,6 +9,12 @@ typedef struct string_t {
     size_t length;
 } string_t;
 
+typedef struct string_builder_t {
+    char *c_str;
+    size_t size;
+    size_t capacity;
+} string_builder_t;
+
 #define CR_STD_STRING_TRIM_LEFT -1
 #define CR_STD_STRING_TRIM_BOTH 0
 #define CR_STD_STRING_TRIM_RIGHT 1
@@ -23,6 +29,49 @@ typedef struct string_t {
  * @return `NULL` if allocation fails.
  */
 string_t *cr_std_string_new(const char *format, ...);
+
+/**
+ * @brief Creates a new `string_builder_t` struct formatted with the provided format string and arguments if any.
+ *
+ * @param `format` The format string used to format like `printf` (`%s`, `%d`, etc.).
+ * @param `...` The arguments to format according to the format string.
+ *
+ * @return A pointer to the new `string_builder_t` struct.
+ * @return `NULL` if allocation fails.
+ */
+string_builder_t *cr_std_string_builder_new(const char *format, ...);
+
+/**
+ * @brief Adds an string to the string builder.
+ *
+ * @param `string_builder` The `string_builder_t` struct to work on.
+ * @param `format` The format string used to format like `printf` (`%s`, `%d`, etc.).
+ *                 Can also be a single string to add, e.g. "hello".
+ *
+ * @return `1` on success.
+ * @return `0` on failure.
+ */
+int cr_std_string_builder_append(string_builder_t *string_builder, const char *format, ...);
+
+/**
+ * @brief Resets a string builders string, back to nothing.
+ *
+ * @param `string_builder` The `string_builder_t` struct to work on.
+ *
+ * @return `1` on success.
+ * @return `0` on failure.
+ */
+int cr_std_string_builder_reset(string_builder_t *string_builder);
+
+/**
+ * @brief Resets a string builders string, back to nothing.
+ *
+ * @param `string_builder` The `string_builder_t` struct to work on.
+ *
+ * @return A pointer to a new `string_t` struct.
+ * @return `NULL` on failure.
+ */
+string_t *cr_std_string_builder_to_string(string_builder_t *string_builder);
 
 /**
  * @brief Free a `string_t` struct, sets pointer to `NULL`.

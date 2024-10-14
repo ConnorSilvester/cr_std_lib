@@ -2,6 +2,7 @@
 #include "cr_std_logger.h"
 #include "cr_std_string.h"
 #include "cr_std_testing.h"
+#include "cr_std_utils.h"
 #include "cr_std_vector.h"
 #include <stdio.h>
 

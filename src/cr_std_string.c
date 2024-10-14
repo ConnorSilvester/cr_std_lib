@@ -51,6 +51,113 @@ string_t *cr_std_string_new(const char *format, ...) {
     return string;
 }
 
+string_builder_t *cr_std_string_builder_new(const char *format, ...) {
+    if (!format) {
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_builder_new -> char* input was NULL");
+        return NULL;
+    }
+
+    string_builder_t *string_builder = (string_builder_t *)malloc(sizeof(string_builder_t));
+
+    if (!string_builder) {
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_builder_new -> failed to allocate memory for new string_t struct");
+        return NULL;
+    }
+
+    va_list args;
+    va_start(args, format);
+
+    string_builder->size = vsnprintf(NULL, 0, format, args);
+    string_builder->capacity = string_builder->size * 2;
+    va_end(args);
+
+    if (string_builder->size < 0) {
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_builder_new -> vsnprintf failed during length calculation");
+        free(string_builder);
+        va_end(args);
+        return NULL;
+    }
+
+    char *c_str = (char *)malloc(sizeof(char) * string_builder->capacity);
+    if (!c_str) {
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_builder_new -> failed to allocate memory for buffer");
+        free(string_builder);
+        va_end(args);
+        return NULL;
+    }
+
+    va_start(args, format);
+    vsnprintf(c_str, string_builder->size + 1, format, args);
+    va_end(args);
+
+    string_builder->c_str = c_str;
+
+    return string_builder;
+}
+
+int cr_std_string_builder_append(string_builder_t *string_builder, const char *format, ...) {
+    if (!string_builder) {
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_builder_append -> given string builder is NULL");
+        return 0;
+    }
+
+    va_list args;
+    va_start(args, format);
+    size_t string_to_append_length = vsnprintf(NULL, 0, format, args);
+    va_end(args);
+
+    if (string_builder->size + string_to_append_length >= string_builder->capacity) {
+        string_builder->capacity = (string_builder->size + string_to_append_length) * 2;
+
+        void *temp = realloc(string_builder->c_str, string_builder->capacity);
+        if (!temp) {
+            cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_builder_append -> failed to realloc memory for string_builder_t->c_str");
+            return 0;
+        }
+        string_builder->c_str = temp;
+    }
+
+    if (string_to_append_length < 0) {
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_builder_append -> vsnprintf failed during length calculation");
+        // TODO - Add custom free function.
+        free(string_builder);
+        va_end(args);
+        return 0;
+    }
+
+    char buffer[string_to_append_length + 1];
+
+    va_start(args, format);
+    vsnprintf(buffer, string_to_append_length + 1, format, args);
+    va_end(args);
+
+    for (int i = 0; i < string_to_append_length; i++) {
+        string_builder->c_str[string_builder->size + i] = buffer[i];
+    }
+
+    string_builder->size += string_to_append_length;
+    string_builder->c_str[string_builder->size] = '\0';
+    return 1;
+}
+
+int cr_std_string_builder_reset(string_builder_t *string_builder) {
+    if (!string_builder) {
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_builder_reset -> given string builder is NULL");
+        return 0;
+    }
+    string_builder->c_str[0] = '\0';
+    string_builder->size = 0;
+    return 1;
+}
+
+string_t *cr_std_string_builder_to_string(string_builder_t *string_builder) {
+    if (!string_builder) {
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_builder_to_string -> given string builder is NULL");
+        return 0;
+    }
+    return cr_std_string_new(string_builder->c_str);
+}
+
 int cr_std_string_free(string_t **string_ptr) {
     if (string_ptr && *string_ptr) {
         if ((*string_ptr)->c_str) {
