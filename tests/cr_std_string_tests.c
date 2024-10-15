@@ -88,6 +88,20 @@ void cr_std_string_test_all() {
     cr_std_vector_push_back(tests, cr_std_testing_new_test("Replace String -> NULL Value", cr_std_string_test_replace_string_null_value));
     cr_std_vector_push_back(tests, cr_std_testing_new_test("Replace String -> Empty", cr_std_string_test_replace_string_empty));
 
+    // Remove Non Numeric
+    cr_std_vector_push_back(tests, cr_std_testing_new_test("Remove Non Numeric -> Normal", cr_std_string_test_remove_non_numeric));
+    cr_std_vector_push_back(tests, cr_std_testing_new_test("Remove Non Numeric -> Empty", cr_std_string_test_remove_non_numeric_empty));
+    cr_std_vector_push_back(tests, cr_std_testing_new_test("Remove Non Numeric -> NULL Value", cr_std_string_test_remove_non_numeric_null));
+
+    // Remove Numeric
+    cr_std_vector_push_back(tests, cr_std_testing_new_test("Remove Numeric -> Normal", cr_std_string_test_remove_numeric));
+    cr_std_vector_push_back(tests, cr_std_testing_new_test("Remove Numeric -> Empty", cr_std_string_test_remove_numeric_empty));
+    cr_std_vector_push_back(tests, cr_std_testing_new_test("Remove Numeric -> NULL Value", cr_std_string_test_remove_numeric_null));
+
+    /**
+     * String Builder Tests Below
+     */
+
     // New String Builder
     cr_std_vector_push_back(tests, cr_std_testing_new_test("Make String Builder -> Normal", cr_std_string_builder_test_new_normal));
     cr_std_vector_push_back(tests, cr_std_testing_new_test("Make String Builder -> Empty", cr_std_string_builder_test_new_empty));
@@ -622,6 +636,78 @@ int cr_std_string_test_replace_string_empty() {
     cr_std_string_free(&string_expected);
     return result;
 }
+
+int cr_std_string_test_remove_non_numeric() {
+    string_t *string = cr_std_string_new("Hello667788, Hello World");
+    string_t *string_expected = cr_std_string_new("667788");
+    int function_result = cr_std_string_remove_non_numeric(string);
+    int compare_result = cr_std_string_compare(string, string_expected);
+    int expected_function_result = 1;
+    int expected_compare_result = 1;
+    int result = string != NULL && string_expected != NULL && compare_result == expected_compare_result && function_result == expected_function_result;
+    cr_std_string_free(&string);
+    cr_std_string_free(&string_expected);
+    return result;
+}
+
+int cr_std_string_test_remove_non_numeric_empty() {
+    string_t *string = cr_std_string_new("");
+    string_t *string_expected = cr_std_string_new("");
+    int function_result = cr_std_string_remove_non_numeric(string);
+    int compare_result = cr_std_string_compare(string, string_expected);
+    int expected_function_result = 1;
+    int expected_compare_result = 1;
+    int result = string != NULL && string_expected != NULL && compare_result == expected_compare_result && function_result == expected_function_result;
+    cr_std_string_free(&string);
+    cr_std_string_free(&string_expected);
+    return result;
+}
+
+int cr_std_string_test_remove_non_numeric_null() {
+    string_t *string = NULL;
+    int function_result = cr_std_string_remove_non_numeric(string);
+    int expected_function_result = 0;
+    int result = function_result == expected_function_result;
+    return result;
+}
+
+int cr_std_string_test_remove_numeric() {
+    string_t *string = cr_std_string_new("Hello667788, Hello World");
+    string_t *string_expected = cr_std_string_new("Hello, Hello World");
+    int function_result = cr_std_string_remove_numeric(string);
+    int compare_result = cr_std_string_compare(string, string_expected);
+    int expected_function_result = 1;
+    int expected_compare_result = 1;
+    int result = string != NULL && string_expected != NULL && compare_result == expected_compare_result && function_result == expected_function_result;
+    cr_std_string_free(&string);
+    cr_std_string_free(&string_expected);
+    return result;
+}
+
+int cr_std_string_test_remove_numeric_empty() {
+    string_t *string = cr_std_string_new("");
+    string_t *string_expected = cr_std_string_new("");
+    int function_result = cr_std_string_remove_numeric(string);
+    int compare_result = cr_std_string_compare(string, string_expected);
+    int expected_function_result = 1;
+    int expected_compare_result = 1;
+    int result = string != NULL && string_expected != NULL && compare_result == expected_compare_result && function_result == expected_function_result;
+    cr_std_string_free(&string);
+    cr_std_string_free(&string_expected);
+    return result;
+}
+
+int cr_std_string_test_remove_numeric_null() {
+    string_t *string = NULL;
+    int function_result = cr_std_string_remove_numeric(string);
+    int expected_function_result = 0;
+    int result = function_result == expected_function_result;
+    return result;
+}
+
+/**
+ * String Builder Tests Below
+ */
 
 int cr_std_string_builder_test_new_normal() {
     string_builder_t *sb = cr_std_string_builder_new("Hello World");

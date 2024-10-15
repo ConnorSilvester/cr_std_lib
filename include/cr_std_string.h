@@ -302,4 +302,24 @@ int cr_std_string_to_lower(string_t *string);
  */
 int cr_std_string_replace_string(string_t *string, char *from, char *to);
 
+/**
+ * @brief Removes all characters that are not numbers.
+ *
+ * @param `string` The `string_t` to work on.
+ *
+ * @return `1` on success.
+ * @return `0` on failure.
+ */
+int cr_std_string_remove_non_numeric(string_t *string);
+
+/**
+ * @brief Removes all characters that are considered numbers.
+ *
+ * @param `string` The `string_t` to work on.
+ *
+ * @return `1` on success.
+ * @return `0` on failure.
+ */
+int cr_std_string_remove_numeric(string_t *string);
+
 #endif // CR_STD_STRING

@@ -580,3 +580,71 @@ int cr_std_string_replace_string(string_t *string, char *from, char *to) {
 
     return successfully_changed_words;
 }
+
+int cr_std_string_remove_non_numeric(string_t *string) {
+    if (!string || !string->c_str) {
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_remove_non_numeric -> string pointer is NULL");
+        return 0;
+    }
+
+    size_t digit_count = 0;
+    for (size_t i = 0; i < string->length; ++i) {
+        if (isdigit((unsigned char)string->c_str[i])) {
+            digit_count++;
+        }
+    }
+
+    char *filtered_str = (char *)malloc(digit_count + 1);
+    if (!filtered_str) {
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_remove_non_numeric -> malloc allocation failed for filtered_str");
+        return 0;
+    }
+
+    size_t filtered_str_index = 0;
+    for (size_t i = 0; i < string->length; ++i) {
+        if (isdigit((unsigned char)string->c_str[i])) {
+            filtered_str[filtered_str_index] = string->c_str[i];
+            filtered_str_index++;
+        }
+    }
+    filtered_str[filtered_str_index] = '\0';
+
+    free(string->c_str);
+    string->c_str = filtered_str;
+    string->length = digit_count;
+    return 1;
+}
+
+int cr_std_string_remove_numeric(string_t *string) {
+    if (!string || !string->c_str) {
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_remove_numeric -> string pointer is NULL");
+        return 0;
+    }
+
+    size_t new_char_count = 0;
+    for (size_t i = 0; i < string->length; ++i) {
+        if (!isdigit((unsigned char)string->c_str[i])) {
+            new_char_count++;
+        }
+    }
+
+    char *filtered_str = (char *)malloc(new_char_count + 1);
+    if (!filtered_str) {
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_remove_numeric -> malloc allocation failed for filtered_str");
+        return 0;
+    }
+
+    size_t filtered_str_index = 0;
+    for (size_t i = 0; i < string->length; ++i) {
+        if (!isdigit((unsigned char)string->c_str[i])) {
+            filtered_str[filtered_str_index] = string->c_str[i];
+            filtered_str_index++;
+        }
+    }
+    filtered_str[filtered_str_index] = '\0';
+
+    free(string->c_str);
+    string->c_str = filtered_str;
+    string->length = new_char_count;
+    return 1;
+}

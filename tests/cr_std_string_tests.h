@@ -81,6 +81,20 @@ int cr_std_string_test_replace_string_invalid();
 int cr_std_string_test_replace_string_null_value();
 int cr_std_string_test_replace_string_empty();
 
+// Remove Non Numeric
+int cr_std_string_test_remove_non_numeric();
+int cr_std_string_test_remove_non_numeric_empty();
+int cr_std_string_test_remove_non_numeric_null();
+
+// Remove Numeric
+int cr_std_string_test_remove_numeric();
+int cr_std_string_test_remove_numeric_empty();
+int cr_std_string_test_remove_numeric_null();
+
+/**
+ * String Builder Tests Below
+ */
+
 // String Builder New
 int cr_std_string_builder_test_new_normal();
 int cr_std_string_builder_test_new_empty();
