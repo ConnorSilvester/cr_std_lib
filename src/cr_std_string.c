@@ -648,3 +648,22 @@ int cr_std_string_remove_numeric(string_t *string) {
     string->length = new_char_count;
     return 1;
 }
+
+long int cr_std_string_to_int(string_t *string) {
+    if (!string) {
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_to_int -> string pointer is NULL");
+        return 0;
+    }
+    string_t *string_copy = cr_std_string_make_copy(string);
+    cr_std_string_remove_non_numeric(string_copy);
+    long int result = strtol(string_copy->c_str, NULL, 10);
+    cr_std_string_free(&string_copy);
+    return result;
+}
+
+string_t *cr_std_string_from_int(int number) {
+    size_t max_buffer_size = 50;
+    char str_buffer[max_buffer_size];
+    snprintf(str_buffer, max_buffer_size, "%d", number);
+    return cr_std_string_new(str_buffer);
+}

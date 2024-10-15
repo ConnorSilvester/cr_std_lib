@@ -91,6 +91,16 @@ int cr_std_string_test_remove_numeric();
 int cr_std_string_test_remove_numeric_empty();
 int cr_std_string_test_remove_numeric_null();
 
+// To Int
+int cr_std_string_test_to_int();
+int cr_std_string_test_to_int_mixed_string();
+int cr_std_string_test_to_int_empty();
+int cr_std_string_test_to_int_null();
+
+// From Int
+int cr_std_string_test_from_int();
+int cr_std_string_test_from_int_negative();
+
 /**
  * String Builder Tests Below
  */

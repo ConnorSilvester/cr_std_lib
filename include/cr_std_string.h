@@ -322,4 +322,22 @@ int cr_std_string_remove_non_numeric(string_t *string);
  */
 int cr_std_string_remove_numeric(string_t *string);
 
+/**
+ * @brief Returns the numerical representation of a string
+ *
+ * @param `string` The `string_t` to work on.
+ *
+ * @return `long int` The numerical representation of the string
+ */
+long int cr_std_string_to_int(string_t *string);
+
+/**
+ * @brief Returns the string representation of a number.
+ *
+ * @param `number` The number to convert.
+ *
+ * @return `string_t` A pointer to a `string_t` struct representing the number.
+ */
+string_t *cr_std_string_from_int(int number);
+
 #endif // CR_STD_STRING

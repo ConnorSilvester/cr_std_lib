@@ -98,6 +98,16 @@ void cr_std_string_test_all() {
     cr_std_vector_push_back(tests, cr_std_testing_new_test("Remove Numeric -> Empty", cr_std_string_test_remove_numeric_empty));
     cr_std_vector_push_back(tests, cr_std_testing_new_test("Remove Numeric -> NULL Value", cr_std_string_test_remove_numeric_null));
 
+    // To Int
+    cr_std_vector_push_back(tests, cr_std_testing_new_test("To Int -> Normal", cr_std_string_test_to_int));
+    cr_std_vector_push_back(tests, cr_std_testing_new_test("To Int -> Mixed String", cr_std_string_test_to_int_mixed_string));
+    cr_std_vector_push_back(tests, cr_std_testing_new_test("To Int -> Empty", cr_std_string_test_to_int_empty));
+    cr_std_vector_push_back(tests, cr_std_testing_new_test("To Int -> NULL Value", cr_std_string_test_to_int_null));
+
+    // From Int
+    cr_std_vector_push_back(tests, cr_std_testing_new_test("From Int -> Normal", cr_std_string_test_from_int));
+    cr_std_vector_push_back(tests, cr_std_testing_new_test("From Int -> Negative", cr_std_string_test_from_int_negative));
+
     /**
      * String Builder Tests Below
      */
@@ -702,6 +712,63 @@ int cr_std_string_test_remove_numeric_null() {
     int function_result = cr_std_string_remove_numeric(string);
     int expected_function_result = 0;
     int result = function_result == expected_function_result;
+    return result;
+}
+
+int cr_std_string_test_to_int() {
+    string_t *string = cr_std_string_new("66778868880092");
+    long int function_result = cr_std_string_to_int(string);
+    long int expected_function_result = 66778868880092;
+    int result = string != NULL && function_result == expected_function_result;
+    cr_std_string_free(&string);
+    return result;
+}
+
+int cr_std_string_test_to_int_mixed_string() {
+    string_t *string = cr_std_string_new("Hello667788, Hello 68880092World");
+    long int function_result = cr_std_string_to_int(string);
+    long int expected_function_result = 66778868880092;
+    int result = string != NULL && function_result == expected_function_result;
+    cr_std_string_free(&string);
+    return result;
+}
+
+int cr_std_string_test_to_int_empty() {
+    string_t *string = cr_std_string_new("");
+    long int function_result = cr_std_string_to_int(string);
+    long int expected_function_result = 0;
+    int result = string != NULL && function_result == expected_function_result;
+    cr_std_string_free(&string);
+    return result;
+}
+
+int cr_std_string_test_to_int_null() {
+    string_t *string = NULL;
+    long int function_result = cr_std_string_to_int(string);
+    long int expected_function_result = 0;
+    int result = function_result == expected_function_result;
+    return result;
+}
+
+int cr_std_string_test_from_int() {
+    string_t *string = cr_std_string_from_int(12345);
+    string_t *string_expected = cr_std_string_new("12345");
+    int compare_result = cr_std_string_compare(string, string_expected);
+    int expected_compare_result = 1;
+    int result = string != NULL && string_expected != NULL && compare_result == expected_compare_result;
+    cr_std_string_free(&string);
+    cr_std_string_free(&string_expected);
+    return result;
+}
+
+int cr_std_string_test_from_int_negative() {
+    string_t *string = cr_std_string_from_int(-12345);
+    string_t *string_expected = cr_std_string_new("-12345");
+    int compare_result = cr_std_string_compare(string, string_expected);
+    int expected_compare_result = 1;
+    int result = string != NULL && string_expected != NULL && compare_result == expected_compare_result;
+    cr_std_string_free(&string);
+    cr_std_string_free(&string_expected);
     return result;
 }
 
