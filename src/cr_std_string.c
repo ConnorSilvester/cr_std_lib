@@ -28,7 +28,7 @@ string_builder_t *cr_std_string_builder_new(const char *string) {
         string_builder->capacity = string_builder->size * 2;
     }
 
-    char *c_str = (char *)malloc(sizeof(char) * string_builder->capacity);
+    char *c_str = (char *)malloc(sizeof(char) * (string_builder->capacity + 1));
     if (!c_str) {
         cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_builder_new -> failed to allocate memory for buffer");
         free(string_builder);
@@ -666,4 +666,40 @@ string_t *cr_std_string_from_int(int number) {
     char str_buffer[max_buffer_size];
     snprintf(str_buffer, max_buffer_size, "%d", number);
     return cr_std_string_new(str_buffer);
+}
+
+string_t *cr_std_string_from_string_ptr_vector(vector_t *vector, const char *delimiter) {
+    if (!vector) {
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_from_string_ptr_vector -> given vector is NULL");
+        return NULL;
+    }
+
+    if (!vector->is_pointer || vector->type_size != sizeof(string_t *)) {
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_from_string_ptr_vector -> given vector does not contain string_t pointers");
+        return NULL;
+    }
+
+    string_builder_t *sb = cr_std_string_builder_new("");
+
+    for (int i = 0; i < vector->size; i++) {
+        string_t *current_string = (string_t *)cr_std_vector_get_element(vector, i);
+        if (!current_string) {
+            cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_WARNING, "cr_std_string_from_string_ptr_vector -> element at index %zu is NULL", i);
+            continue; // Skip NULL elements.
+        }
+
+        cr_std_string_builder_append(sb, current_string->c_str);
+        if (i < vector->size - 1) {
+            cr_std_string_builder_append(sb, delimiter);
+        }
+    }
+
+    string_t *final_string = cr_std_string_builder_to_string(sb);
+    cr_std_string_builder_free(&sb);
+
+    if (!final_string) {
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_from_string_ptr_vector -> failed to convert string builder to string");
+    }
+
+    return final_string;
 }

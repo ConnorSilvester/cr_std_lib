@@ -340,4 +340,14 @@ long int cr_std_string_to_int(string_t *string);
  */
 string_t *cr_std_string_from_int(int number);
 
+/**
+ * @brief Returns the string representation of a `vector_t` struct.
+ *
+ * @param `vector` The vector you want to join together, that contains pointers to `string_t` structs.
+ * @param `delimiter` A string / phrase to separate the elements in the vector with.
+ *
+ * @return `string_t` A pointer to a `string_t` struct the joined vector.
+ */
+string_t *cr_std_string_from_string_ptr_vector(vector_t *vector, const char* delimiter);
+
 #endif // CR_STD_STRING

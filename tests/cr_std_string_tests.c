@@ -108,6 +108,11 @@ void cr_std_string_test_all() {
     cr_std_vector_push_back(tests, cr_std_testing_new_test("From Int -> Normal", cr_std_string_test_from_int));
     cr_std_vector_push_back(tests, cr_std_testing_new_test("From Int -> Negative", cr_std_string_test_from_int_negative));
 
+    // From Vector
+    cr_std_vector_push_back(tests, cr_std_testing_new_test("From String Ptr Vector -> Normal", cr_std_string_test_from_string_ptr_vector));
+    cr_std_vector_push_back(tests, cr_std_testing_new_test("From String Ptr Vector -> Empty", cr_std_string_test_from_string_ptr_vector_empty));
+    cr_std_vector_push_back(tests, cr_std_testing_new_test("From String Ptr Vector -> NULL", cr_std_string_test_from_string_ptr_vector_null));
+
     /**
      * String Builder Tests Below
      */
@@ -769,6 +774,47 @@ int cr_std_string_test_from_int_negative() {
     int result = string != NULL && string_expected != NULL && compare_result == expected_compare_result;
     cr_std_string_free(&string);
     cr_std_string_free(&string_expected);
+    return result;
+}
+
+int cr_std_string_test_from_string_ptr_vector() {
+    string_t *string = cr_std_string_new("Hello World This Is A Test String");
+    string_t *string_expected = cr_std_string_new("Hello, World, This, Is, A, Test, String");
+    vector_t *vector = cr_std_string_split(string, ' ');
+    string_t *result_string = cr_std_string_from_string_ptr_vector(vector, ", ");
+
+    int compare_result = cr_std_string_compare(result_string, string_expected);
+    int expected_compare_result = 1;
+    int result = string != NULL && string_expected != NULL && vector != NULL && result_string != NULL && compare_result == expected_compare_result;
+
+    cr_std_string_free(&string);
+    cr_std_string_free(&string_expected);
+    cr_std_string_free(&result_string);
+    cr_std_vector_free(&vector);
+    return result;
+}
+
+int cr_std_string_test_from_string_ptr_vector_empty() {
+    string_t *string_expected = cr_std_string_new("");
+    vector_t *vector = cr_std_vector_new(sizeof(string_t *), cr_std_string_free_ptr);
+    string_t *result_string = cr_std_string_from_string_ptr_vector(vector, ", ");
+
+    int compare_result = cr_std_string_compare(result_string, string_expected);
+    int expected_compare_result = 1;
+    int result = string_expected != NULL && vector != NULL && result_string != NULL && compare_result == expected_compare_result;
+
+    cr_std_string_free(&string_expected);
+    cr_std_string_free(&result_string);
+    cr_std_vector_free(&vector);
+    return result;
+}
+
+
+int cr_std_string_test_from_string_ptr_vector_null() {
+    vector_t *vector = NULL;
+    string_t *result_string = cr_std_string_from_string_ptr_vector(vector, ", ");
+
+    int result = result_string == NULL;
     return result;
 }
 

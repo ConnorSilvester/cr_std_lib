@@ -12,8 +12,8 @@
  *
  * @param `log_type` One of the defined log types.
  * @param `log_message` The message to print to the console, can be formatted.
- * @param `...` This can be any amount of strings to add into the format of log_message.
+ * @param `...` This can be any amount of args to add into the format of log_message.
  */
-void cr_std_logger_out(int log_type, const char *log_message, ...);
+void cr_std_logger_out(int log_type, const char *formatted_str, ...);
 
 #endif // CR_STD_LOGGER_H
