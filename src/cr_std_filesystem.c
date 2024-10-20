@@ -10,7 +10,7 @@
 string_t *cr_std_filesystem_read_file_as_string(const char *file_path) {
     FILE *file = fopen(file_path, "r");
     if (!file) {
-        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_filesystem_read_file_as_string -> file cant be found -> %s", file_path);
+        cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_filesystem_read_file_as_string -> file cant be found -> %s", file_path);
         fclose(file);
         return NULL;
     }
@@ -37,7 +37,7 @@ vector_t *cr_std_filesystem_read_file_as_vector(const char *file_path) {
     FILE *file = fopen(file_path, "r");
 
     if (!file) {
-        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_filesystem_read_file_as_vector -> failed to find file %s", file_path);
+        cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_filesystem_read_file_as_vector -> failed to find file %s", file_path);
         return NULL;
     }
 
@@ -77,7 +77,7 @@ vector_t *cr_std_filesystem_read_file_as_vector(const char *file_path) {
 vector_t *cr_std_filesystem_get_dir_files(const char *file_path) {
     DIR *dir = opendir(file_path);
     if (!dir) {
-        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_filesystem_get_dir_files -> failed to open dir -> %s", file_path);
+        cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_filesystem_get_dir_files -> failed to open dir -> %s", file_path);
         return NULL;
     }
 

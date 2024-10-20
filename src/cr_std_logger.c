@@ -13,7 +13,29 @@ void cr_std_logger_get_current_time(char *buffer, size_t buffer_size) {
     strftime(buffer, buffer_size, "%H:%M:%S", time_info);
 }
 
-void cr_std_logger_out(int log_type, const char *formatted_str, ...) {
+void cr_std_logger_out(int log_type, const char *log_message) {
+// Define this to block all output from the logger
+#ifndef CR_STD_TESTING_MODE
+    char time_str[9]; // HH:MM:SS + null terminator
+    cr_std_logger_get_current_time(time_str, sizeof(time_str));
+
+    switch (log_type) {
+    case CR_STD_LOGGER_LOG_TYPE_INFO:
+        printf("[%s] [INFO] %s\n", time_str, log_message);
+        break;
+    case CR_STD_LOGGER_LOG_TYPE_WARNING:
+        printf("[%s] [WARNING] %s\n", time_str, log_message);
+        break;
+    case CR_STD_LOGGER_LOG_TYPE_ERROR:
+        printf("[%s] [ERROR] %s\n", time_str, log_message);
+        break;
+    default:
+        break;
+    }
+#endif
+}
+
+void cr_std_logger_outf(int log_type, const char *formatted_str, ...) {
 // Define this to block all output from the logger
 #ifndef CR_STD_TESTING_MODE
     char time_str[9]; // HH:MM:SS + null terminator

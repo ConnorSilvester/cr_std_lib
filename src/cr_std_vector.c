@@ -42,7 +42,7 @@ int cr_std_vector_free(vector_t **vector_ptr) {
             if (vector->free_function) { // Check if a custom free function is provided
                 int result = vector->free_function(&element);
                 if (result == 0) {
-                    cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_vector_free -> failed on custom free_function call : element index = %ld", i);
+                    cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_vector_free -> failed on custom free_function call : element index = %ld", i);
                     return 0;
                 }
             } else if (element) {
@@ -97,7 +97,7 @@ int cr_std_vector_remove_element(vector_t *vector, size_t index) {
     }
 
     if (index >= vector->size || index < 0) {
-        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_WARNING, "cr_std_vector_remove_element -> tried to access out of bounds index -> index : %ld max_index : %ld", index, vector->size - 1);
+        cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_WARNING, "cr_std_vector_remove_element -> tried to access out of bounds index -> index : %ld max_index : %ld", index, vector->size - 1);
         return 0;
     }
 
@@ -106,7 +106,7 @@ int cr_std_vector_remove_element(vector_t *vector, size_t index) {
         if (vector->free_function && element) {
             int result = vector->free_function(&element);
             if (result == 0) {
-                cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_vector_remove_element -> failed on custom free_function call : element index = %ld", index);
+                cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_vector_remove_element -> failed on custom free_function call : element index = %ld", index);
                 return 0;
             }
         }
@@ -133,7 +133,7 @@ void *cr_std_vector_get_element(vector_t *vector, size_t index) {
     }
 
     if (index >= vector->size) {
-        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_WARNING, "cr_std_vector_get_element -> tried to access out of bounds index -> index : %ld max_index : %ld", index, vector->size - 1);
+        cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_WARNING, "cr_std_vector_get_element -> tried to access out of bounds index -> index : %ld max_index : %ld", index, vector->size - 1);
         return NULL;
     }
 

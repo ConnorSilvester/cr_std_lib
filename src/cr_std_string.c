@@ -684,7 +684,7 @@ string_t *cr_std_string_from_string_ptr_vector(vector_t *vector, const char *del
     for (int i = 0; i < vector->size; i++) {
         string_t *current_string = (string_t *)cr_std_vector_get_element(vector, i);
         if (!current_string) {
-            cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_WARNING, "cr_std_string_from_string_ptr_vector -> element at index %zu is NULL", i);
+            cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_WARNING, "cr_std_string_from_string_ptr_vector -> element at index %zu is NULL", i);
             continue; // Skip NULL elements.
         }
 
