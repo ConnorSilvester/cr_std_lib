@@ -96,7 +96,7 @@ CR_STD_LOGGER_LOG_TYPE_ERROR
 
 ```bash
 cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_INFO, "This is a info message");
-cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "This is a error message with filename : %s", file_name); //Same formatting as printf
+cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR, "This is a error message with filename : %s", file_name); //Same formatting as printf
 ```
 
 
