@@ -124,17 +124,12 @@ int cr_std_vector_test_push_back_primitive() {
 int cr_std_vector_test_push_back_primitive_pointer() {
     vector_t *vector = cr_std_vector_new(sizeof(char *), NULL);
     int expected_size = 0;
-    char *string_1 = "Hello";
-    char *string_2 = "Hello";
-    char *string_3 = "Hello";
-    char *string_4 = "Hello";
-    char *string_5 = "Hello";
 
-    expected_size += cr_std_vector_push_back(vector, string_1);
-    expected_size += cr_std_vector_push_back(vector, string_2);
-    expected_size += cr_std_vector_push_back(vector, string_3);
-    expected_size += cr_std_vector_push_back(vector, string_4);
-    expected_size += cr_std_vector_push_back(vector, string_5);
+    expected_size += cr_std_vector_push_back(vector, "Hello");
+    expected_size += cr_std_vector_push_back(vector, "Hello");
+    expected_size += cr_std_vector_push_back(vector, "Hello");
+    expected_size += cr_std_vector_push_back(vector, "Hello");
+    expected_size += cr_std_vector_push_back(vector, "Hello");
     int result = vector != NULL && expected_size == vector->size;
     cr_std_vector_free(&vector);
     return result;

@@ -101,10 +101,15 @@ int cr_std_string_test_to_int_null();
 int cr_std_string_test_from_int();
 int cr_std_string_test_from_int_negative();
 
-// From Vector
+// From String Pointer Vector
 int cr_std_string_test_from_string_ptr_vector();
 int cr_std_string_test_from_string_ptr_vector_empty();
 int cr_std_string_test_from_string_ptr_vector_null();
+
+// From Char Pointer Vector
+int cr_std_string_test_from_char_ptr_vector();
+int cr_std_string_test_from_char_ptr_vector_empty();
+int cr_std_string_test_from_char_ptr_vector_null();
 
 /**
  * String Builder Tests Below

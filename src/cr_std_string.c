@@ -703,3 +703,40 @@ string_t *cr_std_string_from_string_ptr_vector(vector_t *vector, const char *del
 
     return final_string;
 }
+
+
+string_t *cr_std_string_from_char_ptr_vector(vector_t *vector, const char *delimiter) {
+    if (!vector) {
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_from_char_ptr_vector -> given vector is NULL");
+        return NULL;
+    }
+
+    if (!vector->is_pointer || vector->type_size != sizeof(char *)) {
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_from_char_ptr_vector -> given vector does not contain char pointers");
+        return NULL;
+    }
+
+    string_builder_t *sb = cr_std_string_builder_new("");
+
+    for (int i = 0; i < vector->size; i++) {
+        char *current_string = (char *)cr_std_vector_get_element(vector, i);
+        if (!current_string) {
+            cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_WARNING, "cr_std_string_from_char_ptr_vector -> element at index %zu is NULL", i);
+            continue; // Skip NULL elements.
+        }
+
+        cr_std_string_builder_append(sb, current_string);
+        if (i < vector->size - 1) {
+            cr_std_string_builder_append(sb, delimiter);
+        }
+    }
+
+    string_t *final_string = cr_std_string_builder_to_string(sb);
+    cr_std_string_builder_free(&sb);
+
+    if (!final_string) {
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_from_char_ptr_vector -> failed to convert string builder to string");
+    }
+
+    return final_string;
+}
