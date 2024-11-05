@@ -5,6 +5,28 @@ typedef struct string_t string_t;
 typedef struct vector_t vector_t;
 
 /**
+ * @brief Writes the contents of `data` into the file at `file_path`
+ *
+ * @param `file_path` A raw string of the file path.
+ * @param `data` A raw string containing the data to write.
+ *
+ * @return `1` on success.
+ * @return `0` on failure.
+ */
+int cr_std_filesystem_write_to_file(const char *file_path, const char *data);
+
+/**
+ * @brief Appends the contents of `data` into the file at `file_path`
+ *
+ * @param `file_path` A raw string of the file path.
+ * @param `data` A raw string containing the data to append to the file.
+ *
+ * @return `1` on success.
+ * @return `0` on failure.
+ */
+int cr_std_filesystem_append_to_file(const char *file_path, const char *data);
+
+/**
  * @brief Reads file contents into a `string_t` struct.
  *
  * @param `file_path` A raw string of the file path.

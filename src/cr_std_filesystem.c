@@ -9,10 +9,39 @@
 #include <string.h>
 #include <unistd.h>
 
+int cr_std_filesystem_write_file_operations(const char *file_path, const char *data, const char* mode) {
+    if (!data || !file_path || !mode) {
+        return 0;
+    }
+
+    FILE *file = fopen(file_path, mode);
+    if (!file) {
+        cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_filesystem_write_file_operations -> file can't be opened -> %s", file_path);
+        return 0;
+    }
+
+    if (fputs(data, file) == EOF) {
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_filesystem_write_file_operations  -> failed to write data");
+        fclose(file);
+        return 0;
+    }
+
+    fclose(file);
+    return 1;
+}
+
+int cr_std_filesystem_write_to_file(const char *file_path, const char *data) {
+    return cr_std_filesystem_write_file_operations(file_path, data, "w");
+}
+
+int cr_std_filesystem_append_to_file(const char *file_path, const char *data) {
+    return cr_std_filesystem_write_file_operations(file_path, data, "a");
+}
+
 string_t *cr_std_filesystem_read_file_as_string(const char *file_path) {
     FILE *file = fopen(file_path, "r");
     if (!file) {
-        cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_filesystem_read_file_as_string -> file cant be found -> %s", file_path);
+        cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_filesystem_read_file_as_string -> file can't be found -> %s", file_path);
         fclose(file);
         return NULL;
     }
@@ -193,4 +222,3 @@ vector_t *cr_std_filesystem_get_dir_files_r(const char *file_path) {
     cr_std_string_free(&parent_dir);
     return vector;
 }
-
