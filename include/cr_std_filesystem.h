@@ -29,7 +29,17 @@ vector_t *cr_std_filesystem_read_file_as_vector(const char *file_path);
  *
  * @param `file_path` A raw string of the file path.
  *
- * @return A pointer to a new `vector_t`struct containing `string_t` struct of the file names in the dir.
+ * @return A pointer to a new `vector_t` struct containing `dirent` structs of the directories in the dir.
+ * @return `NULL` on failure.
+ */
+vector_t *cr_std_filesystem_get_dirs(const char *file_path);
+
+/**
+ * @brief Reads the contents of a file dir
+ *
+ * @param `file_path` A raw string of the file path.
+ *
+ * @return A pointer to a new `vector_t` struct containing `dirent` structs of the files in the dir.
  * @return `NULL` on failure.
  */
 vector_t *cr_std_filesystem_get_dir_files(const char *file_path);
