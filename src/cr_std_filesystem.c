@@ -117,7 +117,7 @@ vector_t *cr_std_filesystem_get_dirs(const char *file_path) {
 vector_t *cr_std_filesystem_get_dir_files(const char *file_path) {
     DIR *dir = opendir(file_path);
     if (!dir) {
-        cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_filesystem_get_dirs -> failed to open dir -> %s", file_path);
+        cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_filesystem_get_dir_files -> failed to open dir -> %s", file_path);
         return NULL;
     }
 
@@ -140,3 +140,57 @@ vector_t *cr_std_filesystem_get_dir_files(const char *file_path) {
     closedir(dir);
     return vector;
 }
+
+vector_t *cr_std_filesystem_get_dir_files_r(const char *file_path) {
+    DIR *dir = opendir(file_path);
+    if (!dir) {
+        cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_filesystem_get_dir_files_r -> failed to open dir -> %s", file_path);
+        return NULL;
+    }
+
+    vector_t *vector = cr_std_vector_new(sizeof(struct dirent *), cr_std_free_ptr);
+
+    string_t *current_dir = cr_std_string_new(".");
+    string_t *parent_dir = cr_std_string_new("..");
+
+    struct dirent *entry;
+    while ((entry = readdir(dir)) != NULL) {
+
+        string_t *file_name = cr_std_string_new(entry->d_name);
+        if (cr_std_string_compare(file_name, current_dir) == 1 ||
+            cr_std_string_compare(file_name, parent_dir) == 1) {
+            continue;
+        }
+
+        string_t *full_path = cr_std_string_newf("%s/%s", file_path, file_name->c_str);
+
+        if (!full_path) {
+            cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR, "Memory allocation failed for path -> %s/%s", file_path, file_name->c_str);
+            continue;
+        }
+
+        if (entry->d_type == DT_DIR) {
+            vector_t *sub_dir_vector = cr_std_filesystem_get_dir_files_r(full_path->c_str);
+            if (sub_dir_vector) {
+                for (size_t i = 0; i < sub_dir_vector->size; i++) {
+                    struct dirent *sub_entry = (struct dirent *)cr_std_vector_get_element(sub_dir_vector, i);
+                    cr_std_vector_push_back(vector, sub_entry);
+                }
+                free(sub_dir_vector);
+            }
+        } else {
+            struct dirent *allocated_entry = malloc(sizeof(struct dirent));
+            if (allocated_entry != NULL) {
+                memcpy(allocated_entry, entry, sizeof(struct dirent));
+                cr_std_vector_push_back(vector, allocated_entry);
+            }
+        }
+        cr_std_string_free(&full_path);
+    }
+
+    closedir(dir);
+    cr_std_string_free(&current_dir);
+    cr_std_string_free(&parent_dir);
+    return vector;
+}
+

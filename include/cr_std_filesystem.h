@@ -43,4 +43,14 @@ vector_t *cr_std_filesystem_get_dirs(const char *file_path);
  * @return `NULL` on failure.
  */
 vector_t *cr_std_filesystem_get_dir_files(const char *file_path);
+
+/**
+ * @brief Reads the contents of a file dir recursively
+ *
+ * @param `file_path` A raw string of the file path.
+ *
+ * @return A pointer to a new `vector_t` struct containing `dirent` structs of the files in the dir and all sub dirs.
+ * @return `NULL` on failure.
+ */
+vector_t *cr_std_filesystem_get_dir_files_r(const char *file_path);
 #endif // CR_STD_FILESYSTEM
