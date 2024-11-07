@@ -36,7 +36,7 @@ All functions are documented in the respective header file, for help with a spec
 
 Once installed you can add the following to your program depending what your needs are:
 
-```
+```c
 #include <cr_std_filesystem.h>
 #include <cr_std_logger.h>
 #include <cr_std_string.h>
@@ -48,13 +48,12 @@ Once installed you can add the following to your program depending what your nee
 ## Code Examples
 
 **Strings** : Prefix is cr_std_string *
-```bash
+```c
 string_t *str = cr_std_string_new("Hello, World");
-string_t *str = cr_std_string_newf("Hello, %s", "World"); //Same formatting as printf
+string_t *str = cr_std_string_newf("Hello, %s", "World");
 string_t *str = cr_std_string_newf("Hello, %s%d", "World", 4);
 ```
-```bash
-//Works with any amount of arguments.
+```c
 cr_std_string_concat(str, ", This", " Has", " Been", " Concatenated");
 cr_std_string_contains_string(str, "Been");
 cr_std_string_split(str, " ");
@@ -63,12 +62,12 @@ cr_std_string_free(&str);
 ```
 
 **Vectors** : Prefix is cr_std_vector *
-```bash
+```c
 vector_t *int_vector = cr_std_vector_new(sizeof(int), NULL);
 vector_t *string_vector = cr_std_vector_new(sizeof(string_t *), cr_std_string_free_ptr); //string_t custom free function
 vector_t *tests_vector = cr_std_vector_new(sizeof(test_case_t *), cr_std_free_ptr); //general use free function
 ```
-```bash
+```c
 int number = 4;
 cr_std_vector_push_back(int_vector, &number);
 
@@ -79,22 +78,26 @@ cr_std_vector_free(&int_vector);
 ```
 
 **Filesystem** : Prefix is cr_std_filesystem *
-```bash
+```c
+cr_std_filesystem_write_to_file("test.txt", "This is test data");
+cr_std_filesystem_append_to_file("test.txt", "."); //file will contain 'This is test data.'
+
 string_t *string = cr_std_filesystem_read_file_as_string("test.txt");
 vector_t *vector = cr_std_filesystem_read_file_as_vector("test.txt");
-vector_t *vector = cr_std_filesystem_get_dir_files("/home/connor/Downloads");
-vector_t *vector = cr_std_filesystem_get_dir_files("src");
+vector_t *vector = cr_std_filesystem_get_dirs("/home/connor/Downloads");
+vector_t *vector = cr_std_filesystem_get_dirs_files("src");
+vector_t *vector = cr_std_filesystem_get_dirs_files_r("src"); //recursive search
 ```
 
 **Logging** : Prefix is cr_std_logger *
-```bash
-// 3 Log Levels
-CR_STD_LOGGER_LOG_TYPE_INFO 
-CR_STD_LOGGER_LOG_TYPE_WARNING
-CR_STD_LOGGER_LOG_TYPE_ERROR
+```c
+// 3 Defined Log Levels
+#define CR_STD_LOGGER_LOG_TYPE_INFO 0
+#define CR_STD_LOGGER_LOG_TYPE_WARNING 1
+#define CR_STD_LOGGER_LOG_TYPE_ERROR 2
 ```
 
-```bash
+```c
 cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_INFO, "This is a info message");
 cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR, "This is a error message with filename : %s", file_name); //Same formatting as printf
 ```
@@ -103,7 +106,7 @@ cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR, "This is a error message with f
 **Testing** : Prefix is cr_std_testing *
 
 For best examples see the /tests directory.
-```bash
+```c
 // Make vector of test_cases
 vector_t *tests = cr_std_vector_new(sizeof(test_case_t *), cr_std_free_ptr);
 
