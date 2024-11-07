@@ -69,4 +69,14 @@ int cr_std_vector_remove_element(vector_t *vector, size_t index);
  */
 void *cr_std_vector_get_element(vector_t *vector, size_t index);
 
+/**
+ * @brief Extends a vector with another vector does not realloc the elements.
+ *
+ * @param `dest` The destination vector to add the items too.
+ * @param `src` The source vector to add the items from.
+ *
+ * @return `1` on success.
+ * @return `0` on failure.
+ */
+int cr_std_vector_extend(vector_t *dest, vector_t *src);
 #endif // CR_STD_VECTOR

@@ -42,4 +42,11 @@ int cr_std_vector_test_get_element_invalid_index();
 int cr_std_vector_test_get_element_invalid_index_negative();
 int cr_std_vector_test_get_element_empty_vector();
 
+// Extend Vector
+int cr_std_vector_test_extend_primitive_type();
+int cr_std_vector_test_extend_primitive_pointer();
+int cr_std_vector_test_extend_custom();
+int cr_std_vector_test_extend_custom_pointer();
+int cr_std_vector_test_extend_incorrect_types();
+
 #endif // CR_STD_VECTOR_TESTS_H

@@ -1,5 +1,6 @@
 #include "cr_std_vector.h"
 #include "cr_std_logger.h"
+#include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -145,4 +146,21 @@ void *cr_std_vector_get_element(vector_t *vector, size_t index) {
         char *base = (char *)vector->elements;
         return (void *)(base + (index * vector->type_size));
     }
+}
+
+int cr_std_vector_extend(vector_t *dest, vector_t *src) {
+    if (!dest || !src) {
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_vector_extend -> given vector(s) is NULL");
+        return 0;
+    }
+
+    if (dest->type_size != src->type_size) {
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_vector_extend -> vector type sizes are not the same");
+        return 0;
+    }
+
+    for (size_t i = 0; i < src->size; i++) {
+        cr_std_vector_push_back(dest, cr_std_vector_get_element(src, i));
+    }
+    return 1;
 }

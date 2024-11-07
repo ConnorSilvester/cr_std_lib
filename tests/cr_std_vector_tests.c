@@ -48,6 +48,13 @@ void cr_std_vector_test_all() {
     cr_std_vector_push_back(tests, cr_std_testing_new_test("Get Element -> Invalid Index Negative", cr_std_vector_test_get_element_invalid_index_negative));
     cr_std_vector_push_back(tests, cr_std_testing_new_test("Get Element -> Empty Vector", cr_std_vector_test_get_element_empty_vector));
 
+    // Get Element
+    cr_std_vector_push_back(tests, cr_std_testing_new_test("Extend Vector -> Primitive", cr_std_vector_test_extend_primitive_type));
+    cr_std_vector_push_back(tests, cr_std_testing_new_test("Extend Vector -> Primitive Pointer", cr_std_vector_test_extend_primitive_pointer));
+    cr_std_vector_push_back(tests, cr_std_testing_new_test("Extend Vector -> Custom", cr_std_vector_test_extend_custom));
+    cr_std_vector_push_back(tests, cr_std_testing_new_test("Extend Vector -> Custom Pointer", cr_std_vector_test_extend_custom_pointer));
+    cr_std_vector_push_back(tests, cr_std_testing_new_test("Extend Vector -> Incorrect Types", cr_std_vector_test_extend_incorrect_types));
+
     cr_std_testing_run_tests(tests);
     cr_std_vector_free(&tests);
 }
@@ -467,5 +474,153 @@ int cr_std_vector_test_get_element_empty_vector() {
     void *function_result = cr_std_vector_get_element(vector, -2);
     int result = vector != NULL && expected_size == vector->size && function_result == NULL;
     cr_std_vector_free(&vector);
+    return result;
+}
+
+int cr_std_vector_test_extend_primitive_type() {
+    vector_t *dest = cr_std_vector_new(sizeof(int), NULL);
+    vector_t *src = cr_std_vector_new(sizeof(int), NULL);
+    int expected_size = 0;
+    int number_1 = 1;
+    int number_2 = 2;
+    int number_3 = 3;
+    int number_4 = 4;
+    int number_5 = 5;
+
+    expected_size += cr_std_vector_push_back(dest, &number_1);
+    expected_size += cr_std_vector_push_back(dest, &number_2);
+    expected_size += cr_std_vector_push_back(dest, &number_3);
+
+    expected_size += cr_std_vector_push_back(src, &number_4);
+    expected_size += cr_std_vector_push_back(src, &number_5);
+
+    int function_result = cr_std_vector_extend(dest, src);
+
+    // Change the number
+    int *number = (int *)cr_std_vector_get_element(dest, 3);
+    *number = 10;
+    int actual_number = *(int *)cr_std_vector_get_element(dest, 3);
+
+    int result = dest != NULL && src != NULL && expected_size == dest->size && actual_number == 10 && function_result == 1;
+    cr_std_vector_free(&src);
+    cr_std_vector_free(&dest);
+    return result;
+}
+
+int cr_std_vector_test_extend_primitive_pointer() {
+    vector_t *dest = cr_std_vector_new(sizeof(char *), NULL);
+    vector_t *src = cr_std_vector_new(sizeof(char *), NULL);
+    int expected_size = 0;
+    char *string_1 = "Hello";
+    char *string_2 = "Hello";
+    char *string_3 = "Hello";
+    char *string_4 = "Hello";
+    char *string_5 = "Hello";
+
+    expected_size += cr_std_vector_push_back(dest, string_1);
+    expected_size += cr_std_vector_push_back(dest, string_2);
+    expected_size += cr_std_vector_push_back(dest, string_3);
+
+    expected_size += cr_std_vector_push_back(src, string_4);
+    expected_size += cr_std_vector_push_back(src, string_5);
+
+    int function_result = cr_std_vector_extend(dest, src);
+
+    char *string = (char *)cr_std_vector_get_element(dest, 3);
+    int result = dest != NULL && src != NULL && expected_size == dest->size && string != NULL && function_result == 1;
+    cr_std_vector_free(&src);
+    cr_std_vector_free(&dest);
+    return result;
+}
+
+int cr_std_vector_test_extend_custom() {
+    typedef struct test_struct_t {
+        int x;
+        int y;
+    } test_struct_t;
+
+    vector_t *dest = cr_std_vector_new(sizeof(test_struct_t), NULL);
+    vector_t *src = cr_std_vector_new(sizeof(test_struct_t), NULL);
+    int expected_size = 0;
+
+    test_struct_t test_1 = {4, 7};
+    test_struct_t test_2 = {5, 7};
+    test_struct_t test_3 = {7, 7};
+    test_struct_t test_4 = {2, 7};
+    test_struct_t test_5 = {6, 7};
+
+    expected_size += cr_std_vector_push_back(dest, &test_1);
+    expected_size += cr_std_vector_push_back(dest, &test_2);
+    expected_size += cr_std_vector_push_back(dest, &test_3);
+
+    expected_size += cr_std_vector_push_back(src, &test_4);
+    expected_size += cr_std_vector_push_back(src, &test_5);
+
+    int function_result = cr_std_vector_extend(dest, src);
+
+    test_struct_t *test = (test_struct_t *)cr_std_vector_get_element(dest, 3);
+    // Change the number
+    test->x = 10;
+    test_struct_t actual_test = *(test_struct_t *)cr_std_vector_get_element(dest, 3);
+
+    int result = dest != NULL && src != NULL && expected_size == dest->size && actual_test.x == 10 && function_result == 1;
+    cr_std_vector_free(&src);
+    cr_std_vector_free(&dest);
+    return result;
+}
+
+int cr_std_vector_test_extend_custom_pointer() {
+    vector_t *dest = cr_std_vector_new(sizeof(string_t *), cr_std_string_free_ptr);
+    vector_t *src = cr_std_vector_new(sizeof(string_t *), cr_std_string_free_ptr);
+
+    int expected_size = 0;
+    string_t *string_1 = cr_std_string_new("String 1");
+    string_t *string_2 = cr_std_string_new("String 2");
+    string_t *string_3 = cr_std_string_new("String 3");
+    string_t *string_4 = cr_std_string_new("String 4");
+
+    expected_size += cr_std_vector_push_back(dest, string_1);
+    expected_size += cr_std_vector_push_back(dest, string_2);
+
+    expected_size += cr_std_vector_push_back(dest, string_3);
+    expected_size += cr_std_vector_push_back(dest, string_4);
+
+    int extend_function_result = cr_std_vector_extend(dest, src);
+
+    string_t *expected_string = cr_std_string_new("String 4");
+    string_t *string = (string_t *)cr_std_vector_get_element(dest, 3);
+
+    int compare_function_result = cr_std_string_compare(string, expected_string);
+    int result = dest != NULL && src != NULL && expected_size == dest->size && extend_function_result == 1 && compare_function_result == 1;
+
+    cr_std_vector_free(&src);
+    cr_std_vector_free(&dest);
+    cr_std_string_free(&expected_string);
+    return result;
+}
+
+
+int cr_std_vector_test_extend_incorrect_types() {
+    vector_t *dest = cr_std_vector_new(sizeof(int), NULL);
+    vector_t *src = cr_std_vector_new(sizeof(string_t *), cr_std_string_free_ptr);
+    int expected_size = 0;
+    int number_1 = 1;
+    int number_2 = 2;
+    int number_3 = 3;
+    string_t *string_4 = cr_std_string_new("String 4");
+    string_t *string_5 = cr_std_string_new("String 5");
+
+    expected_size += cr_std_vector_push_back(dest, &number_1);
+    expected_size += cr_std_vector_push_back(dest, &number_2);
+    expected_size += cr_std_vector_push_back(dest, &number_3);
+
+    cr_std_vector_push_back(src, string_4);
+    cr_std_vector_push_back(src, string_5);
+
+    int function_result = cr_std_vector_extend(dest, src);
+
+    int result = dest != NULL && src != NULL && expected_size == dest->size && function_result == 0;
+    cr_std_vector_free(&src);
+    cr_std_vector_free(&dest);
     return result;
 }
