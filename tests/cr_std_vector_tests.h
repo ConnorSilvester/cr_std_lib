@@ -47,6 +47,7 @@ int cr_std_vector_test_extend_primitive_type();
 int cr_std_vector_test_extend_primitive_pointer();
 int cr_std_vector_test_extend_custom();
 int cr_std_vector_test_extend_custom_pointer();
+int cr_std_vector_test_extend_custom_pointer_copy_elements();
 int cr_std_vector_test_extend_incorrect_types();
 
 #endif // CR_STD_VECTOR_TESTS_H

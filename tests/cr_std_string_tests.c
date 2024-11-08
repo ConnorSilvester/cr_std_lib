@@ -9,7 +9,7 @@
 void cr_std_string_test_all() {
     printf("%s\n", "Running String Tests:");
 
-    vector_t *tests = cr_std_vector_new(sizeof(test_case_t *), cr_std_free_ptr);
+    vector_t *tests = cr_std_vector_new(sizeof(test_case_t *), cr_std_free_ptr, NULL);
 
     // New String
     cr_std_vector_push_back(tests, cr_std_testing_new_test("Make String -> Normal", cr_std_string_test_new_string_normal));
@@ -800,7 +800,7 @@ int cr_std_string_test_from_string_ptr_vector() {
 
 int cr_std_string_test_from_string_ptr_vector_empty() {
     string_t *string_expected = cr_std_string_new("");
-    vector_t *vector = cr_std_vector_new(sizeof(string_t *), cr_std_string_free_ptr);
+    vector_t *vector = cr_std_vector_new(sizeof(string_t *), cr_std_string_free_ptr, cr_std_string_make_copy_ptr);
     string_t *result_string = cr_std_string_from_string_ptr_vector(vector, ", ");
 
     int compare_result = cr_std_string_compare(result_string, string_expected);
@@ -813,7 +813,6 @@ int cr_std_string_test_from_string_ptr_vector_empty() {
     return result;
 }
 
-
 int cr_std_string_test_from_string_ptr_vector_null() {
     vector_t *vector = NULL;
     string_t *result_string = cr_std_string_from_string_ptr_vector(vector, ", ");
@@ -823,7 +822,7 @@ int cr_std_string_test_from_string_ptr_vector_null() {
 }
 
 int cr_std_string_test_from_char_ptr_vector() {
-    vector_t *vector = cr_std_vector_new(sizeof(char *), NULL);
+    vector_t *vector = cr_std_vector_new_n(sizeof(char *));
     cr_std_vector_push_back(vector, "Hello");
     cr_std_vector_push_back(vector, "World");
     cr_std_vector_push_back(vector, "This");
@@ -847,7 +846,7 @@ int cr_std_string_test_from_char_ptr_vector() {
 
 int cr_std_string_test_from_char_ptr_vector_empty() {
     string_t *string_expected = cr_std_string_new("");
-    vector_t *vector = cr_std_vector_new(sizeof(char *), NULL);
+    vector_t *vector = cr_std_vector_new_n(sizeof(char *));
     string_t *result_string = cr_std_string_from_char_ptr_vector(vector, ", ");
 
     int compare_result = cr_std_string_compare(result_string, string_expected);
@@ -859,7 +858,6 @@ int cr_std_string_test_from_char_ptr_vector_empty() {
     cr_std_vector_free(&vector);
     return result;
 }
-
 
 int cr_std_string_test_from_char_ptr_vector_null() {
     vector_t *vector = NULL;

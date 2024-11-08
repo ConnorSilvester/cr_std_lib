@@ -10,6 +10,7 @@ typedef struct vector_t {
     size_t type_size;
     bool is_pointer;
     int (*free_function)(void **);
+    void *(*copy_function)(void *);
 } vector_t;
 
 /**
@@ -17,14 +18,27 @@ typedef struct vector_t {
  *
  * @param `type_size` The `sizeof` the element you want to store (e.g. `sizeof(int)`, `sizeof(string_t *)`).
  * @param `free_function` The custom free function to be called when freeing the vector,
- *                        Use `cr_std_free_ptr` for generic cr_std types that do not have a custom free function, 
- *                        Use `NULL` if you don't want any sub elements freed.
- *                        Use `NULL` for all primitive types.
+ *                        Use `cr_std_free_ptr` for generic cr_std types that do not have a custom free function, this just calls stdlib `free`.
+ *                        Use `NULL` if you don't want any elements freed, when freeing the vector.
+ *                        Use `NULL` for all primitive types, that are not allocated.
+ * @param `copy_function` The custom copy function to be called when adding to the vector with push_back, if you want to copy the data over.
+ *                        Use `NULL` if you don't want any data to be copied.
  *
  * @return A pointer to the new `vector_t` struct.
  * @return `NULL` if allocation fails.
  */
-vector_t *cr_std_vector_new(size_t type_size, int (*free_function)(void **));
+vector_t *cr_std_vector_new(size_t type_size, int (*free_function)(void **), void *(*copy_function)(void *src));
+
+/**
+ * @brief Creates a new `vector_t` struct.
+ *                        This function calls `cr_std_vector_new`, with both functions set to `NULL`.
+ *
+ * @param `type_size` The `sizeof` the element you want to store (e.g. `sizeof(int)`, `sizeof(string_t *)`).
+ *
+ * @return A pointer to the new `vector_t` struct.
+ * @return `NULL` if allocation fails.
+ */
+vector_t *cr_std_vector_new_n(size_t type_size);
 
 /**
  * @brief Frees a `vector_t` struct.
@@ -38,6 +52,7 @@ int cr_std_vector_free(vector_t **vector_ptr);
 
 /**
  * @brief Adds an element to the vector.
+ *                  If the vector has a copy function it will copy the data when added.
  *
  * @param `vector` The vector you want to add to.
  * @param `element` The element you want to add.

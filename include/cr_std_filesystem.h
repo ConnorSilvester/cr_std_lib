@@ -1,5 +1,6 @@
 #ifndef CR_STD_FILESYSTEM
 #define CR_STD_FILESYSTEM
+#include <stdbool.h>
 
 typedef struct string_t string_t;
 typedef struct vector_t vector_t;
@@ -47,6 +48,19 @@ string_t *cr_std_filesystem_read_file_as_string(const char *file_path);
 vector_t *cr_std_filesystem_read_file_as_vector(const char *file_path);
 
 /**
+ * @brief Gets entries given a path and settings.
+ *
+ * @param `file_path` A raw string of the file path.
+ * @param `include_files` A flag to include files or not.
+ * @param `include_dirs` A flag to include dirs or not.
+ * @param `recursive` A flag to recursively search or not.
+ *
+ * @return A pointer to a new `vector_t` struct containing the entries contents.
+ * @return `NULL` on failure.
+ */
+vector_t *cr_std_filesystem_get_entries(const char *file_path, bool include_files, bool include_dirs, bool recursive);
+
+/**
  * @brief Reads the contents of a file dir
  *
  * @param `file_path` A raw string of the file path.
@@ -55,6 +69,16 @@ vector_t *cr_std_filesystem_read_file_as_vector(const char *file_path);
  * @return `NULL` on failure.
  */
 vector_t *cr_std_filesystem_get_dirs(const char *file_path);
+
+/**
+ * @brief Reads the contents of a file dir recursively.
+ *
+ * @param `file_path` A raw string of the file path.
+ *
+ * @return A pointer to a new `vector_t` struct containing `dirent` structs of the directories in the dir and all sub dirs.
+ * @return `NULL` on failure.
+ */
+vector_t *cr_std_filesystem_get_dirs_r(const char *file_path);
 
 /**
  * @brief Reads the contents of a file dir

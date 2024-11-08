@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-vector_t *cr_std_vector_new(size_t type_size, int (*free_function)(void **)) {
+vector_t *cr_std_vector_new(size_t type_size, int (*free_function)(void **), void *(*copy_function)(void *src)) {
     if (type_size == 0) {
         cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_vector_new -> type_size cannot be zero");
         return NULL;
@@ -24,8 +24,13 @@ vector_t *cr_std_vector_new(size_t type_size, int (*free_function)(void **)) {
     vector->is_pointer = vector->type_size == sizeof(void *);
     vector->elements = malloc(vector->capacity * sizeof(void *));
     vector->free_function = free_function;
+    vector->copy_function = copy_function;
 
     return vector;
+}
+
+vector_t *cr_std_vector_new_n(size_t type_size) {
+    return cr_std_vector_new(type_size, NULL, NULL);
 }
 
 int cr_std_vector_free(vector_t **vector_ptr) {
@@ -78,8 +83,18 @@ int cr_std_vector_push_back(vector_t *vector, void *element) {
     }
 
     if (vector->is_pointer) {
-        // If storing pointers, directly assign the pointer
-        ((void **)vector->elements)[vector->size] = element;
+        if (vector->copy_function) {
+            // Use the custom copy function to create a deep copy
+            void *copied_element = vector->copy_function(element);
+            if (!copied_element) {
+                cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_vector_push_back -> copy_function failed to allocate memory");
+                return 0;
+            }
+            ((void **)vector->elements)[vector->size] = copied_element;
+        } else {
+            // If none is provided just copy the pointer
+            ((void **)vector->elements)[vector->size] = element;
+        }
     } else {
         // If storing raw data, copy the data into the vector
         int offset_from_start_of_vector = vector->size * vector->type_size;
@@ -130,7 +145,7 @@ int cr_std_vector_remove_element(vector_t *vector, size_t index) {
 void *cr_std_vector_get_element(vector_t *vector, size_t index) {
     if (!vector) {
         cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_vector_get_element -> given vector is NULL");
-        return 0;
+        return NULL;
     }
 
     if (index >= vector->size) {

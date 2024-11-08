@@ -278,14 +278,21 @@ int cr_std_string_free(string_t **string_ptr) {
 
 string_t *cr_std_string_make_copy(string_t *src_string) {
     if (!src_string) {
-        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_make_copy -> string pointer is NULL");
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_make_copy -> source string pointer is NULL");
         return NULL;
     }
     if (!src_string->c_str) {
-        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_make_copy -> string->c_str pointer is NULL");
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_make_copy -> source string's c_str pointer is NULL");
         return NULL;
     }
-    return cr_std_string_new(src_string->c_str);
+
+    string_t *new_string = cr_std_string_new(src_string->c_str);
+    if (!new_string) {
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_make_copy -> failed to allocate memory for new string");
+        return NULL;
+    }
+
+    return new_string;
 }
 
 int cr_std_string_concat_null_terminated(string_t *string, ...) {
@@ -478,7 +485,7 @@ vector_t *cr_std_string_split(string_t *string, char delimiter) {
         cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_split -> string pointer is NULL");
         return NULL;
     }
-    vector_t *vector = cr_std_vector_new(sizeof(string_t *), cr_std_string_free_ptr);
+    vector_t *vector = cr_std_vector_new(sizeof(string_t *), cr_std_string_free_ptr, cr_std_string_make_copy_ptr);
     char buffer[string->length + 1];
     int buffer_index = 0;
     for (size_t i = 0; i < string->length; i++) {
@@ -703,7 +710,6 @@ string_t *cr_std_string_from_string_ptr_vector(vector_t *vector, const char *del
 
     return final_string;
 }
-
 
 string_t *cr_std_string_from_char_ptr_vector(vector_t *vector, const char *delimiter) {
     if (!vector) {

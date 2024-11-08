@@ -18,7 +18,7 @@ test_case_t *cr_std_testing_new_test(const char *name, int (*test_function)(void
 }
 
 void cr_std_testing_run_tests(vector_t *tests) {
-    vector_t *list_of_errors = cr_std_vector_new(sizeof(test_case_t *), NULL);
+    vector_t *list_of_errors = cr_std_vector_new_n(sizeof(test_case_t *));
     printf("--------------------------------------------------------\n");
     for (int i = 0; i < tests->size; i++) {
         test_case_t *test = (test_case_t *)cr_std_vector_get_element(tests, i);

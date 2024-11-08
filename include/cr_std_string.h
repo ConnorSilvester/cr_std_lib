@@ -155,6 +155,7 @@ int cr_std_string_free(string_t **string_ptr);
  * @return `NULL` if copy fails.
  */
 string_t *cr_std_string_make_copy(string_t *src_string);
+#define cr_std_string_make_copy_ptr ((void *(*)(void *))cr_std_string_make_copy)
 
 /**
  * @brief Concatenates multiple strings and stores the result in an existing `string_t` struct.
@@ -348,7 +349,7 @@ string_t *cr_std_string_from_int(int number);
  *
  * @return `string_t` A pointer to a `string_t` struct the joined vector.
  */
-string_t *cr_std_string_from_string_ptr_vector(vector_t *vector, const char* delimiter);
+string_t *cr_std_string_from_string_ptr_vector(vector_t *vector, const char *delimiter);
 
 /**
  * @brief Returns the string representation of a `vector_t` struct.
@@ -358,5 +359,5 @@ string_t *cr_std_string_from_string_ptr_vector(vector_t *vector, const char* del
  *
  * @return `string_t` A pointer to a `string_t` struct the joined vector.
  */
-string_t *cr_std_string_from_char_ptr_vector(vector_t *vector, const char* delimiter);
+string_t *cr_std_string_from_char_ptr_vector(vector_t *vector, const char *delimiter);
 #endif // CR_STD_STRING
