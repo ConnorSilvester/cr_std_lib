@@ -341,6 +341,18 @@ long int cr_std_string_to_int(string_t *string);
  */
 string_t *cr_std_string_from_int(int number);
 
+
+/**
+ * @brief Returns a sub-string of a given string and index.
+ *
+ * @param `string` The original string.
+ * @param `start_index` The index to start the sub-string.
+ * @param `end_index` The index to end the sub-string.
+ *
+ * @return `string_t` A pointer to a `string_t` struct representing the sub-string.
+ */
+string_t *cr_std_string_sub_string(string_t* string, int start_index, int end_index);
+
 /**
  * @brief Returns the string representation of a `vector_t` struct.
  *

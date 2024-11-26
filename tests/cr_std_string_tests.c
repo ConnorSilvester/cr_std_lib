@@ -117,6 +117,16 @@ void cr_std_string_test_all() {
     cr_std_vector_push_back(tests, cr_std_testing_new_test("From Char Ptr Vector -> Normal", cr_std_string_test_from_char_ptr_vector));
     cr_std_vector_push_back(tests, cr_std_testing_new_test("From Char Ptr Vector -> Empty", cr_std_string_test_from_char_ptr_vector_empty));
     cr_std_vector_push_back(tests, cr_std_testing_new_test("From Char Ptr Vector -> NULL", cr_std_string_test_from_char_ptr_vector_null));
+
+
+    // Sub String
+    cr_std_vector_push_back(tests, cr_std_testing_new_test("Sub String -> Normal", cr_std_string_test_sub_string));
+    cr_std_vector_push_back(tests, cr_std_testing_new_test("Sub String -> Index Too Low", cr_std_string_test_sub_string_index_too_low));
+    cr_std_vector_push_back(tests, cr_std_testing_new_test("Sub String -> Index Too High", cr_std_string_test_sub_string_index_too_high));
+    cr_std_vector_push_back(tests, cr_std_testing_new_test("Sub String -> Index Invalid", cr_std_string_test_sub_string_index_invalid));
+    cr_std_vector_push_back(tests, cr_std_testing_new_test("Sub String -> Empty", cr_std_string_test_sub_string_empty));
+    cr_std_vector_push_back(tests, cr_std_testing_new_test("Sub String -> Null", cr_std_string_test_sub_string_null));
+
     /**
      * String Builder Tests Below
      */
@@ -864,6 +874,100 @@ int cr_std_string_test_from_char_ptr_vector_null() {
     string_t *result_string = cr_std_string_from_char_ptr_vector(vector, ", ");
 
     int result = result_string == NULL;
+    return result;
+}
+
+
+int cr_std_string_test_sub_string() {
+    string_t *string = cr_std_string_new("This is a Test String which i want to use!");
+    string_t *string_expected = cr_std_string_new("Test String");
+    string_t *result_string = cr_std_string_sub_string(string, 10, 21);
+
+    int compare_result = cr_std_string_compare(result_string, string_expected);
+    int expected_compare_result = 1;
+    int result = string_expected != NULL && result_string != NULL && compare_result == expected_compare_result;
+
+    cr_std_string_free(&string);
+    cr_std_string_free(&string_expected);
+    cr_std_string_free(&result_string);
+    return result;
+}
+
+
+int cr_std_string_test_sub_string_index_too_low() {
+    string_t *string = cr_std_string_new("This is a Test String which i want to use!");
+    string_t *string_expected = cr_std_string_new("This is a Test String");
+    string_t *result_string = cr_std_string_sub_string(string, -24, 21);
+
+    int compare_result = cr_std_string_compare(result_string, string_expected);
+    int expected_compare_result = 1;
+    int result = string_expected != NULL && result_string != NULL && compare_result == expected_compare_result;
+
+    cr_std_string_free(&string);
+    cr_std_string_free(&string_expected);
+    cr_std_string_free(&result_string);
+    return result;
+}
+
+
+int cr_std_string_test_sub_string_index_too_high() {
+    string_t *string = cr_std_string_new("This is a Test String which i want to use!");
+    string_t *string_expected = cr_std_string_new("Test String which i want to use!");
+    string_t *result_string = cr_std_string_sub_string(string, 10, 291);
+
+    int compare_result = cr_std_string_compare(result_string, string_expected);
+    int expected_compare_result = 1;
+    int result = string_expected != NULL && result_string != NULL && compare_result == expected_compare_result;
+
+    cr_std_string_free(&string);
+    cr_std_string_free(&string_expected);
+    cr_std_string_free(&result_string);
+    return result;
+}
+
+
+int cr_std_string_test_sub_string_index_invalid() {
+    string_t *string = cr_std_string_new("This is a Test String which i want to use!");
+    string_t *string_expected = cr_std_string_new("");
+    string_t *result_string = cr_std_string_sub_string(string, 10, 5);
+
+    int compare_result = cr_std_string_compare(result_string, string_expected);
+    int expected_compare_result = 1;
+    int result = string_expected != NULL && result_string != NULL && compare_result == expected_compare_result;
+
+    cr_std_string_free(&string);
+    cr_std_string_free(&string_expected);
+    cr_std_string_free(&result_string);
+    return result;
+}
+
+int cr_std_string_test_sub_string_empty() {
+    string_t *string = cr_std_string_new("");
+    string_t *string_expected = cr_std_string_new("");
+    string_t *result_string = cr_std_string_sub_string(string, 10, 20);
+
+    int compare_result = cr_std_string_compare(result_string, string_expected);
+    int expected_compare_result = 1;
+    int result = string_expected != NULL && result_string != NULL && compare_result == expected_compare_result;
+
+    cr_std_string_free(&string);
+    cr_std_string_free(&string_expected);
+    cr_std_string_free(&result_string);
+    return result;
+}
+
+int cr_std_string_test_sub_string_null() {
+    string_t *string = NULL;
+    string_t *string_expected = cr_std_string_new("");
+    string_t *result_string = cr_std_string_sub_string(string, 10, 20);
+
+    int compare_result = cr_std_string_compare(result_string, string_expected);
+    int expected_compare_result = 1;
+    int result = string_expected != NULL && result_string != NULL && compare_result == expected_compare_result;
+
+    cr_std_string_free(&string);
+    cr_std_string_free(&string_expected);
+    cr_std_string_free(&result_string);
     return result;
 }
 

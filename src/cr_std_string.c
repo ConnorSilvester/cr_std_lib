@@ -675,6 +675,39 @@ string_t *cr_std_string_from_int(int number) {
     return cr_std_string_new(str_buffer);
 }
 
+string_t *cr_std_string_sub_string(string_t *string, int start_index, int end_index) {
+    if (!string) {
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_WARNING, "cr_std_string_sub_string -> given string is NULL");
+        return cr_std_string_new("");
+    }
+
+    if (string->length == 0) {
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_WARNING, "cr_std_string_sub_string -> given string is empty");
+        return cr_std_string_new("");
+    }
+
+    if (start_index < 0) {
+        start_index = 0;
+    }
+
+    if (end_index < start_index) {
+        return cr_std_string_new("");
+    }
+
+    if (end_index > string->length) {
+        end_index = string->length;
+    }
+
+    size_t sub_length = end_index - start_index;
+    char sub_data[sub_length];
+
+    strncpy(sub_data, string->c_str + start_index, sub_length);
+
+    sub_data[sub_length] = '\0';
+
+    return cr_std_string_new(sub_data);
+}
+
 string_t *cr_std_string_from_string_ptr_vector(vector_t *vector, const char *delimiter) {
     if (!vector) {
         cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_from_string_ptr_vector -> given vector is NULL");

@@ -111,6 +111,14 @@ int cr_std_string_test_from_char_ptr_vector();
 int cr_std_string_test_from_char_ptr_vector_empty();
 int cr_std_string_test_from_char_ptr_vector_null();
 
+int cr_std_string_test_sub_string();
+int cr_std_string_test_sub_string_index_too_low();
+int cr_std_string_test_sub_string_index_too_high();
+int cr_std_string_test_sub_string_index_invalid();
+int cr_std_string_test_sub_string_empty();
+int cr_std_string_test_sub_string_null();
+
+
 /**
  * String Builder Tests Below
  */
