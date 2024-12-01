@@ -9,6 +9,48 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
+int cr_std_filesystem_copy_file(const char *src, const char *dest) {
+
+    FILE *src_file = fopen(src, "rb");
+    if (!src_file) {
+        cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_filesystem_copy_file -> file can't be opened -> %s", src);
+        return 1;
+    }
+
+    FILE *dest_file = fopen(dest, "wb");
+    if (!dest_file) {
+        fclose(src_file);
+        cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_filesystem_copy_file -> file can't be opened -> %s", dest);
+        return 1;
+    }
+
+    int ch;
+    while ((ch = fgetc(src_file)) != EOF) {
+        if (fputc(ch, dest_file) == EOF) {
+            cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_filesystem_copy_file -> error writing to file -> %s", dest);
+            fclose(src_file);
+            fclose(dest_file);
+            return 1;
+        }
+    }
+
+    if (ferror(src_file)) {
+        cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_filesystem_copy_file -> error reading from file -> %s", src);
+        fclose(src_file);
+        fclose(dest_file);
+        return 1;
+    }
+
+    fclose(dest_file);
+    fclose(src_file);
+
+    return 0;
+}
+
+int cr_std_filesystem_move_file(const char *src, const char *dest) {
+    return !rename(src, dest);
+}
+
 int cr_std_filesystem_write_file_operations(const char *file_path, const char *data, const char *mode) {
     if (!data || !file_path || !mode) {
         return 1;

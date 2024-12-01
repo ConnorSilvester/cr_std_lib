@@ -18,6 +18,28 @@ typedef struct dirent_t {
 } dirent_t;
 
 /**
+ * @brief Copy a file from src to dest
+ *
+ * @param `src` The source file to copy from
+ * @param `dest` The destination file to copy to
+ *
+ * @return `0` on success.
+ * @return `1` on failure.
+ */
+int cr_std_filesystem_copy_file(const char *src, const char *dest);
+
+/**
+ * @brief Move a file from src to dest
+ *
+ * @param `src` The source file to move
+ * @param `dest` The destination file path
+ *
+ * @return `0` on success.
+ * @return `1` on failure.
+ */
+int cr_std_filesystem_move_file(const char *src, const char *dest);
+
+/**
  * @brief Writes the contents of `data` into the file at `file_path`
  *
  * @param `file_path` A raw string of the file path.
