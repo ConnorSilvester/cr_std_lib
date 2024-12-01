@@ -93,7 +93,7 @@ string_builder_t *cr_std_string_builder_newf(const char *format, ...) {
 int cr_std_string_builder_append_single(string_builder_t *string_builder, const char *string) {
     if (!string_builder) {
         cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_builder_append -> given string builder is NULL");
-        return 0;
+        return 1;
     }
 
     size_t string_to_append_length = strlen(string);
@@ -103,7 +103,7 @@ int cr_std_string_builder_append_single(string_builder_t *string_builder, const 
         void *temp = realloc(string_builder->c_str, string_builder->capacity);
         if (!temp) {
             cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_builder_append -> failed to realloc memory for string_builder_t->c_str");
-            return 0;
+            return 1;
         }
         string_builder->c_str = temp;
     }
@@ -112,13 +112,13 @@ int cr_std_string_builder_append_single(string_builder_t *string_builder, const 
 
     string_builder->size += string_to_append_length;
     string_builder->c_str[string_builder->size] = '\0';
-    return 1;
+    return 0;
 }
 
 int cr_std_string_builder_appendf(string_builder_t *string_builder, const char *format, ...) {
     if (!string_builder) {
         cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_builder_append -> given string builder is NULL");
-        return 0;
+        return 1;
     }
 
     va_list args;
@@ -139,7 +139,7 @@ int cr_std_string_builder_appendf(string_builder_t *string_builder, const char *
 int cr_std_string_builder_append_null_terminated(string_builder_t *string_builder, ...) {
     if (!string_builder) {
         cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_builder_append_null_terminated -> string builder pointer is NULL");
-        return 0;
+        return 1;
     }
 
     va_list args;
@@ -148,28 +148,28 @@ int cr_std_string_builder_append_null_terminated(string_builder_t *string_builde
     char *current_string;
     while ((current_string = va_arg(args, char *)) != NULL) {
         int result = cr_std_string_builder_append_single(string_builder, current_string);
-        if (result == 0) {
-            return 0;
+        if (result != 0) {
+            return result;
         }
     }
     va_end(args);
-    return 1;
+    return 0;
 }
 
 int cr_std_string_builder_reset(string_builder_t *string_builder) {
     if (!string_builder) {
         cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_builder_reset -> given string builder is NULL");
-        return 0;
+        return 1;
     }
     string_builder->c_str[0] = '\0';
     string_builder->size = 0;
-    return 1;
+    return 0;
 }
 
 string_t *cr_std_string_builder_to_string(string_builder_t *string_builder) {
     if (!string_builder) {
         cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_builder_to_string -> given string builder is NULL");
-        return 0;
+        return NULL;
     }
     return cr_std_string_new(string_builder->c_str);
 }
@@ -183,10 +183,10 @@ int cr_std_string_builder_free(string_builder_t **sb_ptr) {
 
         free(*sb_ptr);
         *sb_ptr = NULL;
-        return 1;
+        return 0;
     }
     cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_WARNING, "cr_std_string_builder_free -> tried to free a NULL string_builder_t*");
-    return 0;
+    return 1;
 }
 
 string_t *cr_std_string_new(const char *string) {
@@ -270,10 +270,10 @@ int cr_std_string_free(string_t **string_ptr) {
 
         free(*string_ptr);
         *string_ptr = NULL;
-        return 1;
+        return 0;
     }
     cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_WARNING, "cr_std_string_free -> tried to free a NULL string_t*");
-    return 0;
+    return 1;
 }
 
 string_t *cr_std_string_make_copy(string_t *src_string) {
@@ -298,7 +298,7 @@ string_t *cr_std_string_make_copy(string_t *src_string) {
 int cr_std_string_concat_null_terminated(string_t *string, ...) {
     if (!string) {
         cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_concat_null_terminated -> string pointer is NULL");
-        return 0;
+        return 1;
     }
 
     va_list args;
@@ -314,7 +314,7 @@ int cr_std_string_concat_null_terminated(string_t *string, ...) {
     char *new_c_str = (char *)malloc(sizeof(char) * (total_length + 1));
     if (!new_c_str) {
         cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_concat_null_terminated -> Failed to allocate memory for new string_t struct");
-        return 0;
+        return 1;
     }
 
     size_t c_str_current_pos = 0;
@@ -335,7 +335,7 @@ int cr_std_string_concat_null_terminated(string_t *string, ...) {
     string->c_str = new_c_str;
     string->length = total_length;
 
-    return 1;
+    return 0;
 }
 
 int cr_std_string_compare(string_t *arg, string_t *arg1) {
@@ -360,7 +360,7 @@ int cr_std_string_compare(string_t *arg, string_t *arg1) {
 int cr_std_string_trim(string_t *string, int direction) {
     if (string == NULL || string->c_str == NULL || string->length == 0) {
         cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_trim -> tried to trim an invalid string");
-        return 0;
+        return 1;
     }
 
     int start = 0;
@@ -385,7 +385,7 @@ int cr_std_string_trim(string_t *string, int direction) {
     char *new_str = malloc(sizeof(char) * (new_length + 1));
     if (new_str == NULL) {
         cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_trim -> malloc failed to allocate memory for new string");
-        return 0;
+        return 1;
     }
 
     memcpy(new_str, string->c_str + start, new_length);
@@ -395,7 +395,7 @@ int cr_std_string_trim(string_t *string, int direction) {
     string->c_str = new_str;
     string->length = new_length;
 
-    return 1;
+    return 0;
 }
 
 int cr_std_string_find_char(string_t *string, char ch) {
@@ -515,23 +515,23 @@ vector_t *cr_std_string_split(string_t *string, char delimiter) {
 int cr_std_string_to_upper(string_t *string) {
     if (!string) {
         cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_to_upper -> string pointer is NULL");
-        return 0;
+        return 1;
     }
     for (int i = 0; i < string->length; i++) {
         string->c_str[i] = toupper(string->c_str[i]);
     }
-    return 1;
+    return 0;
 }
 
 int cr_std_string_to_lower(string_t *string) {
     if (!string) {
         cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_to_lower -> string pointer is NULL");
-        return 0;
+        return 1;
     }
     for (int i = 0; i < string->length; i++) {
         string->c_str[i] = tolower(string->c_str[i]);
     }
-    return 1;
+    return 0;
 }
 
 int cr_std_string_replace_string(string_t *string, char *from, char *to) {
@@ -591,7 +591,7 @@ int cr_std_string_replace_string(string_t *string, char *from, char *to) {
 int cr_std_string_remove_non_numeric(string_t *string) {
     if (!string || !string->c_str) {
         cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_remove_non_numeric -> string pointer is NULL");
-        return 0;
+        return 1;
     }
 
     size_t digit_count = 0;
@@ -604,7 +604,7 @@ int cr_std_string_remove_non_numeric(string_t *string) {
     char *filtered_str = (char *)malloc(digit_count + 1);
     if (!filtered_str) {
         cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_remove_non_numeric -> malloc allocation failed for filtered_str");
-        return 0;
+        return 1;
     }
 
     size_t filtered_str_index = 0;
@@ -619,13 +619,13 @@ int cr_std_string_remove_non_numeric(string_t *string) {
     free(string->c_str);
     string->c_str = filtered_str;
     string->length = digit_count;
-    return 1;
+    return 0;
 }
 
 int cr_std_string_remove_numeric(string_t *string) {
     if (!string || !string->c_str) {
         cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_remove_numeric -> string pointer is NULL");
-        return 0;
+        return 1;
     }
 
     size_t new_char_count = 0;
@@ -638,7 +638,7 @@ int cr_std_string_remove_numeric(string_t *string) {
     char *filtered_str = (char *)malloc(new_char_count + 1);
     if (!filtered_str) {
         cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_remove_numeric -> malloc allocation failed for filtered_str");
-        return 0;
+        return 1;
     }
 
     size_t filtered_str_index = 0;
@@ -653,7 +653,7 @@ int cr_std_string_remove_numeric(string_t *string) {
     free(string->c_str);
     string->c_str = filtered_str;
     string->length = new_char_count;
-    return 1;
+    return 0;
 }
 
 long int cr_std_string_to_int(string_t *string) {

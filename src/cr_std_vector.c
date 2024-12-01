@@ -36,7 +36,7 @@ vector_t *cr_std_vector_new_n(size_t type_size) {
 int cr_std_vector_free(vector_t **vector_ptr) {
     if (!vector_ptr || !*vector_ptr) {
         cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_vector_free -> tried to free a NULL vector");
-        return 0;
+        return 1;
     }
 
     vector_t *vector = *vector_ptr;
@@ -47,9 +47,9 @@ int cr_std_vector_free(vector_t **vector_ptr) {
             void *element = ((void **)vector->elements)[i];
             if (vector->free_function) { // Check if a custom free function is provided
                 int result = vector->free_function(&element);
-                if (result == 0) {
+                if (result != 0) {
                     cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_vector_free -> failed on custom free_function call : element index = %ld", i);
-                    return 0;
+                    return result;
                 }
             } else if (element) {
                 cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_WARNING, "cr_std_vector_free -> no custom free_function was found for pointer type, element was not freed");
@@ -60,13 +60,13 @@ int cr_std_vector_free(vector_t **vector_ptr) {
     free(vector->elements);
     free(vector);
     *vector_ptr = NULL;
-    return 1;
+    return 0;
 }
 
 int cr_std_vector_push_back(vector_t *vector, void *element) {
     if (!vector) {
         cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_vector_push_back -> given vector is NULL");
-        return 0;
+        return 1;
     }
 
     if (vector->size >= vector->capacity) {
@@ -77,7 +77,7 @@ int cr_std_vector_push_back(vector_t *vector, void *element) {
         void *temp = realloc(vector->elements, new_size);
         if (!temp) {
             cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_vector_push_back -> failed to realloc memory for vector_t");
-            return 0;
+            return 1;
         }
         vector->elements = temp;
     }
@@ -88,7 +88,7 @@ int cr_std_vector_push_back(vector_t *vector, void *element) {
             void *copied_element = vector->copy_function(element);
             if (!copied_element) {
                 cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_vector_push_back -> copy_function failed to allocate memory");
-                return 0;
+                return 1;
             }
             ((void **)vector->elements)[vector->size] = copied_element;
         } else {
@@ -103,27 +103,27 @@ int cr_std_vector_push_back(vector_t *vector, void *element) {
     }
 
     vector->size++;
-    return 1;
+    return 0;
 }
 
 int cr_std_vector_remove_element(vector_t *vector, size_t index) {
     if (!vector) {
         cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_vector_remove_element -> given vector is NULL");
-        return 0;
+        return 1;
     }
 
     if (index >= vector->size || index < 0) {
         cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_WARNING, "cr_std_vector_remove_element -> tried to access out of bounds index -> index : %ld max_index : %ld", index, vector->size - 1);
-        return 0;
+        return 1;
     }
 
     if (vector->is_pointer) {
         void *element = ((void **)vector->elements)[index];
         if (vector->free_function && element) {
             int result = vector->free_function(&element);
-            if (result == 0) {
+            if (result != 0) {
                 cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_vector_remove_element -> failed on custom free_function call : element index = %ld", index);
-                return 0;
+                return result;
             }
         }
         for (size_t i = index; i < vector->size - 1; i++) {
@@ -139,7 +139,7 @@ int cr_std_vector_remove_element(vector_t *vector, size_t index) {
     }
 
     vector->size--;
-    return 1;
+    return 0;
 }
 
 void *cr_std_vector_get_element(vector_t *vector, size_t index) {
@@ -166,16 +166,16 @@ void *cr_std_vector_get_element(vector_t *vector, size_t index) {
 int cr_std_vector_extend(vector_t *dest, vector_t *src) {
     if (!dest || !src) {
         cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_vector_extend -> given vector(s) is NULL");
-        return 0;
+        return 1;
     }
 
     if (dest->type_size != src->type_size) {
         cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_vector_extend -> vector type sizes are not the same");
-        return 0;
+        return 1;
     }
 
     for (size_t i = 0; i < src->size; i++) {
         cr_std_vector_push_back(dest, cr_std_vector_get_element(src, i));
     }
-    return 1;
+    return 0;
 }

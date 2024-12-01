@@ -47,8 +47,8 @@ string_builder_t *cr_std_string_builder_newf(const char *format, ...);
  * @param `string_builder` The `string_builder_t` struct to work on.
  * @param `string` The string to add.
  *
- * @return `1` on success.
- * @return `0` on failure.
+ * @return `0` on success.
+ * @return `1` on failure.
  */
 int cr_std_string_builder_append_single(string_builder_t *string_builder, const char *string);
 
@@ -59,8 +59,8 @@ int cr_std_string_builder_append_single(string_builder_t *string_builder, const 
  * @param `format` The format string used to format like `printf` (`%s`, `%d`, etc.).
  *                 Can also be a single string to add, e.g. "hello".
  *
- * @return `1` on success.
- * @return `0` on failure.
+ * @return `0` on success.
+ * @return `1` on failure.
  */
 int cr_std_string_builder_appendf(string_builder_t *string_builder, const char *format, ...);
 
@@ -70,8 +70,8 @@ int cr_std_string_builder_appendf(string_builder_t *string_builder, const char *
  * @param `string_builder` A pointer to the `string_builder_t` struct to be updated.
  * @param `...` The strings to append.
  *
- * @return `1` on success.
- * @return `0` on failure.
+ * @return `0` on success.
+ * @return `1` on failure.
  */
 int cr_std_string_builder_append_null_terminated(string_builder_t *string_builder, ...);
 
@@ -88,8 +88,8 @@ int cr_std_string_builder_append_null_terminated(string_builder_t *string_builde
  *
  * @param `string_builder` The `string_builder_t` struct to work on.
  *
- * @return `1` on success.
- * @return `0` on failure.
+ * @return `0` on success.
+ * @return `1` on failure.
  */
 int cr_std_string_builder_reset(string_builder_t *string_builder);
 
@@ -108,8 +108,8 @@ string_t *cr_std_string_builder_to_string(string_builder_t *string_builder);
  *
  * @param `sb_ptr` A pointer to a pointer containing a `string_builder_t` struct.
  *
- * @return `1` on success.
- * @return `0` on failure.
+ * @return `0` on success.
+ * @return `1` on failure.
  */
 int cr_std_string_builder_free(string_builder_t **sb_ptr);
 #define cr_std_string_builder_free_ptr ((int (*)(void **))cr_std_string_builder_free)
@@ -140,8 +140,8 @@ string_t *cr_std_string_newf(const char *format, ...);
  *
  * @param `string_ptr` A pointer to a pointer containing a `string_t` struct.
  *
- * @return `1` on success.
- * @return `0` on failure.
+ * @return `0` on success.
+ * @return `1` on failure.
  */
 int cr_std_string_free(string_t **string_ptr);
 #define cr_std_string_free_ptr ((int (*)(void **))cr_std_string_free)
@@ -163,8 +163,8 @@ string_t *cr_std_string_make_copy(string_t *src_string);
  * @param `string` A pointer to the `string_t` struct to be updated.
  * @param `...` The strings to concatenate, terminated with a `NULL`.
  *
- * @return `1` on success.
- * @return `0` on failure.
+ * @return `0` on success.
+ * @return `1` on failure.
  */
 int cr_std_string_concat_null_terminated(string_t *string, ...);
 
@@ -201,8 +201,8 @@ int cr_std_string_compare(string_t *arg, string_t *arg1);
  *
  * Defined as `CR_STD_STRING_TRIM_BOTH`
  *
- * @return `1` if the string is trimmed successfully.
- * @return `0` if the string failed to be trimmed.
+ * @return `0` if the string is trimmed successfully.
+ * @return `1` if the string failed to be trimmed.
  */
 int cr_std_string_trim(string_t *string, int direction);
 
@@ -276,8 +276,8 @@ vector_t *cr_std_string_split(string_t *string, char delimiter);
  *
  * @param `string` The string to work on.
  *
- * @return `1` if the string is changed.
- * @return `0` if error.
+ * @return `0` if the string is changed.
+ * @return `1` if error.
  */
 int cr_std_string_to_upper(string_t *string);
 
@@ -286,8 +286,8 @@ int cr_std_string_to_upper(string_t *string);
  *
  * @param `string` The string to work on.
  *
- * @return `1` if the string is changed.
- * @return `0` if error.
+ * @return `0` if the string is changed.
+ * @return `1` if error.
  */
 int cr_std_string_to_lower(string_t *string);
 
@@ -308,8 +308,8 @@ int cr_std_string_replace_string(string_t *string, char *from, char *to);
  *
  * @param `string` The `string_t` to work on.
  *
- * @return `1` on success.
- * @return `0` on failure.
+ * @return `0` on success.
+ * @return `1` on failure.
  */
 int cr_std_string_remove_non_numeric(string_t *string);
 
@@ -318,8 +318,8 @@ int cr_std_string_remove_non_numeric(string_t *string);
  *
  * @param `string` The `string_t` to work on.
  *
- * @return `1` on success.
- * @return `0` on failure.
+ * @return `0` on success.
+ * @return `1` on failure.
  */
 int cr_std_string_remove_numeric(string_t *string);
 

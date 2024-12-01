@@ -6,8 +6,8 @@
  *
  * @param `ptr` A pointer to a pointer to be freed.
  *
- * @return `1` on success.
- * @return `0` on failure.
+ * @return `0` on success.
+ * @return `1` on failure.
  */
 int cr_std_free(void **ptr);
 #define cr_std_free_ptr ((int (*)(void **))cr_std_free)

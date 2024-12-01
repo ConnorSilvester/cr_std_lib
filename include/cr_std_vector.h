@@ -45,8 +45,8 @@ vector_t *cr_std_vector_new_n(size_t type_size);
  *
  * @param `vector` A pointer to a pointer containing the `vector_t` struct
  *
- * @return `1` on success.
- * @return `0` on failure.
+ * @return `0` on success.
+ * @return `1` on failure.
  */
 int cr_std_vector_free(vector_t **vector_ptr);
 
@@ -57,8 +57,8 @@ int cr_std_vector_free(vector_t **vector_ptr);
  * @param `vector` The vector you want to add to.
  * @param `element` The element you want to add.
  *
- * @return `1` on success.
- * @return `0` on failure.
+ * @return `0` on success.
+ * @return `1` on failure.
  */
 int cr_std_vector_push_back(vector_t *vector, void *element);
 
@@ -68,8 +68,8 @@ int cr_std_vector_push_back(vector_t *vector, void *element);
  * @param `vector` The vector you want to remove from.
  * @param `index` The index of the element you want to remove.
  *
- * @return `1` on success.
- * @return `0` on failure.
+ * @return `0` on success.
+ * @return `1` on failure.
  */
 int cr_std_vector_remove_element(vector_t *vector, size_t index);
 
@@ -90,8 +90,8 @@ void *cr_std_vector_get_element(vector_t *vector, size_t index);
  * @param `dest` The destination vector to add the items too.
  * @param `src` The source vector to add the items from.
  *
- * @return `1` on success.
- * @return `0` on failure.
+ * @return `0` on success.
+ * @return `1` on failure.
  */
 int cr_std_vector_extend(vector_t *dest, vector_t *src);
 #endif // CR_STD_VECTOR

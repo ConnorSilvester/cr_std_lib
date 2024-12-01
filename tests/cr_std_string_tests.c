@@ -183,14 +183,14 @@ int cr_std_string_test_new_string_formatted() {
 int cr_std_string_test_free() {
     string_t *string = cr_std_string_newf("Hello %s", "World");
     int function_result = cr_std_string_free(&string);
-    int result = function_result == 1 && string == NULL;
+    int result = function_result == 0 && string == NULL;
     return result;
 }
 
 int cr_std_string_test_free_null_value() {
     string_t *string = NULL;
     int function_result = cr_std_string_free(&string);
-    return function_result == 0;
+    return function_result != 0;
 }
 
 int cr_std_string_test_copy_string() {
@@ -221,7 +221,7 @@ int cr_std_string_test_concat_string() {
     int function_result = cr_std_string_concat(string, ", My Name Is John");
     int compare_result = cr_std_string_compare(string, string_expected);
     int expected = 1;
-    int result = string != NULL && string_expected != NULL && compare_result == expected && function_result == expected;
+    int result = string != NULL && string_expected != NULL && compare_result == expected && function_result == 0;
     cr_std_string_free(&string);
     cr_std_string_free(&string_expected);
     return result;
@@ -233,7 +233,7 @@ int cr_std_string_test_concat_string_multi() {
     int function_result = cr_std_string_concat(string, ", My Name Is", " John");
     int compare_result = cr_std_string_compare(string, string_expected);
     int expected = 1;
-    int result = string != NULL && string_expected != NULL && compare_result == expected && function_result == expected;
+    int result = string != NULL && string_expected != NULL && compare_result == expected && function_result == 0;
     cr_std_string_free(&string);
     cr_std_string_free(&string_expected);
     return result;
@@ -245,7 +245,7 @@ int cr_std_string_test_concat_string_empty() {
     int function_result = cr_std_string_concat(string, "Hello World");
     int compare_result = cr_std_string_compare(string, string_expected);
     int expected = 1;
-    int result = string != NULL && string_expected != NULL && compare_result == expected && function_result == expected;
+    int result = string != NULL && string_expected != NULL && compare_result == expected && function_result == 0;
     cr_std_string_free(&string);
     cr_std_string_free(&string_expected);
     return result;
@@ -312,7 +312,7 @@ int cr_std_string_test_trim_left() {
     int function_result = cr_std_string_trim(string, CR_STD_STRING_TRIM_LEFT);
     int compare_result = cr_std_string_compare(string, string_expected);
     int expected = 1;
-    int result = string != NULL && string_expected != NULL && compare_result == expected && function_result == expected;
+    int result = string != NULL && string_expected != NULL && compare_result == expected && function_result == 0;
     cr_std_string_free(&string);
     cr_std_string_free(&string_expected);
     return result;
@@ -324,7 +324,7 @@ int cr_std_string_test_trim_right() {
     int function_result = cr_std_string_trim(string, CR_STD_STRING_TRIM_RIGHT);
     int compare_result = cr_std_string_compare(string, string_expected);
     int expected = 1;
-    int result = string != NULL && string_expected != NULL && compare_result == expected && function_result == expected;
+    int result = string != NULL && string_expected != NULL && compare_result == expected && function_result == 0;
     cr_std_string_free(&string);
     cr_std_string_free(&string_expected);
     return result;
@@ -336,7 +336,7 @@ int cr_std_string_test_trim_both() {
     int function_result = cr_std_string_trim(string, CR_STD_STRING_TRIM_BOTH);
     int compare_result = cr_std_string_compare(string, string_expected);
     int expected = 1;
-    int result = string != NULL && string_expected != NULL && compare_result == expected && function_result == expected;
+    int result = string != NULL && string_expected != NULL && compare_result == expected && function_result == 0;
     cr_std_string_free(&string);
     cr_std_string_free(&string_expected);
     return result;
@@ -348,7 +348,7 @@ int cr_std_string_test_trim_both_with_special() {
     int function_result = cr_std_string_trim(string, CR_STD_STRING_TRIM_BOTH);
     int compare_result = cr_std_string_compare(string, string_expected);
     int expected = 1;
-    int result = string != NULL && string_expected != NULL && compare_result == expected && function_result == expected;
+    int result = string != NULL && string_expected != NULL && compare_result == expected && function_result == 0;
     cr_std_string_free(&string);
     cr_std_string_free(&string_expected);
     return result;
@@ -360,7 +360,7 @@ int cr_std_string_test_trim_both_word_gaps() {
     int function_result = cr_std_string_trim(string, CR_STD_STRING_TRIM_BOTH);
     int compare_result = cr_std_string_compare(string, string_expected);
     int expected = 1;
-    int result = string != NULL && string_expected != NULL && compare_result == expected && function_result == expected;
+    int result = string != NULL && string_expected != NULL && compare_result == expected && function_result == 0;
     cr_std_string_free(&string);
     cr_std_string_free(&string_expected);
     return result;
@@ -551,7 +551,7 @@ int cr_std_string_test_to_upper() {
     int function_result = cr_std_string_to_upper(string);
     int compare_result = cr_std_string_compare(string, string_expected);
     int expected = 1;
-    int result = string != NULL && string_expected != NULL && compare_result == expected && function_result == expected;
+    int result = string != NULL && string_expected != NULL && compare_result == expected && function_result == 0;
     cr_std_string_free(&string);
     cr_std_string_free(&string_expected);
     return result;
@@ -563,7 +563,7 @@ int cr_std_string_test_to_upper_empty() {
     int function_result = cr_std_string_to_upper(string);
     int compare_result = cr_std_string_compare(string, string_expected);
     int expected = 1;
-    int result = string != NULL && string_expected != NULL && compare_result == expected && function_result == expected;
+    int result = string != NULL && string_expected != NULL && compare_result == expected && function_result == 0;
     cr_std_string_free(&string);
     cr_std_string_free(&string_expected);
     return result;
@@ -572,8 +572,7 @@ int cr_std_string_test_to_upper_empty() {
 int cr_std_string_test_to_upper_invalid() {
     string_t *string = NULL;
     int function_result = cr_std_string_to_upper(string);
-    int expected = 0;
-    return function_result == expected;
+    return function_result != 0;
 }
 
 int cr_std_string_test_to_lower() {
@@ -582,7 +581,7 @@ int cr_std_string_test_to_lower() {
     int function_result = cr_std_string_to_lower(string);
     int compare_result = cr_std_string_compare(string, string_expected);
     int expected = 1;
-    int result = string != NULL && string_expected != NULL && compare_result == expected && function_result == expected;
+    int result = string != NULL && string_expected != NULL && compare_result == expected && function_result == 0;
     cr_std_string_free(&string);
     cr_std_string_free(&string_expected);
     return result;
@@ -594,7 +593,7 @@ int cr_std_string_test_to_lower_empty() {
     int function_result = cr_std_string_to_lower(string);
     int compare_result = cr_std_string_compare(string, string_expected);
     int expected = 1;
-    int result = string != NULL && string_expected != NULL && compare_result == expected && function_result == expected;
+    int result = string != NULL && string_expected != NULL && compare_result == expected && function_result == 0;
     cr_std_string_free(&string);
     cr_std_string_free(&string_expected);
     return result;
@@ -603,8 +602,7 @@ int cr_std_string_test_to_lower_empty() {
 int cr_std_string_test_to_lower_invalid() {
     string_t *string = NULL;
     int function_result = cr_std_string_to_lower(string);
-    int expected = 0;
-    return function_result == expected;
+    return function_result != 0;
 }
 
 int cr_std_string_test_replace_string() {
@@ -671,7 +669,7 @@ int cr_std_string_test_remove_non_numeric() {
     string_t *string_expected = cr_std_string_new("667788");
     int function_result = cr_std_string_remove_non_numeric(string);
     int compare_result = cr_std_string_compare(string, string_expected);
-    int expected_function_result = 1;
+    int expected_function_result = 0;
     int expected_compare_result = 1;
     int result = string != NULL && string_expected != NULL && compare_result == expected_compare_result && function_result == expected_function_result;
     cr_std_string_free(&string);
@@ -684,7 +682,7 @@ int cr_std_string_test_remove_non_numeric_empty() {
     string_t *string_expected = cr_std_string_new("");
     int function_result = cr_std_string_remove_non_numeric(string);
     int compare_result = cr_std_string_compare(string, string_expected);
-    int expected_function_result = 1;
+    int expected_function_result = 0;
     int expected_compare_result = 1;
     int result = string != NULL && string_expected != NULL && compare_result == expected_compare_result && function_result == expected_function_result;
     cr_std_string_free(&string);
@@ -695,9 +693,7 @@ int cr_std_string_test_remove_non_numeric_empty() {
 int cr_std_string_test_remove_non_numeric_null() {
     string_t *string = NULL;
     int function_result = cr_std_string_remove_non_numeric(string);
-    int expected_function_result = 0;
-    int result = function_result == expected_function_result;
-    return result;
+    return function_result != 0;
 }
 
 int cr_std_string_test_remove_numeric() {
@@ -705,7 +701,7 @@ int cr_std_string_test_remove_numeric() {
     string_t *string_expected = cr_std_string_new("Hello, Hello World");
     int function_result = cr_std_string_remove_numeric(string);
     int compare_result = cr_std_string_compare(string, string_expected);
-    int expected_function_result = 1;
+    int expected_function_result = 0;
     int expected_compare_result = 1;
     int result = string != NULL && string_expected != NULL && compare_result == expected_compare_result && function_result == expected_function_result;
     cr_std_string_free(&string);
@@ -718,7 +714,7 @@ int cr_std_string_test_remove_numeric_empty() {
     string_t *string_expected = cr_std_string_new("");
     int function_result = cr_std_string_remove_numeric(string);
     int compare_result = cr_std_string_compare(string, string_expected);
-    int expected_function_result = 1;
+    int expected_function_result = 0;
     int expected_compare_result = 1;
     int result = string != NULL && string_expected != NULL && compare_result == expected_compare_result && function_result == expected_function_result;
     cr_std_string_free(&string);
@@ -729,9 +725,7 @@ int cr_std_string_test_remove_numeric_empty() {
 int cr_std_string_test_remove_numeric_null() {
     string_t *string = NULL;
     int function_result = cr_std_string_remove_numeric(string);
-    int expected_function_result = 0;
-    int result = function_result == expected_function_result;
-    return result;
+    return function_result != 0;
 }
 
 int cr_std_string_test_to_int() {
@@ -999,14 +993,14 @@ int cr_std_string_builder_test_new_formatted() {
 int cr_std_string_builder_test_free() {
     string_builder_t *sb = cr_std_string_builder_new("Hello World");
     int function_result = cr_std_string_builder_free(&sb);
-    int result = sb == NULL && function_result == 1;
+    int result = sb == NULL && function_result == 0;
     return result;
 }
 
 int cr_std_string_builder_test_free_null_value() {
     string_builder_t *sb = NULL;
     int function_result = cr_std_string_builder_free(&sb);
-    int result = sb == NULL && function_result == 0;
+    int result = sb == NULL && function_result != 0;
     return result;
 }
 
@@ -1014,7 +1008,7 @@ int cr_std_string_builder_test_append() {
     string_builder_t *sb = cr_std_string_builder_new("Hello World");
     int expected_size = 11 + 15 + 7;
     int function_result = cr_std_string_builder_append(sb, " This is a test", " Test 2");
-    int result = sb != NULL && function_result == 1 && sb->size == expected_size;
+    int result = sb != NULL && function_result == 0 && sb->size == expected_size;
     cr_std_string_builder_free(&sb);
     return result;
 }
@@ -1023,7 +1017,7 @@ int cr_std_string_builder_test_appendf() {
     string_builder_t *sb = cr_std_string_builder_new("Hello World");
     int expected_size = 11 + 15 + 7;
     int function_result = cr_std_string_builder_appendf(sb, " This is a test%s", " Test 2");
-    int result = sb != NULL && function_result == 1 && sb->size == expected_size;
+    int result = sb != NULL && function_result == 0 && sb->size == expected_size;
     cr_std_string_builder_free(&sb);
     return result;
 }
@@ -1032,7 +1026,7 @@ int cr_std_string_builder_test_append_single() {
     string_builder_t *sb = cr_std_string_builder_new("Hello World");
     int expected_size = 11 + 15;
     int function_result = cr_std_string_builder_append_single(sb, " This is a test");
-    int result = sb != NULL && function_result == 1 && sb->size == expected_size;
+    int result = sb != NULL && function_result == 0 && sb->size == expected_size;
     cr_std_string_builder_free(&sb);
     return result;
 }
@@ -1041,7 +1035,7 @@ int cr_std_string_builder_test_append_empty() {
     string_builder_t *sb = cr_std_string_builder_new("Hello World");
     int expected_size = 11;
     int function_result = cr_std_string_builder_append(sb, "");
-    int result = sb != NULL && function_result == 1 && sb->size == expected_size;
+    int result = sb != NULL && function_result == 0 && sb->size == expected_size;
     cr_std_string_builder_free(&sb);
     return result;
 }
@@ -1050,7 +1044,7 @@ int cr_std_string_builder_test_append_null_value() {
     string_builder_t *sb = cr_std_string_builder_new("Hello World");
     int expected_size = 11;
     int function_result = cr_std_string_builder_append(sb, NULL);
-    int result = sb != NULL && function_result == 1 && sb->size == expected_size;
+    int result = sb != NULL && function_result == 0 && sb->size == expected_size;
     cr_std_string_builder_free(&sb);
     return result;
 }
@@ -1059,7 +1053,7 @@ int cr_std_string_builder_test_reset() {
     string_builder_t *sb = cr_std_string_builder_new("Hello World");
     int expected_size = 0;
     int function_result = cr_std_string_builder_reset(sb);
-    int result = sb != NULL && function_result == 1 && sb->size == expected_size;
+    int result = sb != NULL && function_result == 0 && sb->size == expected_size;
     cr_std_string_builder_free(&sb);
     return result;
 }
@@ -1067,7 +1061,7 @@ int cr_std_string_builder_test_reset() {
 int cr_std_string_builder_test_reset_null_value() {
     string_builder_t *sb = NULL;
     int function_result = cr_std_string_builder_reset(sb);
-    int result = sb == NULL && function_result == 0;
+    int result = sb == NULL && function_result != 0;
     cr_std_string_builder_free(&sb);
     return result;
 }

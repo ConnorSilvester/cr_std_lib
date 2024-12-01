@@ -23,8 +23,8 @@ typedef struct dirent_t {
  * @param `file_path` A raw string of the file path.
  * @param `data` A raw string containing the data to write.
  *
- * @return `1` on success.
- * @return `0` on failure.
+ * @return `0` on success.
+ * @return `1` on failure.
  */
 int cr_std_filesystem_write_to_file(const char *file_path, const char *data);
 
@@ -34,8 +34,8 @@ int cr_std_filesystem_write_to_file(const char *file_path, const char *data);
  * @param `file_path` A raw string of the file path.
  * @param `data` A raw string containing the data to append to the file.
  *
- * @return `1` on success.
- * @return `0` on failure.
+ * @return `0` on success.
+ * @return `1` on failure.
  */
 int cr_std_filesystem_append_to_file(const char *file_path, const char *data);
 
@@ -117,8 +117,8 @@ vector_t *cr_std_filesystem_get_dir_files_r(const char *file_path);
  *
  * @param `dirent_ptr` A pointer to a pointer that stores the `dirent_t`
  *
- * @return `1` on success.
- * @return `0` on failure.
+ * @return `0` on success.
+ * @return `1` on failure.
  */
 int cr_std_filesystem_dirent_free(dirent_t **dirent_ptr);
 #define cr_std_filesystem_dirent_free_ptr ((int (*)(void **))cr_std_filesystem_dirent_free)

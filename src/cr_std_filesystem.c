@@ -11,23 +11,23 @@
 
 int cr_std_filesystem_write_file_operations(const char *file_path, const char *data, const char *mode) {
     if (!data || !file_path || !mode) {
-        return 0;
+        return 1;
     }
 
     FILE *file = fopen(file_path, mode);
     if (!file) {
         cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_filesystem_write_file_operations -> file can't be opened -> %s", file_path);
-        return 0;
+        return 1;
     }
 
     if (fputs(data, file) == EOF) {
         cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_filesystem_write_file_operations  -> failed to write data");
         fclose(file);
-        return 0;
+        return 1;
     }
 
     fclose(file);
-    return 1;
+    return 0;
 }
 
 int cr_std_filesystem_write_to_file(const char *file_path, const char *data) {
@@ -225,8 +225,8 @@ int cr_std_filesystem_dirent_free(dirent_t **dirent_ptr) {
         }
         free(entry);
         *dirent_ptr = NULL;
-        return 1;
+        return 0;
     }
     cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_WARNING, "cr_std_filesystem_dirent_free -> tried to free a NULL dirent_ptr*");
-    return 0;
+    return 1;
 }
