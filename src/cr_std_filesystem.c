@@ -48,7 +48,7 @@ int cr_std_filesystem_copy_file(const char *src, const char *dest) {
 }
 
 int cr_std_filesystem_move_file(const char *src, const char *dest) {
-    return !rename(src, dest);
+    return rename(src, dest);
 }
 
 int cr_std_filesystem_write_file_operations(const char *file_path, const char *data, const char *mode) {

@@ -4,6 +4,8 @@
 
 This is not meant as a professional project, but rather just something for me to develop as i learn C.
 
+Some features may only work on Linux I have not tested on other platforms, this will come later, the MakeFile will need to change if you are using Windows / MacOS.
+
 ## Features so far
 - **Filesystem Operations**
 - **Dynamic Arrays**

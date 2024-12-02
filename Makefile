@@ -4,6 +4,11 @@ CC = gcc
 # Compiler flags
 CFLAGS = -Wall
 
+# Change this as needed
+# Installation directories
+LIB_DEST_DIR = /usr/local/lib
+INCLUDE_DEST_DIR = /usr/local/include
+
 # Executable name
 EXEC = bin/main
 TEST_EXEC = bin/tests
@@ -26,9 +31,6 @@ TEST_SRCS = $(wildcard $(TEST_DIR)/*.c)
 OBJS = $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(SRCS))
 TEST_OBJS = $(patsubst $(TEST_DIR)/%.c, $(OBJ_DIR)/test_%.o, $(TEST_SRCS))
 
-# Installation directories
-LIB_DEST_DIR = /usr/local/lib
-INCLUDE_DEST_DIR = /usr/local/include
 
 # Build executable
 $(EXEC): $(OBJS)
