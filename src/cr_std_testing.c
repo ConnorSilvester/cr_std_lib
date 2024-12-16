@@ -4,10 +4,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-test_case_t *cr_std_testing_new_test(const char *name, int (*test_function)(void)) {
-    test_case_t *new_test = (test_case_t *)malloc(sizeof(test_case_t));
+TestCase *cr_std_testing_new_test(const char *name, int (*test_function)(void)) {
+    TestCase *new_test = (TestCase *)malloc(sizeof(TestCase));
     if (!new_test) {
-        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_testing_new_test -> failed to allocate memory for new test_case_t struct");
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_testing_new_test -> failed to allocate memory for new TestCase struct");
         return NULL;
     }
 
@@ -17,11 +17,11 @@ test_case_t *cr_std_testing_new_test(const char *name, int (*test_function)(void
     return new_test;
 }
 
-void cr_std_testing_run_tests(vector_t *tests) {
-    vector_t *list_of_errors = cr_std_vector_new_n(sizeof(test_case_t *));
+void cr_std_testing_run_tests(Vector *tests) {
+    Vector *list_of_errors = cr_std_vector_new_n(sizeof(TestCase *));
     printf("--------------------------------------------------------\n");
     for (int i = 0; i < tests->size; i++) {
-        test_case_t *test = (test_case_t *)cr_std_vector_get_element(tests, i);
+        TestCase *test = (TestCase *)cr_std_vector_get_element(tests, i);
 
         if (test) {
             if (tests->size >= 10 && i + 1 < 10) {
@@ -43,7 +43,7 @@ void cr_std_testing_run_tests(vector_t *tests) {
     if (list_of_errors->size > 0) {
         printf("\033[31mTOTAL_FAILED\033[0m (%ld / %ld)\n\n", list_of_errors->size, tests->size);
         for (int i = 0; i < list_of_errors->size; i++) {
-            test_case_t *test = (test_case_t *)cr_std_vector_get_element(list_of_errors, i);
+            TestCase *test = (TestCase *)cr_std_vector_get_element(list_of_errors, i);
             printf("\033[31mFailed Test\033[0m : %s\n", test->name);
         }
     }

@@ -51,9 +51,9 @@ Once installed you can add the following to your program depending what your nee
 
 **Strings** : Prefix is cr_std_string *
 ```c
-string_t *str = cr_std_string_new("Hello, World");
-string_t *str = cr_std_string_newf("Hello, %s", "World");
-string_t *str = cr_std_string_newf("Hello, %s%d", "World", 4);
+String *str = cr_std_string_new("Hello, World");
+String *str = cr_std_string_newf("Hello, %s", "World");
+String *str = cr_std_string_newf("Hello, %s%d", "World", 4);
 ```
 ```c
 cr_std_string_concat(str, ", This", " Has", " Been", " Concatenated");
@@ -66,16 +66,16 @@ cr_std_string_free(&str);
 **Vectors** : Prefix is cr_std_vector *
 ```c
 // syntax - both can be NULL if you don't want to use them.
-// vector_t *vector = cr_std_vector_new(sizeof(type_to_store), free_function_ptr, copy_function_ptr);
+// Vector *vector = cr_std_vector_new(sizeof(type_to_store), free_function_ptr, copy_function_ptr);
 
 // These are the same, use the _n to save typing NULL
-vector_t *int_vector = cr_std_vector_new(sizeof(int), NULL, NULL);
-vector_t *int_vector = cr_std_vector_new_n(sizeof(int));
+Vector *int_vector = cr_std_vector_new(sizeof(int), NULL, NULL);
+Vector *int_vector = cr_std_vector_new_n(sizeof(int));
 
-// string_t custom free function, string_t custom copy function.
-vector_t *string_vector = cr_std_vector_new(sizeof(string_t *), cr_std_string_free_ptr, cr_std_string_make_copy_ptr);
+// String custom free function, String custom copy function.
+Vector *string_vector = cr_std_vector_new(sizeof(String *), cr_std_string_free_ptr, cr_std_string_make_copy_ptr);
 // general use free function, NULL for copy function, meaning the data will not be copied on push.
-vector_t *tests_vector = cr_std_vector_new(sizeof(test_case_t *), cr_std_free_ptr, NULL);
+Vector *tests_vector = cr_std_vector_new(sizeof(TestCase *), cr_std_free_ptr, NULL);
 ```
 ```c
 // Primitive example
@@ -89,15 +89,15 @@ cr_std_vector_free(&int_vector);
 ```
 ```c
 // String example
-vector_t *dest = cr_std_vector_new(sizeof(string_t *), cr_std_string_free_ptr, cr_std_string_make_copy_ptr);
-vector_t *src = cr_std_vector_new(sizeof(string_t *), cr_std_string_free_ptr, cr_std_string_make_copy_ptr);
+Vector *dest = cr_std_vector_new(sizeof(String *), cr_std_string_free_ptr, cr_std_string_make_copy_ptr);
+Vector *src = cr_std_vector_new(sizeof(String *), cr_std_string_free_ptr, cr_std_string_make_copy_ptr);
 
-string_t *string_1 = cr_std_string_new("String 1");
-string_t *string_2 = cr_std_string_new("String 2");
-string_t *string_3 = cr_std_string_new("String 3");
-string_t *string_4 = cr_std_string_new("String 4");
+String *string_1 = cr_std_string_new("String 1");
+String *string_2 = cr_std_string_new("String 2");
+String *string_3 = cr_std_string_new("String 3");
+String *string_4 = cr_std_string_new("String 4");
 
-// On push data will be copied to a new string_t struct, if the custom_copy function is provided.
+// On push data will be copied to a new String struct, if the custom_copy function is provided.
 cr_std_vector_push_back(dest, string_1);
 cr_std_vector_push_back(dest, string_2);
 cr_std_vector_push_back(src, string_3);
@@ -118,14 +118,14 @@ cr_std_vector_free(&dest);
 cr_std_filesystem_write_to_file("test.txt", "This is test data");
 cr_std_filesystem_append_to_file("test.txt", "."); //file will contain 'This is test data.'
 
-string_t *string = cr_std_filesystem_read_file_as_string("test.txt");
-vector_t *vector = cr_std_filesystem_read_file_as_vector("test.txt");
+String *string = cr_std_filesystem_read_file_as_string("test.txt");
+Vector *vector = cr_std_filesystem_read_file_as_vector("test.txt");
 
-vector_t *vector = cr_std_filesystem_get_dirs("/home/connor/Downloads");
-vector_t *vector = cr_std_filesystem_get_dirs_r("/home/connor/Downloads"); //recursive search
-
-vector_t *vector = cr_std_filesystem_get_dirs_files("src");
-vector_t *vector = cr_std_filesystem_get_dirs_files_r("src"); //recursive search
+// Returns a vector of custom Dirent structs.
+Vector *vector = cr_std_filesystem_get_dirs("/home/connor/Downloads");
+Vector *vector = cr_std_filesystem_get_dirs_r("/home/connor/Downloads"); //recursive search
+Vector *vector = cr_std_filesystem_get_dirs_files("src");
+Vector *vector = cr_std_filesystem_get_dirs_files_r("src"); //recursive search
 ```
 
 **Logging** : Prefix is cr_std_logger *
@@ -144,10 +144,10 @@ cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR, "This is a error message with f
 
 **Testing** : Prefix is cr_std_testing *
 
-For best examples see the /tests directory.
+For best examples see the /tests directory in the source code.
 ```c
 // Make vector of test_cases
-vector_t *tests = cr_std_vector_new(sizeof(test_case_t *), cr_std_free_ptr, NULL);
+Vector *tests = cr_std_vector_new(sizeof(TestCase *), cr_std_free_ptr, NULL);
 
 // cr_std_string_test_new_string_normal is a function pointer to test with. (1 for pass 0 for fail)
 cr_std_vector_push_back(tests, cr_std_testing_new_test("Make String -> Normal", cr_std_string_test_new_string_normal));

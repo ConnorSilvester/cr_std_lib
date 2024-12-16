@@ -9,7 +9,7 @@
 void cr_std_vector_test_all() {
     printf("%s\n", "Running Vector Tests:");
 
-    vector_t *tests = cr_std_vector_new(sizeof(test_case_t *), cr_std_free_ptr, NULL);
+    Vector *tests = cr_std_vector_new(sizeof(TestCase *), cr_std_free_ptr, NULL);
 
     // New Vector
     cr_std_vector_push_back(tests, cr_std_testing_new_test("Make Vector -> Primitive", cr_std_vector_test_new_vector_normal));
@@ -61,43 +61,43 @@ void cr_std_vector_test_all() {
 }
 
 int cr_std_vector_test_new_vector_normal() {
-    vector_t *vector = cr_std_vector_new_n(sizeof(int));
+    Vector *vector = cr_std_vector_new_n(sizeof(int));
     int result = vector != NULL;
     cr_std_vector_free(&vector);
     return result;
 }
 
 int cr_std_vector_test_new_vector_normal_pointer() {
-    vector_t *vector = cr_std_vector_new_n(sizeof(int *));
+    Vector *vector = cr_std_vector_new_n(sizeof(int *));
     int result = vector != NULL;
     cr_std_vector_free(&vector);
     return result;
 }
 
 int cr_std_vector_test_new_vector_custom() {
-    vector_t *vector = cr_std_vector_new_n(sizeof(string_t));
+    Vector *vector = cr_std_vector_new_n(sizeof(String));
     int result = vector != NULL;
     cr_std_vector_free(&vector);
     return result;
 }
 
 int cr_std_vector_test_new_vector_custom_pointer() {
-    vector_t *vector = cr_std_vector_new(sizeof(string_t *), cr_std_string_free_ptr, NULL);
+    Vector *vector = cr_std_vector_new(sizeof(String *), cr_std_string_free_ptr, NULL);
     int result = vector != NULL;
     cr_std_vector_free(&vector);
     return result;
 }
 
 int cr_std_vector_test_free() {
-    vector_t *vector = cr_std_vector_new_n(sizeof(int));
+    Vector *vector = cr_std_vector_new_n(sizeof(int));
     int function_result = cr_std_vector_free(&vector);
     int result = function_result == 0 && vector == NULL;
     return result;
 }
 
 int cr_std_vector_test_free_pointer_vector() {
-    vector_t *vector = cr_std_vector_new(sizeof(string_t *), cr_std_string_free_ptr, NULL);
-    string_t *string = cr_std_string_new("Hello World");
+    Vector *vector = cr_std_vector_new(sizeof(String *), cr_std_string_free_ptr, NULL);
+    String *string = cr_std_string_new("Hello World");
     cr_std_vector_push_back(vector, string);
     int function_result = cr_std_vector_free(&vector);
     int result = function_result == 0 && vector == NULL;
@@ -105,14 +105,14 @@ int cr_std_vector_test_free_pointer_vector() {
 }
 
 int cr_std_vector_test_free_null() {
-    vector_t *vector = NULL;
+    Vector *vector = NULL;
     int function_result = cr_std_vector_free(&vector);
     int result = function_result != 0;
     return result;
 }
 
 int cr_std_vector_test_push_back_primitive() {
-    vector_t *vector = cr_std_vector_new_n(sizeof(int));
+    Vector *vector = cr_std_vector_new_n(sizeof(int));
     int expected_size = 5;
     int number_1 = 1;
     int number_2 = 2;
@@ -131,7 +131,7 @@ int cr_std_vector_test_push_back_primitive() {
 }
 
 int cr_std_vector_test_push_back_primitive_pointer() {
-    vector_t *vector = cr_std_vector_new_n(sizeof(char *));
+    Vector *vector = cr_std_vector_new_n(sizeof(char *));
     int expected_size = 5;
 
     cr_std_vector_push_back(vector, "Hello");
@@ -150,7 +150,7 @@ int cr_std_vector_test_push_back_custom() {
         int y;
     } test_struct_t;
 
-    vector_t *vector = cr_std_vector_new_n(sizeof(test_struct_t));
+    Vector *vector = cr_std_vector_new_n(sizeof(test_struct_t));
     int expected_size = 5;
 
     test_struct_t test_1 = {4, 7};
@@ -170,13 +170,13 @@ int cr_std_vector_test_push_back_custom() {
 }
 
 int cr_std_vector_test_push_back_custom_pointer() {
-    vector_t *vector = cr_std_vector_new(sizeof(string_t *), cr_std_string_free_ptr, NULL);
+    Vector *vector = cr_std_vector_new(sizeof(String *), cr_std_string_free_ptr, NULL);
 
     int expected_size = 4;
-    string_t *string_1 = cr_std_string_new("Hello World");
-    string_t *string_2 = cr_std_string_new("Hello World");
-    string_t *string_3 = cr_std_string_new("Hello World");
-    string_t *string_4 = cr_std_string_new("Hello World");
+    String *string_1 = cr_std_string_new("Hello World");
+    String *string_2 = cr_std_string_new("Hello World");
+    String *string_3 = cr_std_string_new("Hello World");
+    String *string_4 = cr_std_string_new("Hello World");
 
     cr_std_vector_push_back(vector, string_1);
     cr_std_vector_push_back(vector, string_2);
@@ -188,7 +188,7 @@ int cr_std_vector_test_push_back_custom_pointer() {
 }
 
 int cr_std_vector_test_remove_element_primitive() {
-    vector_t *vector = cr_std_vector_new_n(sizeof(int));
+    Vector *vector = cr_std_vector_new_n(sizeof(int));
     int expected_size = 3;
     int number_1 = 1;
     int number_2 = 2;
@@ -210,7 +210,7 @@ int cr_std_vector_test_remove_element_primitive() {
 }
 
 int cr_std_vector_test_remove_element_primitive_pointer() {
-    vector_t *vector = cr_std_vector_new_n(sizeof(char *));
+    Vector *vector = cr_std_vector_new_n(sizeof(char *));
     int expected_size = 3;
     char *string_1 = "Hello";
     char *string_2 = "Hello";
@@ -237,7 +237,7 @@ int cr_std_vector_test_remove_element_custom() {
         int y;
     } test_struct_t;
 
-    vector_t *vector = cr_std_vector_new_n(sizeof(test_struct_t));
+    Vector *vector = cr_std_vector_new_n(sizeof(test_struct_t));
     int expected_size = 3;
 
     test_struct_t test_1 = {4, 7};
@@ -260,13 +260,13 @@ int cr_std_vector_test_remove_element_custom() {
 }
 
 int cr_std_vector_test_remove_element_custom_pointer() {
-    vector_t *vector = cr_std_vector_new(sizeof(string_t *), cr_std_string_free_ptr, cr_std_string_make_copy_ptr);
+    Vector *vector = cr_std_vector_new(sizeof(String *), cr_std_string_free_ptr, cr_std_string_make_copy_ptr);
 
     int expected_size = 2;
-    string_t *string_1 = cr_std_string_new("Hello World");
-    string_t *string_2 = cr_std_string_new("Hello World");
-    string_t *string_3 = cr_std_string_new("Hello World");
-    string_t *string_4 = cr_std_string_new("Hello World");
+    String *string_1 = cr_std_string_new("Hello World");
+    String *string_2 = cr_std_string_new("Hello World");
+    String *string_3 = cr_std_string_new("Hello World");
+    String *string_4 = cr_std_string_new("Hello World");
 
     cr_std_vector_push_back(vector, string_1);
     cr_std_vector_push_back(vector, string_2);
@@ -288,7 +288,7 @@ int cr_std_vector_test_remove_element_custom_pointer() {
 }
 
 int cr_std_vector_test_remove_element_invalid_vector() {
-    vector_t *vector = NULL;
+    Vector *vector = NULL;
 
     int function_result = cr_std_vector_remove_element(vector, 0);
     int result = function_result != 0;
@@ -297,13 +297,13 @@ int cr_std_vector_test_remove_element_invalid_vector() {
 }
 
 int cr_std_vector_test_remove_element_invalid_index() {
-    vector_t *vector = cr_std_vector_new(sizeof(string_t *), cr_std_string_free_ptr, NULL);
+    Vector *vector = cr_std_vector_new(sizeof(String *), cr_std_string_free_ptr, NULL);
 
     int expected_size = 4;
-    string_t *string_1 = cr_std_string_new("Hello World");
-    string_t *string_2 = cr_std_string_new("Hello World");
-    string_t *string_3 = cr_std_string_new("Hello World");
-    string_t *string_4 = cr_std_string_new("Hello World");
+    String *string_1 = cr_std_string_new("Hello World");
+    String *string_2 = cr_std_string_new("Hello World");
+    String *string_3 = cr_std_string_new("Hello World");
+    String *string_4 = cr_std_string_new("Hello World");
 
     cr_std_vector_push_back(vector, string_1);
     cr_std_vector_push_back(vector, string_2);
@@ -317,7 +317,7 @@ int cr_std_vector_test_remove_element_invalid_index() {
 }
 
 int cr_std_vector_test_remove_element_invalid_index_negative() {
-    vector_t *vector = cr_std_vector_new(sizeof(string_t *), cr_std_string_free_ptr, NULL);
+    Vector *vector = cr_std_vector_new(sizeof(String *), cr_std_string_free_ptr, NULL);
 
     int expected_size = 0;
     int function_result = cr_std_vector_remove_element(vector, -2);
@@ -327,7 +327,7 @@ int cr_std_vector_test_remove_element_invalid_index_negative() {
 }
 
 int cr_std_vector_test_remove_element_empty_vector() {
-    vector_t *vector = cr_std_vector_new(sizeof(string_t *), cr_std_string_free_ptr, NULL);
+    Vector *vector = cr_std_vector_new(sizeof(String *), cr_std_string_free_ptr, NULL);
 
     int expected_size = 0;
     int function_result = cr_std_vector_remove_element(vector, 0);
@@ -337,7 +337,7 @@ int cr_std_vector_test_remove_element_empty_vector() {
 }
 
 int cr_std_vector_test_get_element_primitive() {
-    vector_t *vector = cr_std_vector_new_n(sizeof(int));
+    Vector *vector = cr_std_vector_new_n(sizeof(int));
     int expected_size = 5;
     int number_1 = 1;
     int number_2 = 2;
@@ -363,7 +363,7 @@ int cr_std_vector_test_get_element_primitive() {
 }
 
 int cr_std_vector_test_get_element_primitive_pointer() {
-    vector_t *vector = cr_std_vector_new_n(sizeof(char *));
+    Vector *vector = cr_std_vector_new_n(sizeof(char *));
     int expected_size = 5;
     char *string_1 = "Hello";
     char *string_2 = "Hello";
@@ -389,7 +389,7 @@ int cr_std_vector_test_get_element_custom() {
         int y;
     } test_struct_t;
 
-    vector_t *vector = cr_std_vector_new_n(sizeof(test_struct_t));
+    Vector *vector = cr_std_vector_new_n(sizeof(test_struct_t));
     int expected_size = 5;
 
     test_struct_t test_1 = {4, 7};
@@ -415,21 +415,21 @@ int cr_std_vector_test_get_element_custom() {
 }
 
 int cr_std_vector_test_get_element_custom_pointer() {
-    vector_t *vector = cr_std_vector_new(sizeof(string_t *), cr_std_string_free_ptr, NULL);
+    Vector *vector = cr_std_vector_new(sizeof(String *), cr_std_string_free_ptr, NULL);
 
     int expected_size = 4;
-    string_t *string_1 = cr_std_string_new("String 1");
-    string_t *string_2 = cr_std_string_new("String 2");
-    string_t *string_3 = cr_std_string_new("String 3");
-    string_t *string_4 = cr_std_string_new("String 4");
+    String *string_1 = cr_std_string_new("String 1");
+    String *string_2 = cr_std_string_new("String 2");
+    String *string_3 = cr_std_string_new("String 3");
+    String *string_4 = cr_std_string_new("String 4");
 
     cr_std_vector_push_back(vector, string_1);
     cr_std_vector_push_back(vector, string_2);
     cr_std_vector_push_back(vector, string_3);
     cr_std_vector_push_back(vector, string_4);
 
-    string_t *expected_string = cr_std_string_new("String 3");
-    string_t *string = (string_t *)cr_std_vector_get_element(vector, 2);
+    String *expected_string = cr_std_string_new("String 3");
+    String *string = (String *)cr_std_vector_get_element(vector, 2);
 
     int function_result = cr_std_string_compare(string, expected_string);
     int result = vector != NULL && expected_size == vector->size && function_result == 1;
@@ -439,7 +439,7 @@ int cr_std_vector_test_get_element_custom_pointer() {
 }
 
 int cr_std_vector_test_get_element_invalid_vector() {
-    vector_t *vector = NULL;
+    Vector *vector = NULL;
 
     int result = cr_std_vector_get_element(vector, 0) == NULL;
     cr_std_vector_free(&vector);
@@ -447,13 +447,13 @@ int cr_std_vector_test_get_element_invalid_vector() {
 }
 
 int cr_std_vector_test_get_element_invalid_index() {
-    vector_t *vector = cr_std_vector_new(sizeof(string_t *), cr_std_string_free_ptr, NULL);
+    Vector *vector = cr_std_vector_new(sizeof(String *), cr_std_string_free_ptr, NULL);
 
     int expected_size = 4;
-    string_t *string_1 = cr_std_string_new("Hello World");
-    string_t *string_2 = cr_std_string_new("Hello World");
-    string_t *string_3 = cr_std_string_new("Hello World");
-    string_t *string_4 = cr_std_string_new("Hello World");
+    String *string_1 = cr_std_string_new("Hello World");
+    String *string_2 = cr_std_string_new("Hello World");
+    String *string_3 = cr_std_string_new("Hello World");
+    String *string_4 = cr_std_string_new("Hello World");
 
     cr_std_vector_push_back(vector, string_1);
     cr_std_vector_push_back(vector, string_2);
@@ -467,7 +467,7 @@ int cr_std_vector_test_get_element_invalid_index() {
 }
 
 int cr_std_vector_test_get_element_invalid_index_negative() {
-    vector_t *vector = cr_std_vector_new(sizeof(string_t *), cr_std_string_free_ptr, NULL);
+    Vector *vector = cr_std_vector_new(sizeof(String *), cr_std_string_free_ptr, NULL);
 
     int expected_size = 0;
     void *function_result = cr_std_vector_get_element(vector, -2);
@@ -477,7 +477,7 @@ int cr_std_vector_test_get_element_invalid_index_negative() {
 }
 
 int cr_std_vector_test_get_element_empty_vector() {
-    vector_t *vector = cr_std_vector_new(sizeof(string_t *), cr_std_string_free_ptr, NULL);
+    Vector *vector = cr_std_vector_new(sizeof(String *), cr_std_string_free_ptr, NULL);
 
     int expected_size = 0;
     void *function_result = cr_std_vector_get_element(vector, -2);
@@ -487,8 +487,8 @@ int cr_std_vector_test_get_element_empty_vector() {
 }
 
 int cr_std_vector_test_extend_primitive_type() {
-    vector_t *dest = cr_std_vector_new_n(sizeof(int));
-    vector_t *src = cr_std_vector_new_n(sizeof(int));
+    Vector *dest = cr_std_vector_new_n(sizeof(int));
+    Vector *src = cr_std_vector_new_n(sizeof(int));
     int expected_size = 5;
     int number_1 = 1;
     int number_2 = 2;
@@ -517,8 +517,8 @@ int cr_std_vector_test_extend_primitive_type() {
 }
 
 int cr_std_vector_test_extend_primitive_pointer() {
-    vector_t *dest = cr_std_vector_new_n(sizeof(char *));
-    vector_t *src = cr_std_vector_new_n(sizeof(char *));
+    Vector *dest = cr_std_vector_new_n(sizeof(char *));
+    Vector *src = cr_std_vector_new_n(sizeof(char *));
     int expected_size = 5;
     char *string_1 = "Hello";
     char *string_2 = "Hello";
@@ -548,8 +548,8 @@ int cr_std_vector_test_extend_custom() {
         int y;
     } test_struct_t;
 
-    vector_t *dest = cr_std_vector_new_n(sizeof(test_struct_t));
-    vector_t *src = cr_std_vector_new_n(sizeof(test_struct_t));
+    Vector *dest = cr_std_vector_new_n(sizeof(test_struct_t));
+    Vector *src = cr_std_vector_new_n(sizeof(test_struct_t));
     int expected_size = 5;
 
     test_struct_t test_1 = {4, 7};
@@ -579,14 +579,14 @@ int cr_std_vector_test_extend_custom() {
 }
 
 int cr_std_vector_test_extend_custom_pointer() {
-    vector_t *dest = cr_std_vector_new(sizeof(string_t *), cr_std_string_free_ptr, NULL);
-    vector_t *src = cr_std_vector_new(sizeof(string_t *), cr_std_string_free_ptr, NULL);
+    Vector *dest = cr_std_vector_new(sizeof(String *), cr_std_string_free_ptr, NULL);
+    Vector *src = cr_std_vector_new(sizeof(String *), cr_std_string_free_ptr, NULL);
 
     int expected_size = 4;
-    string_t *string_1 = cr_std_string_new("String 1");
-    string_t *string_2 = cr_std_string_new("String 2");
-    string_t *string_3 = cr_std_string_new("String 3");
-    string_t *string_4 = cr_std_string_new("String 4");
+    String *string_1 = cr_std_string_new("String 1");
+    String *string_2 = cr_std_string_new("String 2");
+    String *string_3 = cr_std_string_new("String 3");
+    String *string_4 = cr_std_string_new("String 4");
 
     cr_std_vector_push_back(dest, string_1);
     cr_std_vector_push_back(dest, string_2);
@@ -596,8 +596,8 @@ int cr_std_vector_test_extend_custom_pointer() {
 
     int extend_function_result = cr_std_vector_extend(dest, src);
 
-    string_t *expected_string = cr_std_string_new("String 4");
-    string_t *string = (string_t *)cr_std_vector_get_element(dest, 3);
+    String *expected_string = cr_std_string_new("String 4");
+    String *string = (String *)cr_std_vector_get_element(dest, 3);
 
     int compare_function_result = cr_std_string_compare(string, expected_string);
     int result = dest != NULL && src != NULL && expected_size == dest->size && extend_function_result == 0 && compare_function_result == 1;
@@ -609,14 +609,14 @@ int cr_std_vector_test_extend_custom_pointer() {
 }
 
 int cr_std_vector_test_extend_custom_pointer_copy_elements() {
-    vector_t *dest = cr_std_vector_new(sizeof(string_t *), cr_std_string_free_ptr, cr_std_string_make_copy_ptr);
-    vector_t *src = cr_std_vector_new(sizeof(string_t *), cr_std_string_free_ptr, cr_std_string_make_copy_ptr);
+    Vector *dest = cr_std_vector_new(sizeof(String *), cr_std_string_free_ptr, cr_std_string_make_copy_ptr);
+    Vector *src = cr_std_vector_new(sizeof(String *), cr_std_string_free_ptr, cr_std_string_make_copy_ptr);
 
     int expected_size = 4;
-    string_t *string_1 = cr_std_string_new("String 1");
-    string_t *string_2 = cr_std_string_new("String 2");
-    string_t *string_3 = cr_std_string_new("String 3");
-    string_t *string_4 = cr_std_string_new("String 4");
+    String *string_1 = cr_std_string_new("String 1");
+    String *string_2 = cr_std_string_new("String 2");
+    String *string_3 = cr_std_string_new("String 3");
+    String *string_4 = cr_std_string_new("String 4");
 
     cr_std_vector_push_back(dest, string_1);
     cr_std_vector_push_back(dest, string_2);
@@ -631,8 +631,8 @@ int cr_std_vector_test_extend_custom_pointer_copy_elements() {
     cr_std_string_free(&string_3);
     cr_std_string_free(&string_4);
 
-    string_t *expected_string = cr_std_string_new("String 4");
-    string_t *string = (string_t *)cr_std_vector_get_element(dest, 3);
+    String *expected_string = cr_std_string_new("String 4");
+    String *string = (String *)cr_std_vector_get_element(dest, 3);
 
     int compare_function_result = cr_std_string_compare(string, expected_string);
     int result = dest != NULL && src == NULL && expected_size == dest->size && extend_function_result == 0 && compare_function_result == 1;
@@ -642,16 +642,15 @@ int cr_std_vector_test_extend_custom_pointer_copy_elements() {
     return result;
 }
 
-
 int cr_std_vector_test_extend_incorrect_types() {
-    vector_t *dest = cr_std_vector_new_n(sizeof(int));
-    vector_t *src = cr_std_vector_new(sizeof(string_t *), cr_std_string_free_ptr, cr_std_string_make_copy_ptr);
+    Vector *dest = cr_std_vector_new_n(sizeof(int));
+    Vector *src = cr_std_vector_new(sizeof(String *), cr_std_string_free_ptr, cr_std_string_make_copy_ptr);
     int expected_size = 3;
     int number_1 = 1;
     int number_2 = 2;
     int number_3 = 3;
-    string_t *string_4 = cr_std_string_new("String 4");
-    string_t *string_5 = cr_std_string_new("String 5");
+    String *string_4 = cr_std_string_new("String 4");
+    String *string_5 = cr_std_string_new("String 5");
 
     cr_std_vector_push_back(dest, &number_1);
     cr_std_vector_push_back(dest, &number_2);

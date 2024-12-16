@@ -80,7 +80,7 @@ int cr_std_filesystem_append_to_file(const char *file_path, const char *data) {
     return cr_std_filesystem_write_file_operations(file_path, data, "a");
 }
 
-string_t *cr_std_filesystem_read_file_as_string(const char *file_path) {
+String *cr_std_filesystem_read_file_as_string(const char *file_path) {
     FILE *file = fopen(file_path, "r");
     if (!file) {
         cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_filesystem_read_file_as_string -> file can't be found -> %s", file_path);
@@ -106,7 +106,7 @@ string_t *cr_std_filesystem_read_file_as_string(const char *file_path) {
     return cr_std_string_new(buffer);
 }
 
-vector_t *cr_std_filesystem_read_file_as_vector(const char *file_path) {
+Vector *cr_std_filesystem_read_file_as_vector(const char *file_path) {
     FILE *file = fopen(file_path, "r");
 
     if (!file) {
@@ -114,9 +114,9 @@ vector_t *cr_std_filesystem_read_file_as_vector(const char *file_path) {
         return NULL;
     }
 
-    vector_t *vector = cr_std_vector_new(sizeof(string_t *), cr_std_string_free_ptr, NULL);
+    Vector *vector = cr_std_vector_new(sizeof(String *), cr_std_string_free_ptr, NULL);
     if (!vector) {
-        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_filesystem_read_file_as_vector -> failed to allocate memory for vector_t struct");
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_filesystem_read_file_as_vector -> failed to allocate memory for Vector struct");
         fclose(file);
         return NULL;
     }
@@ -130,9 +130,9 @@ vector_t *cr_std_filesystem_read_file_as_vector(const char *file_path) {
             line[current_index - 1] = '\0';
         }
 
-        string_t *new_string = cr_std_string_new(line);
+        String *new_string = cr_std_string_new(line);
         if (!new_string) {
-            cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_filesystem_read_file_as_vector -> failed to allocate memory for string_t struct");
+            cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_filesystem_read_file_as_vector -> failed to allocate memory for String struct");
             free(line);
             fclose(file);
             cr_std_vector_free(&vector);
@@ -147,21 +147,21 @@ vector_t *cr_std_filesystem_read_file_as_vector(const char *file_path) {
     return vector;
 }
 
-vector_t *cr_std_filesystem_get_entries(const char *file_path, bool include_files, bool include_dirs, bool recursive) {
+Vector *cr_std_filesystem_get_entries(const char *file_path, bool include_files, bool include_dirs, bool recursive) {
     DIR *dir = opendir(file_path);
     if (!dir) {
         cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_filesystem_get_entries -> failed to open dir -> %s", file_path);
         return NULL;
     }
 
-    // Create a vector to store entries of type dirent_t*
-    vector_t *vector = cr_std_vector_new(sizeof(dirent_t *), cr_std_filesystem_dirent_free_ptr, NULL);
-    string_t *current_dir = cr_std_string_new(".");
-    string_t *parent_dir = cr_std_string_new("..");
+    // Create a vector to store entries of type Dirent*
+    Vector *vector = cr_std_vector_new(sizeof(Dirent *), cr_std_filesystem_dirent_free_ptr, NULL);
+    String *current_dir = cr_std_string_new(".");
+    String *parent_dir = cr_std_string_new("..");
 
     struct dirent *entry;
     while ((entry = readdir(dir)) != NULL) {
-        string_t *file_name = cr_std_string_new(entry->d_name);
+        String *file_name = cr_std_string_new(entry->d_name);
         // Skip current and parent directory entries
         if (cr_std_string_compare(file_name, current_dir) == 1 ||
             cr_std_string_compare(file_name, parent_dir) == 1) {
@@ -170,23 +170,23 @@ vector_t *cr_std_filesystem_get_entries(const char *file_path, bool include_file
         }
 
         // Construct full path to the entry
-        string_t *full_path = cr_std_string_newf("%s/%s", file_path, file_name->c_str);
+        String *full_path = cr_std_string_newf("%s/%s", file_path, file_name->c_str);
         if (!full_path) {
             cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_filesystem_get_entries -> memory allocation failed for path -> %s/%s", file_path, file_name->c_str);
             cr_std_string_free(&file_name);
             continue;
         }
 
-        // Allocate and initialize a new dirent_t structure
-        dirent_t *custom_entry = malloc(sizeof(dirent_t));
+        // Allocate and initialize a new Dirent structure
+        Dirent *custom_entry = malloc(sizeof(Dirent));
         if (!custom_entry) {
-            cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_filesystem_get_entries -> memory allocation failed for dirent_t");
+            cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_filesystem_get_entries -> memory allocation failed for Dirent");
             cr_std_string_free(&file_name);
             cr_std_string_free(&full_path);
             continue;
         }
 
-        // Initialize fields in dirent_t
+        // Initialize fields in Dirent
         custom_entry->d_name = file_name;
         custom_entry->d_path = cr_std_string_make_copy(full_path);
         custom_entry->d_type = entry->d_type;
@@ -221,7 +221,7 @@ vector_t *cr_std_filesystem_get_entries(const char *file_path, bool include_file
 
         // Recursive call for directories if enabled
         if (recursive && entry->d_type == DT_DIR) {
-            vector_t *sub_dir_vector = cr_std_filesystem_get_entries(full_path->c_str, include_files, include_dirs, recursive);
+            Vector *sub_dir_vector = cr_std_filesystem_get_entries(full_path->c_str, include_files, include_dirs, recursive);
             if (sub_dir_vector) {
                 cr_std_vector_extend(vector, sub_dir_vector);
                 free(sub_dir_vector);
@@ -237,25 +237,25 @@ vector_t *cr_std_filesystem_get_entries(const char *file_path, bool include_file
     return vector;
 }
 
-vector_t *cr_std_filesystem_get_dirs(const char *file_path) {
+Vector *cr_std_filesystem_get_dirs(const char *file_path) {
     return cr_std_filesystem_get_entries(file_path, false, true, false);
 }
 
-vector_t *cr_std_filesystem_get_dirs_r(const char *file_path) {
+Vector *cr_std_filesystem_get_dirs_r(const char *file_path) {
     return cr_std_filesystem_get_entries(file_path, false, true, true);
 }
 
-vector_t *cr_std_filesystem_get_dir_files(const char *file_path) {
+Vector *cr_std_filesystem_get_dir_files(const char *file_path) {
     return cr_std_filesystem_get_entries(file_path, true, false, false);
 }
 
-vector_t *cr_std_filesystem_get_dir_files_r(const char *file_path) {
+Vector *cr_std_filesystem_get_dir_files_r(const char *file_path) {
     return cr_std_filesystem_get_entries(file_path, true, false, true);
 }
 
-int cr_std_filesystem_dirent_free(dirent_t **dirent_ptr) {
+int cr_std_filesystem_dirent_free(Dirent **dirent_ptr) {
     if (dirent_ptr && *dirent_ptr) {
-        dirent_t *entry = *dirent_ptr;
+        Dirent *entry = *dirent_ptr;
         if (entry->d_name) {
             cr_std_string_free(&(entry->d_name));
         }

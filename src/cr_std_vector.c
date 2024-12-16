@@ -5,16 +5,16 @@
 #include <stdlib.h>
 #include <string.h>
 
-vector_t *cr_std_vector_new(size_t type_size, int (*free_function)(void **), void *(*copy_function)(void *src)) {
+Vector *cr_std_vector_new(size_t type_size, int (*free_function)(void **), void *(*copy_function)(void *src)) {
     if (type_size == 0) {
         cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_vector_new -> type_size cannot be zero");
         return NULL;
     }
 
-    vector_t *vector = malloc(sizeof(vector_t));
+    Vector *vector = malloc(sizeof(Vector));
 
     if (!vector) {
-        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_vector_new -> failed to allocate memory for new vector_t struct");
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_vector_new -> failed to allocate memory for new Vector struct");
         return NULL;
     }
 
@@ -29,17 +29,17 @@ vector_t *cr_std_vector_new(size_t type_size, int (*free_function)(void **), voi
     return vector;
 }
 
-vector_t *cr_std_vector_new_n(size_t type_size) {
+Vector *cr_std_vector_new_n(size_t type_size) {
     return cr_std_vector_new(type_size, NULL, NULL);
 }
 
-int cr_std_vector_free(vector_t **vector_ptr) {
+int cr_std_vector_free(Vector **vector_ptr) {
     if (!vector_ptr || !*vector_ptr) {
         cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_vector_free -> tried to free a NULL vector");
         return 1;
     }
 
-    vector_t *vector = *vector_ptr;
+    Vector *vector = *vector_ptr;
 
     // If the vector holds pointers, free each element using the custom free function
     if (vector->is_pointer) {
@@ -63,7 +63,7 @@ int cr_std_vector_free(vector_t **vector_ptr) {
     return 0;
 }
 
-int cr_std_vector_push_back(vector_t *vector, void *element) {
+int cr_std_vector_push_back(Vector *vector, void *element) {
     if (!vector) {
         cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_vector_push_back -> given vector is NULL");
         return 1;
@@ -76,7 +76,7 @@ int cr_std_vector_push_back(vector_t *vector, void *element) {
 
         void *temp = realloc(vector->elements, new_size);
         if (!temp) {
-            cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_vector_push_back -> failed to realloc memory for vector_t");
+            cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_vector_push_back -> failed to realloc memory for Vector");
             return 1;
         }
         vector->elements = temp;
@@ -106,7 +106,7 @@ int cr_std_vector_push_back(vector_t *vector, void *element) {
     return 0;
 }
 
-int cr_std_vector_remove_element(vector_t *vector, size_t index) {
+int cr_std_vector_remove_element(Vector *vector, size_t index) {
     if (!vector) {
         cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_vector_remove_element -> given vector is NULL");
         return 1;
@@ -142,7 +142,7 @@ int cr_std_vector_remove_element(vector_t *vector, size_t index) {
     return 0;
 }
 
-void *cr_std_vector_get_element(vector_t *vector, size_t index) {
+void *cr_std_vector_get_element(Vector *vector, size_t index) {
     if (!vector) {
         cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_vector_get_element -> given vector is NULL");
         return NULL;
@@ -163,7 +163,7 @@ void *cr_std_vector_get_element(vector_t *vector, size_t index) {
     }
 }
 
-int cr_std_vector_extend(vector_t *dest, vector_t *src) {
+int cr_std_vector_extend(Vector *dest, Vector *src) {
     if (!dest || !src) {
         cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_vector_extend -> given vector(s) is NULL");
         return 1;

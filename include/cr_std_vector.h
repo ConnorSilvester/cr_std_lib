@@ -3,7 +3,7 @@
 
 #include <stdbool.h>
 #include <stdio.h>
-typedef struct vector_t {
+typedef struct Vector {
     void *elements;
     size_t size;
     size_t capacity;
@@ -11,12 +11,12 @@ typedef struct vector_t {
     bool is_pointer;
     int (*free_function)(void **);
     void *(*copy_function)(void *);
-} vector_t;
+} Vector;
 
 /**
- * @brief Creates a new `vector_t` struct.
+ * @brief Creates a new `Vector` struct.
  *
- * @param `type_size` The `sizeof` the element you want to store (e.g. `sizeof(int)`, `sizeof(string_t *)`).
+ * @param `type_size` The `sizeof` the element you want to store (e.g. `sizeof(int)`, `sizeof(String *)`).
  * @param `free_function` The custom free function to be called when freeing the vector,
  *                        Use `cr_std_free_ptr` for generic cr_std types that do not have a custom free function, this just calls stdlib `free`.
  *                        Use `NULL` if you don't want any elements freed, when freeing the vector.
@@ -24,31 +24,31 @@ typedef struct vector_t {
  * @param `copy_function` The custom copy function to be called when adding to the vector with push_back, if you want to copy the data over.
  *                        Use `NULL` if you don't want any data to be copied.
  *
- * @return A pointer to the new `vector_t` struct.
+ * @return A pointer to the new `Vector` struct.
  * @return `NULL` if allocation fails.
  */
-vector_t *cr_std_vector_new(size_t type_size, int (*free_function)(void **), void *(*copy_function)(void *src));
+Vector *cr_std_vector_new(size_t type_size, int (*free_function)(void **), void *(*copy_function)(void *src));
 
 /**
- * @brief Creates a new `vector_t` struct.
+ * @brief Creates a new `Vector` struct.
  *                        This function calls `cr_std_vector_new`, with both functions set to `NULL`.
  *
- * @param `type_size` The `sizeof` the element you want to store (e.g. `sizeof(int)`, `sizeof(string_t *)`).
+ * @param `type_size` The `sizeof` the element you want to store (e.g. `sizeof(int)`, `sizeof(String *)`).
  *
- * @return A pointer to the new `vector_t` struct.
+ * @return A pointer to the new `Vector` struct.
  * @return `NULL` if allocation fails.
  */
-vector_t *cr_std_vector_new_n(size_t type_size);
+Vector *cr_std_vector_new_n(size_t type_size);
 
 /**
- * @brief Frees a `vector_t` struct.
+ * @brief Frees a `Vector` struct.
  *
- * @param `vector` A pointer to a pointer containing the `vector_t` struct
+ * @param `vector` A pointer to a pointer containing the `Vector` struct
  *
  * @return `0` on success.
  * @return `1` on failure.
  */
-int cr_std_vector_free(vector_t **vector_ptr);
+int cr_std_vector_free(Vector **vector_ptr);
 
 /**
  * @brief Adds an element to the vector.
@@ -60,7 +60,7 @@ int cr_std_vector_free(vector_t **vector_ptr);
  * @return `0` on success.
  * @return `1` on failure.
  */
-int cr_std_vector_push_back(vector_t *vector, void *element);
+int cr_std_vector_push_back(Vector *vector, void *element);
 
 /**
  * @brief Removes an element from the vector.
@@ -71,7 +71,7 @@ int cr_std_vector_push_back(vector_t *vector, void *element);
  * @return `0` on success.
  * @return `1` on failure.
  */
-int cr_std_vector_remove_element(vector_t *vector, size_t index);
+int cr_std_vector_remove_element(Vector *vector, size_t index);
 
 /**
  * @brief Fetches an element from the vector.
@@ -82,7 +82,7 @@ int cr_std_vector_remove_element(vector_t *vector, size_t index);
  * @return A `void *` to the element at the given index.
  * @return `NULL` if the index is not valid.
  */
-void *cr_std_vector_get_element(vector_t *vector, size_t index);
+void *cr_std_vector_get_element(Vector *vector, size_t index);
 
 /**
  * @brief Extends a vector with another vector does not realloc the elements.
@@ -93,5 +93,5 @@ void *cr_std_vector_get_element(vector_t *vector, size_t index);
  * @return `0` on success.
  * @return `1` on failure.
  */
-int cr_std_vector_extend(vector_t *dest, vector_t *src);
+int cr_std_vector_extend(Vector *dest, Vector *src);
 #endif // CR_STD_VECTOR

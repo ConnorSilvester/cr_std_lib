@@ -3,19 +3,19 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-typedef struct string_t string_t;
-typedef struct vector_t vector_t;
+typedef struct String String;
+typedef struct Vector Vector;
 
-typedef struct dirent_t {
-    string_t *d_name;       // Entry name
-    string_t *d_path;       // Entry full path
-    string_t *d_ext;        // Entry extension
+typedef struct Dirent {
+    String *d_name;         // Entry name
+    String *d_path;         // Entry full path
+    String *d_ext;          // Entry extension
     int64_t d_size;         // Entry size in bytes
     uint64_t d_inode;       // Entry inode number
     uint64_t d_permissions; // Entry permissions
     unsigned char d_type;   // Entry type (from struct dirent)
-    unsigned char d_hidden; // 1 = hidden, 0 = not hidden
-} dirent_t;
+    bool d_hidden;          // 1 = hidden, 0 = not hidden
+} Dirent;
 
 /**
  * @brief Copy a file from src to dest
@@ -62,24 +62,24 @@ int cr_std_filesystem_write_to_file(const char *file_path, const char *data);
 int cr_std_filesystem_append_to_file(const char *file_path, const char *data);
 
 /**
- * @brief Reads file contents into a `string_t` struct.
+ * @brief Reads file contents into a `String` struct.
  *
  * @param `file_path` A raw string of the file path.
  *
- * @return A pointer to the new `string_t` struct containing the file contents.
+ * @return A pointer to the new `String` struct containing the file contents.
  * @return `NULL` on failure.
  */
-string_t *cr_std_filesystem_read_file_as_string(const char *file_path);
+String *cr_std_filesystem_read_file_as_string(const char *file_path);
 
 /**
- * @brief Reads file contents into a `vector_t` struct, splitting by newline.
+ * @brief Reads file contents into a `Vector` struct, splitting by newline.
  *
  * @param `file_path` A raw string of the file path.
  *
- * @return A pointer to a new `vector_t` struct containing the file contents.
+ * @return A pointer to a new `Vector` struct containing the file contents.
  * @return `NULL` on failure.
  */
-vector_t *cr_std_filesystem_read_file_as_vector(const char *file_path);
+Vector *cr_std_filesystem_read_file_as_vector(const char *file_path);
 
 /**
  * @brief Gets entries given a path and settings.
@@ -89,60 +89,60 @@ vector_t *cr_std_filesystem_read_file_as_vector(const char *file_path);
  * @param `include_dirs` A flag to include dirs or not.
  * @param `recursive` A flag to recursively search or not.
  *
- * @return A pointer to a new `vector_t` struct containing the entries contents.
+ * @return A pointer to a new `Vector` struct containing the entries contents.
  * @return `NULL` on failure.
  */
-vector_t *cr_std_filesystem_get_entries(const char *file_path, bool include_files, bool include_dirs, bool recursive);
+Vector *cr_std_filesystem_get_entries(const char *file_path, bool include_files, bool include_dirs, bool recursive);
 
 /**
  * @brief Reads the contents of a file dir
  *
  * @param `file_path` A raw string of the file path.
  *
- * @return A pointer to a new `vector_t` struct containing `dirent_t` structs of the directories in the dir.
+ * @return A pointer to a new `Vector` struct containing `Dirent` structs of the directories in the dir.
  * @return `NULL` on failure.
  */
-vector_t *cr_std_filesystem_get_dirs(const char *file_path);
+Vector *cr_std_filesystem_get_dirs(const char *file_path);
 
 /**
  * @brief Reads the contents of a file dir recursively.
  *
  * @param `file_path` A raw string of the file path.
  *
- * @return A pointer to a new `vector_t` struct containing `dirent_t` structs of the directories in the dir and all sub dirs.
+ * @return A pointer to a new `Vector` struct containing `Dirent` structs of the directories in the dir and all sub dirs.
  * @return `NULL` on failure.
  */
-vector_t *cr_std_filesystem_get_dirs_r(const char *file_path);
+Vector *cr_std_filesystem_get_dirs_r(const char *file_path);
 
 /**
  * @brief Reads the contents of a file dir
  *
  * @param `file_path` A raw string of the file path.
  *
- * @return A pointer to a new `vector_t` struct containing `dirent_t` structs of the files in the dir.
+ * @return A pointer to a new `Vector` struct containing `Dirent` structs of the files in the dir.
  * @return `NULL` on failure.
  */
-vector_t *cr_std_filesystem_get_dir_files(const char *file_path);
+Vector *cr_std_filesystem_get_dir_files(const char *file_path);
 
 /**
  * @brief Reads the contents of a file dir recursively
  *
  * @param `file_path` A raw string of the file path.
  *
- * @return A pointer to a new `vector_t` struct containing `dirent_t` structs of the files in the dir and all sub dirs.
+ * @return A pointer to a new `Vector` struct containing `Dirent` structs of the files in the dir and all sub dirs.
  * @return `NULL` on failure.
  */
-vector_t *cr_std_filesystem_get_dir_files_r(const char *file_path);
+Vector *cr_std_filesystem_get_dir_files_r(const char *file_path);
 
 /**
- * @brief Free a `dirent_t` struct
+ * @brief Free a `Dirent` struct
  *
- * @param `dirent_ptr` A pointer to a pointer that stores the `dirent_t`
+ * @param `dirent_ptr` A pointer to a pointer that stores the `Dirent`
  *
  * @return `0` on success.
  * @return `1` on failure.
  */
-int cr_std_filesystem_dirent_free(dirent_t **dirent_ptr);
+int cr_std_filesystem_dirent_free(Dirent **dirent_ptr);
 #define cr_std_filesystem_dirent_free_ptr ((int (*)(void **))cr_std_filesystem_dirent_free)
 
 #endif // CR_STD_FILESYSTEM
