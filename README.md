@@ -65,32 +65,49 @@ cr_std_string_free(&str);
 
 **Vectors** : Prefix is cr_std_vector *
 ```c
-// syntax - both can be NULL if you don't want to use them.
-// Vector *vector = cr_std_vector_new(sizeof(type_to_store), free_function_ptr, copy_function_ptr);
+Vector *int_vector = cr_std_vector_new(int);
 
-// These are the same, use the _n to save typing NULL
-Vector *int_vector = cr_std_vector_new(sizeof(int), NULL, NULL);
-Vector *int_vector = cr_std_vector_new_n(sizeof(int));
+// How to use the [] syntax use the cr_std_vector_get_all macro, works with any type.
+int *numbers = cr_std_vector_get_all(int_vector, int); // Vector and the type its storing
+for (int i = 0; i < int_vector->size; i++) {
+    printf("%d\n", numbers[i]);
+}
 
 // String custom free function, String custom copy function.
-Vector *string_vector = cr_std_vector_new(sizeof(String *), cr_std_string_free_ptr, cr_std_string_make_copy_ptr);
-// general use free function, NULL for copy function, meaning the data will not be copied on push.
-Vector *tests_vector = cr_std_vector_new(sizeof(TestCase *), cr_std_free_ptr, NULL);
+// This will copy on push, and free each string on vector_free.
+Vector *string_vector = cr_std_vector_new(String *);
+string_vector->free_function = cr_std_string_free_ptr;
+string_vector->copy_function = cr_std_string_make_copy_ptr;
+
+// This data will not be copied on push.
+// General use free function use in case of basic struct.
+Vector *tests_vector = cr_std_vector_new(TestCase *);
+test_vector->free_function = cr_std_free_ptr;
+
 ```
 ```c
 // Primitive example
 int number = 4;
 cr_std_vector_push_back(int_vector, &number);
 
-int result = *(int *)cr_std_vector_get_element(int_vector, 0);
+// As a pointer
+int *result = cr_std_vector_get_at(int_vector, int, 0);
+
+// As a int value
+int result = *cr_std_vector_get_at(int_vector, int, 0);
 cr_std_vector_remove_element(int_vector, 0);
 
 cr_std_vector_free(&int_vector);
 ```
 ```c
 // String example
-Vector *dest = cr_std_vector_new(sizeof(String *), cr_std_string_free_ptr, cr_std_string_make_copy_ptr);
-Vector *src = cr_std_vector_new(sizeof(String *), cr_std_string_free_ptr, cr_std_string_make_copy_ptr);
+Vector *dest = cr_std_vector_new(String *);
+dest->free_function = cr_std_string_free_ptr;
+dest->copy_function = cr_std_string_make_copy_ptr;
+
+Vector *src = cr_std_vector_new(String *);
+src->free_function = cr_std_string_free_ptr;
+src->copy_function = cr_std_string_make_copy_ptr;
 
 String *string_1 = cr_std_string_new("String 1");
 String *string_2 = cr_std_string_new("String 2");
@@ -105,6 +122,12 @@ cr_std_vector_push_back(src, string_4);
 
 // Copies all data from src to dest vectors.
 cr_std_vector_extend(dest, src);
+
+// Get all elements and print them out
+String **string_vector = cr_std_vector_get_all(dest, String *); // Vector and the type its storing
+for (int i = 0; i < dest->size; i++) {
+    printf("%s\n", string_vector[i]->c_str);
+}
 
 // You can safely free all previous elements as the data is copied into the vector.
 cr_std_vector_free(&src);
@@ -147,7 +170,8 @@ cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR, "This is a error message with f
 For best examples see the /tests directory in the source code.
 ```c
 // Make vector of test_cases
-Vector *tests = cr_std_vector_new(sizeof(TestCase *), cr_std_free_ptr, NULL);
+Vector *tests = cr_std_vector_new(TestCase *);
+test->free_function = cr_std_free_ptr;
 
 // cr_std_string_test_new_string_normal is a function pointer to test with. (1 for pass 0 for fail)
 cr_std_vector_push_back(tests, cr_std_testing_new_test("Make String -> Normal", cr_std_string_test_new_string_normal));

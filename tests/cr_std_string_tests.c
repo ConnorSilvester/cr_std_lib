@@ -9,7 +9,8 @@
 void cr_std_string_test_all() {
     printf("%s\n", "Running String Tests:");
 
-    Vector *tests = cr_std_vector_new(sizeof(TestCase *), cr_std_free_ptr, NULL);
+    Vector *tests = cr_std_vector_new(TestCase *);
+    tests->free_function = cr_std_free_ptr;
 
     // New String
     cr_std_vector_push_back(tests, cr_std_testing_new_test("Make String -> Normal", cr_std_string_test_new_string_normal));
@@ -117,7 +118,6 @@ void cr_std_string_test_all() {
     cr_std_vector_push_back(tests, cr_std_testing_new_test("From Char Ptr Vector -> Normal", cr_std_string_test_from_char_ptr_vector));
     cr_std_vector_push_back(tests, cr_std_testing_new_test("From Char Ptr Vector -> Empty", cr_std_string_test_from_char_ptr_vector_empty));
     cr_std_vector_push_back(tests, cr_std_testing_new_test("From Char Ptr Vector -> NULL", cr_std_string_test_from_char_ptr_vector_null));
-
 
     // Sub String
     cr_std_vector_push_back(tests, cr_std_testing_new_test("Sub String -> Normal", cr_std_string_test_sub_string));
@@ -804,7 +804,10 @@ int cr_std_string_test_from_string_ptr_vector() {
 
 int cr_std_string_test_from_string_ptr_vector_empty() {
     String *string_expected = cr_std_string_new("");
-    Vector *vector = cr_std_vector_new(sizeof(String *), cr_std_string_free_ptr, cr_std_string_make_copy_ptr);
+    Vector *vector = cr_std_vector_new(String *);
+    vector->free_function = cr_std_free_ptr;
+    vector->copy_function = cr_std_string_make_copy_ptr;
+
     String *result_string = cr_std_string_from_string_ptr_vector(vector, ", ");
 
     int compare_result = cr_std_string_compare(result_string, string_expected);
@@ -826,7 +829,7 @@ int cr_std_string_test_from_string_ptr_vector_null() {
 }
 
 int cr_std_string_test_from_char_ptr_vector() {
-    Vector *vector = cr_std_vector_new_n(sizeof(char *));
+    Vector *vector = cr_std_vector_new(char *);
     cr_std_vector_push_back(vector, "Hello");
     cr_std_vector_push_back(vector, "World");
     cr_std_vector_push_back(vector, "This");
@@ -850,7 +853,7 @@ int cr_std_string_test_from_char_ptr_vector() {
 
 int cr_std_string_test_from_char_ptr_vector_empty() {
     String *string_expected = cr_std_string_new("");
-    Vector *vector = cr_std_vector_new_n(sizeof(char *));
+    Vector *vector = cr_std_vector_new(char *);
     String *result_string = cr_std_string_from_char_ptr_vector(vector, ", ");
 
     int compare_result = cr_std_string_compare(result_string, string_expected);
@@ -871,7 +874,6 @@ int cr_std_string_test_from_char_ptr_vector_null() {
     return result;
 }
 
-
 int cr_std_string_test_sub_string() {
     String *string = cr_std_string_new("This is a Test String which i want to use!");
     String *string_expected = cr_std_string_new("Test String");
@@ -886,7 +888,6 @@ int cr_std_string_test_sub_string() {
     cr_std_string_free(&result_string);
     return result;
 }
-
 
 int cr_std_string_test_sub_string_index_too_low() {
     String *string = cr_std_string_new("This is a Test String which i want to use!");
@@ -903,7 +904,6 @@ int cr_std_string_test_sub_string_index_too_low() {
     return result;
 }
 
-
 int cr_std_string_test_sub_string_index_too_high() {
     String *string = cr_std_string_new("This is a Test String which i want to use!");
     String *string_expected = cr_std_string_new("Test String which i want to use!");
@@ -918,7 +918,6 @@ int cr_std_string_test_sub_string_index_too_high() {
     cr_std_string_free(&result_string);
     return result;
 }
-
 
 int cr_std_string_test_sub_string_index_invalid() {
     String *string = cr_std_string_new("This is a Test String which i want to use!");

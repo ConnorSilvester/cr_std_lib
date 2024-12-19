@@ -114,7 +114,8 @@ Vector *cr_std_filesystem_read_file_as_vector(const char *file_path) {
         return NULL;
     }
 
-    Vector *vector = cr_std_vector_new(sizeof(String *), cr_std_string_free_ptr, NULL);
+    Vector *vector = cr_std_vector_new(String *);
+    vector->free_function = cr_std_string_free_ptr;
     if (!vector) {
         cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_filesystem_read_file_as_vector -> failed to allocate memory for Vector struct");
         fclose(file);
@@ -155,7 +156,9 @@ Vector *cr_std_filesystem_get_entries(const char *file_path, bool include_files,
     }
 
     // Create a vector to store entries of type Dirent*
-    Vector *vector = cr_std_vector_new(sizeof(Dirent *), cr_std_filesystem_dirent_free_ptr, NULL);
+    Vector *vector = cr_std_vector_new(Dirent *);
+    vector->free_function = cr_std_filesystem_dirent_free_ptr;
+
     String *current_dir = cr_std_string_new(".");
     String *parent_dir = cr_std_string_new("..");
 

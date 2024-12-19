@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-Vector *cr_std_vector_new(size_t type_size, int (*free_function)(void **), void *(*copy_function)(void *src)) {
+Vector *cr_std_vector_new_t(size_t type_size) {
     if (type_size == 0) {
         cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_vector_new -> type_size cannot be zero");
         return NULL;
@@ -19,18 +19,14 @@ Vector *cr_std_vector_new(size_t type_size, int (*free_function)(void **), void 
     }
 
     vector->size = 0;
-    vector->capacity = 4;
+    vector->capacity = CR_STD_VECTOR_DEFAULT_SIZE;
     vector->type_size = type_size;
     vector->is_pointer = vector->type_size == sizeof(void *);
-    vector->elements = malloc(vector->capacity * sizeof(void *));
-    vector->free_function = free_function;
-    vector->copy_function = copy_function;
+    vector->free_function = NULL;
+    vector->copy_function = NULL;
+    vector->elements = malloc(vector->capacity * vector->type_size);
 
     return vector;
-}
-
-Vector *cr_std_vector_new_n(size_t type_size) {
-    return cr_std_vector_new(type_size, NULL, NULL);
 }
 
 int cr_std_vector_free(Vector **vector_ptr) {
