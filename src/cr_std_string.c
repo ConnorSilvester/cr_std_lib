@@ -716,7 +716,7 @@ String *cr_std_string_from_string_ptr_vector(Vector *vector, const char *delimit
         return NULL;
     }
 
-    if (!vector->is_pointer || vector->type_size != sizeof(String *)) {
+    if (!cr_std_vector_contains_pointer(vector) || vector->type_size != sizeof(String *)) {
         cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_from_string_ptr_vector -> given vector does not contain String pointers");
         return NULL;
     }
@@ -724,7 +724,7 @@ String *cr_std_string_from_string_ptr_vector(Vector *vector, const char *delimit
     StringBuilder *sb = cr_std_string_builder_new("");
 
     for (int i = 0; i < vector->size; i++) {
-        String *current_string = (String *)cr_std_vector_get_element(vector, i);
+        String *current_string = cr_std_vector_get_at(vector, String, i);
         if (!current_string) {
             cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_WARNING, "cr_std_string_from_string_ptr_vector -> element at index %zu is NULL", i);
             continue; // Skip NULL elements.
@@ -752,7 +752,7 @@ String *cr_std_string_from_char_ptr_vector(Vector *vector, const char *delimiter
         return NULL;
     }
 
-    if (!vector->is_pointer || vector->type_size != sizeof(char *)) {
+    if (!cr_std_vector_contains_pointer(vector) || vector->type_size != sizeof(char *)) {
         cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_from_char_ptr_vector -> given vector does not contain char pointers");
         return NULL;
     }
@@ -760,7 +760,7 @@ String *cr_std_string_from_char_ptr_vector(Vector *vector, const char *delimiter
     StringBuilder *sb = cr_std_string_builder_new("");
 
     for (int i = 0; i < vector->size; i++) {
-        char *current_string = (char *)cr_std_vector_get_element(vector, i);
+        char *current_string = cr_std_vector_get_at(vector, char, i);
         if (!current_string) {
             cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_WARNING, "cr_std_string_from_char_ptr_vector -> element at index %zu is NULL", i);
             continue; // Skip NULL elements.

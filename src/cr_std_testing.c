@@ -21,7 +21,7 @@ void cr_std_testing_run_tests(Vector *tests) {
     Vector *list_of_errors = cr_std_vector_new(TestCase *);
     printf("--------------------------------------------------------\n");
     for (int i = 0; i < tests->size; i++) {
-        TestCase *test = (TestCase *)cr_std_vector_get_element(tests, i);
+        TestCase *test = cr_std_vector_get_at(tests, TestCase, i);
 
         if (test) {
             if (tests->size >= 10 && i + 1 < 10) {
@@ -43,7 +43,7 @@ void cr_std_testing_run_tests(Vector *tests) {
     if (list_of_errors->size > 0) {
         printf("\033[31mTOTAL_FAILED\033[0m (%ld / %ld)\n\n", list_of_errors->size, tests->size);
         for (int i = 0; i < list_of_errors->size; i++) {
-            TestCase *test = (TestCase *)cr_std_vector_get_element(list_of_errors, i);
+            TestCase *test = cr_std_vector_get_at(list_of_errors, TestCase, i);
             printf("\033[31mFailed Test\033[0m : %s\n", test->name);
         }
     }

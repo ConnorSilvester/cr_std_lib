@@ -7,7 +7,6 @@ typedef struct Vector {
     size_t size;
     size_t capacity;
     size_t type_size;
-    bool is_pointer;
     int (*free_function)(void **);
     void *(*copy_function)(void *);
     void *elements;
@@ -82,4 +81,14 @@ void *cr_std_vector_get_element(Vector *vector, size_t index);
  * @return `1` on failure.
  */
 int cr_std_vector_extend(Vector *dest, Vector *src);
+
+/**
+ * @brief Checks if a given vector contains pointers.
+ *
+ * @param `vector` The vector to check.
+ *
+ * @return `true` if it contains pointers.
+ * @return `false` if it contains data not pointers.
+ */
+bool cr_std_vector_contains_pointer(Vector *vector);
 #endif // CR_STD_VECTOR

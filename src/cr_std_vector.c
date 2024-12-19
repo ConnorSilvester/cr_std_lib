@@ -21,7 +21,6 @@ Vector *cr_std_vector_new_t(size_t type_size) {
     vector->size = 0;
     vector->capacity = CR_STD_VECTOR_DEFAULT_SIZE;
     vector->type_size = type_size;
-    vector->is_pointer = vector->type_size == sizeof(void *);
     vector->free_function = NULL;
     vector->copy_function = NULL;
     vector->elements = malloc(vector->capacity * vector->type_size);
@@ -38,7 +37,7 @@ int cr_std_vector_free(Vector **vector_ptr) {
     Vector *vector = *vector_ptr;
 
     // If the vector holds pointers, free each element using the custom free function
-    if (vector->is_pointer) {
+    if (cr_std_vector_contains_pointer(vector)) {
         for (size_t i = 0; i < vector->size; i++) {
             void *element = ((void **)vector->elements)[i];
             if (vector->free_function) { // Check if a custom free function is provided
@@ -78,7 +77,7 @@ int cr_std_vector_push_back(Vector *vector, void *element) {
         vector->elements = temp;
     }
 
-    if (vector->is_pointer) {
+    if (cr_std_vector_contains_pointer(vector)) {
         if (vector->copy_function) {
             // Use the custom copy function to create a deep copy
             void *copied_element = vector->copy_function(element);
@@ -113,7 +112,7 @@ int cr_std_vector_remove_element(Vector *vector, size_t index) {
         return 1;
     }
 
-    if (vector->is_pointer) {
+    if (cr_std_vector_contains_pointer(vector)) {
         void *element = ((void **)vector->elements)[index];
         if (vector->free_function && element) {
             int result = vector->free_function(&element);
@@ -149,7 +148,7 @@ void *cr_std_vector_get_element(Vector *vector, size_t index) {
         return NULL;
     }
 
-    if (vector->is_pointer) {
+    if (cr_std_vector_contains_pointer(vector)) {
         // If the vector holds pointers, return the pointer
         return ((void **)vector->elements)[index];
     } else {
@@ -174,4 +173,8 @@ int cr_std_vector_extend(Vector *dest, Vector *src) {
         cr_std_vector_push_back(dest, cr_std_vector_get_element(src, i));
     }
     return 0;
+}
+
+bool cr_std_vector_contains_pointer(Vector *vector) {
+    return vector->type_size == sizeof(void *);
 }

@@ -363,10 +363,10 @@ int cr_std_vector_test_get_element_primitive() {
     cr_std_vector_push_back(vector, &number_5);
 
     // Change the number
-    int *number = (int *)cr_std_vector_get_element(vector, 2);
+    int *number = cr_std_vector_get_at(vector, int, 2);
     *number = 10;
 
-    int actual_number = *(int *)cr_std_vector_get_element(vector, 2);
+    int actual_number = *cr_std_vector_get_at(vector, int, 2);
 
     int result = vector != NULL && expected_size == vector->size && actual_number == 10;
     cr_std_vector_free(&vector);
@@ -388,7 +388,7 @@ int cr_std_vector_test_get_element_primitive_pointer() {
     cr_std_vector_push_back(vector, string_4);
     cr_std_vector_push_back(vector, string_5);
 
-    char *string = (char *)cr_std_vector_get_element(vector, 2);
+    char *string = cr_std_vector_get_at(vector, char, 2);
     int result = vector != NULL && expected_size == vector->size && string != NULL;
     cr_std_vector_free(&vector);
     return result;
@@ -415,10 +415,10 @@ int cr_std_vector_test_get_element_custom() {
     cr_std_vector_push_back(vector, &test_4);
     cr_std_vector_push_back(vector, &test_5);
 
-    TestStruct *test = (TestStruct *)cr_std_vector_get_element(vector, 2);
+    TestStruct *test = cr_std_vector_get_at(vector, TestStruct, 2);
     // Change the number
     test->x = 10;
-    TestStruct actual_test = *(TestStruct *)cr_std_vector_get_element(vector, 2);
+    TestStruct actual_test = *cr_std_vector_get_at(vector, TestStruct, 2);
 
     int result = vector != NULL && expected_size == vector->size && actual_test.x == 10;
     cr_std_vector_free(&vector);
@@ -441,7 +441,7 @@ int cr_std_vector_test_get_element_custom_pointer() {
     cr_std_vector_push_back(vector, string_4);
 
     String *expected_string = cr_std_string_new("String 3");
-    String *string = (String *)cr_std_vector_get_element(vector, 2);
+    String *string = cr_std_vector_get_at(vector, String, 2);
 
     int function_result = cr_std_string_compare(string, expected_string);
     int result = vector != NULL && expected_size == vector->size && function_result == 1;
@@ -522,9 +522,9 @@ int cr_std_vector_test_extend_primitive_type() {
     cr_std_vector_free(&src);
 
     // Change the number
-    int *number = (int *)cr_std_vector_get_element(dest, 3);
+    int *number = cr_std_vector_get_at(dest, int, 3);
     *number = 10;
-    int actual_number = *(int *)cr_std_vector_get_element(dest, 3);
+    int actual_number = *cr_std_vector_get_at(dest, int, 3);
 
     int result = dest != NULL && src == NULL && expected_size == dest->size && actual_number == 10 && function_result == 0;
     cr_std_vector_free(&dest);
@@ -551,7 +551,7 @@ int cr_std_vector_test_extend_primitive_pointer() {
     int function_result = cr_std_vector_extend(dest, src);
     cr_std_vector_free(&src);
 
-    char *string = (char *)cr_std_vector_get_element(dest, 3);
+    char *string = cr_std_vector_get_at(dest, char, 3);
     int result = dest != NULL && src == NULL && expected_size == dest->size && string != NULL && function_result == 0;
     cr_std_vector_free(&dest);
     return result;
@@ -583,10 +583,10 @@ int cr_std_vector_test_extend_custom() {
     int function_result = cr_std_vector_extend(dest, src);
     cr_std_vector_free(&src);
 
-    TestStruct *test = (TestStruct *)cr_std_vector_get_element(dest, 3);
+    TestStruct *test = cr_std_vector_get_at(dest, TestStruct, 3);
     // Change the number
     test->x = 10;
-    TestStruct actual_test = *(TestStruct *)cr_std_vector_get_element(dest, 3);
+    TestStruct actual_test = *cr_std_vector_get_at(dest, TestStruct, 3);
 
     int result = dest != NULL && src == NULL && expected_size == dest->size && actual_test.x == 10 && function_result == 0;
     cr_std_vector_free(&dest);
@@ -614,7 +614,7 @@ int cr_std_vector_test_extend_custom_pointer() {
     int extend_function_result = cr_std_vector_extend(dest, src);
 
     String *expected_string = cr_std_string_new("String 4");
-    String *string = (String *)cr_std_vector_get_element(dest, 3);
+    String *string = cr_std_vector_get_at(dest, String, 3);
 
     int compare_function_result = cr_std_string_compare(string, expected_string);
     int result = dest != NULL && src != NULL && expected_size == dest->size && extend_function_result == 0 && compare_function_result == 1;
@@ -653,7 +653,7 @@ int cr_std_vector_test_extend_custom_pointer_copy_elements() {
     cr_std_string_free(&string_4);
 
     String *expected_string = cr_std_string_new("String 4");
-    String *string = (String *)cr_std_vector_get_element(dest, 3);
+    String *string = cr_std_vector_get_at(dest, String, 3);
 
     int compare_function_result = cr_std_string_compare(string, expected_string);
     int result = dest != NULL && src == NULL && expected_size == dest->size && extend_function_result == 0 && compare_function_result == 1;
