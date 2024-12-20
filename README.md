@@ -153,13 +153,26 @@ Vector *vector = cr_std_filesystem_get_dirs_files_r("src"); //recursive search
 
 **Logging** : Prefix is cr_std_logger *
 ```c
-// 3 Defined Log Levels
+// 3 Defined Log Types
 #define CR_STD_LOGGER_LOG_TYPE_INFO 0
 #define CR_STD_LOGGER_LOG_TYPE_WARNING 1
 #define CR_STD_LOGGER_LOG_TYPE_ERROR 2
+
+// 4 Defined Log Levels
+// Set to ALL by default
+#define CR_STD_LOGGER_LOG_LEVEL_ALL 0
+#define CR_STD_LOGGER_LOG_LEVEL_WARNING 1
+#define CR_STD_LOGGER_LOG_LEVEL_ERROR 2
+#define CR_STD_LOGGER_LOG_LEVEL_NONE 3
 ```
 
 ```c
+// Disable logger output
+cr_std_logger_set_log_level(CR_STD_LOGGER_LOG_LEVEL_NONE);
+
+// Set to show all logger outputs
+cr_std_logger_set_log_level(CR_STD_LOGGER_LOG_LEVEL_ALL);
+
 cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_INFO, "This is a info message");
 cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR, "This is a error message with filename : %s", file_name); //Same formatting as printf
 ```

@@ -69,8 +69,6 @@ $(TEST_EXEC): $(TEST_OBJS) $(LIB_FILE)
 	mkdir -p bin
 	$(CC) $(CFLAGS) $(TEST_OBJS) -L. -l$(LIB_NAME) -o $(TEST_EXEC)
 
-run_tests: CFLAGS += -DCR_STD_TESTING_MODE
-run_tests: CFLAGS += -g
 run_tests: clean $(TEST_EXEC)
 	$(TEST_EXEC)
 
