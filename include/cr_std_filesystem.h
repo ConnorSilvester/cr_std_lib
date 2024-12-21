@@ -2,6 +2,7 @@
 #define CR_STD_FILESYSTEM
 #include <stdbool.h>
 #include <stdint.h>
+#include <sys/types.h>
 
 typedef struct String String;
 typedef struct Vector Vector;
@@ -38,6 +39,16 @@ int cr_std_filesystem_copy_file(const char *src, const char *dest);
  * @return `1` on failure.
  */
 int cr_std_filesystem_move_file(const char *src, const char *dest);
+
+/**
+ * @brief Makes a directory
+ *
+ * @param `dir_path` The directory path to create
+ *
+ * @return `0` on success.
+ * @return `1` on failure.
+ */
+int cr_std_filesystem_make_dir(const char *dir_path, mode_t permissions);
 
 /**
  * @brief Writes the contents of `data` into the file at `file_path`

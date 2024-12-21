@@ -3,11 +3,9 @@
 #include "cr_std_string.h"
 #include "cr_std_vector.h"
 #include <dirent.h>
-#include <stdio.h>
+#include <errno.h>
 #include <stdlib.h>
-#include <string.h>
 #include <sys/stat.h>
-#include <unistd.h>
 
 int cr_std_filesystem_copy_file(const char *src, const char *dest) {
 
@@ -48,7 +46,43 @@ int cr_std_filesystem_copy_file(const char *src, const char *dest) {
 }
 
 int cr_std_filesystem_move_file(const char *src, const char *dest) {
-    return rename(src, dest);
+    if (rename(src, dest) == 0) {
+        cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_INFO, "cr_std_filesystem_move_file -> File moved from '%s' to '%s' successfully", src, dest);
+        return 0;
+    } else {
+        if (errno == ENOENT) {
+            cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_filesystem_move_file -> Source file '%s' or destination '%s' does not exist", src, dest);
+        } else if (errno == EACCES) {
+            cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_filesystem_move_file -> Permission denied when accessing '%s' or '%s'", src, dest);
+        } else if (errno == ENOTDIR) {
+            cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_filesystem_move_file -> Part of the path does not exist in '%s' or '%s'", src, dest);
+        } else if (errno == EEXIST) {
+            cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_filesystem_move_file -> The destination file '%s' already exists", dest);
+        } else if (errno == EXDEV) {
+            cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_filesystem_move_file -> Can not move file across different filesystems");
+        } else {
+            cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_filesystem_move_file -> Failed to move file");
+        }
+        return 1;
+    }
+}
+
+int cr_std_filesystem_make_dir(const char *dir_path, mode_t permissions) {
+    if (mkdir(dir_path, permissions) == 0) {
+        cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_INFO, "cr_std_filesystem_make_dir -> Directory created '%s'", dir_path);
+        return 0;
+    } else {
+        if (errno == EEXIST) {
+            cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_filesystem_make_dir -> Directory already exists '%s'", dir_path);
+        } else if (errno == EACCES) {
+            cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_filesystem_make_dir -> Permission denied could not create directory '%s'", dir_path);
+        } else if (errno == ENOENT) {
+            cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_filesystem_make_dir -> Part of the directory could not be found '%s'", dir_path);
+        } else {
+            cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_filesystem_make_dir -> Failed to create directory");
+        }
+        return 1;
+    }
 }
 
 int cr_std_filesystem_write_file_operations(const char *file_path, const char *data, const char *mode) {
