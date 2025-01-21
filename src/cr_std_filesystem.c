@@ -6,6 +6,23 @@
 #include <errno.h>
 #include <stdlib.h>
 #include <sys/stat.h>
+#include <time.h>
+
+String *cr_std_filesystem_get_current_time_date(const char *time_date_format) {
+    time_t rawtime;
+    struct tm *timeinfo;
+    char time_str[256];
+
+    time(&rawtime);
+    timeinfo = localtime(&rawtime);
+
+    if (strftime(time_str, sizeof(time_str), time_date_format, timeinfo) == 0) {
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_filesystem_get_current_time -> strftime failed to format the format string");
+        return NULL;
+    }
+
+    return cr_std_string_new(time_str);
+}
 
 int cr_std_filesystem_copy_file(const char *src, const char *dest) {
 
@@ -73,7 +90,7 @@ int cr_std_filesystem_make_dir(const char *dir_path, mode_t permissions) {
         return 0;
     } else {
         if (errno == EEXIST) {
-            cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_filesystem_make_dir -> Directory already exists '%s'", dir_path);
+            cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_WARNING, "cr_std_filesystem_make_dir -> Directory already exists '%s'", dir_path);
         } else if (errno == EACCES) {
             cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_filesystem_make_dir -> Permission denied could not create directory '%s'", dir_path);
         } else if (errno == ENOENT) {

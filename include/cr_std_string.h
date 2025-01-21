@@ -237,7 +237,7 @@ int cr_std_string_find_char_last(String *string, char ch);
  * @return `number of occurrences` if the string contains the phrase
  * @return `0` if the string does not contain the phrase
  */
-int cr_std_string_contains_string(String *string, char *phrase);
+int cr_std_string_contains_string(String *string, const char *phrase);
 
 /**
  * @brief Check if a string contains a char.

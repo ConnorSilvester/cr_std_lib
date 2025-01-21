@@ -2,7 +2,7 @@
 CC = gcc
 
 # Compiler flags
-CFLAGS = -Wall
+CFLAGS = -Wall -Werror
 
 # Change this as needed
 # Installation directories

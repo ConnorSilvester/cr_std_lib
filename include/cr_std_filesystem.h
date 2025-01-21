@@ -19,6 +19,16 @@ typedef struct Dirent {
 } Dirent;
 
 /**
+ * @brief Get local time or date information
+ *
+ * @param `time_date_format` The format for the string, example ("%d-%m-%Y %H:%M:%S")
+ *
+ * @return `String` containing the information on success.
+ * @return `NULL` on failure.
+ */
+String *cr_std_filesystem_get_current_time_date(const char *time_date_format);
+
+/**
  * @brief Copy a file from src to dest
  *
  * @param `src` The source file to copy from

@@ -424,7 +424,7 @@ int cr_std_string_find_char_last(String *string, char ch) {
     return -1;
 }
 
-int cr_std_string_contains_string(String *string, char *phrase) {
+int cr_std_string_contains_string(String *string, const char *phrase) {
     if (!string) {
         cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_contains_string -> string pointer is NULL");
         return 0;
@@ -544,7 +544,6 @@ int cr_std_string_replace_string(String *string, char *from, char *to) {
 
     int occurrences = cr_std_string_contains_string(string, from);
     if (occurrences == 0) {
-        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_WARNING, "cr_std_string_replace_string -> string does not contain phrase");
         return 0;
     }
 
