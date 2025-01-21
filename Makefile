@@ -2,7 +2,7 @@
 CC = gcc
 
 # Compiler flags
-CFLAGS = -Wall -Werror
+CFLAGS = -std=c99 -Wall -Werror
 
 # Change this as needed
 # Installation directories

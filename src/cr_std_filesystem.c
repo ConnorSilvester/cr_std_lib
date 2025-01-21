@@ -158,45 +158,18 @@ String *cr_std_filesystem_read_file_as_string(const char *file_path) {
 }
 
 Vector *cr_std_filesystem_read_file_as_vector(const char *file_path) {
-    FILE *file = fopen(file_path, "r");
-
-    if (!file) {
-        cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_filesystem_read_file_as_vector -> failed to find file %s", file_path);
+    String *file_contents = cr_std_filesystem_read_file_as_string(file_path);
+    if (!file_contents) {
+        cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_filesystem_read_file_as_vector -> failed to read file contents -> %s", file_path);
         return NULL;
     }
 
-    Vector *vector = cr_std_vector_new(String *);
-    vector->free_function = cr_std_string_free_ptr;
-    if (!vector) {
-        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_filesystem_read_file_as_vector -> failed to allocate memory for Vector struct");
-        fclose(file);
-        return NULL;
+    Vector *file_lines = cr_std_string_split(file_contents, '\n');
+    if (!file_lines) {
+        cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_filesystem_read_file_as_vector -> failed to split file contents -> %s", file_path);
     }
-
-    char *line;
-    size_t line_length = 0;
-    ssize_t current_index = getline(&line, &line_length, file);
-
-    while (current_index != -1) {
-        if (current_index > 0 && line[current_index - 1] == '\n') {
-            line[current_index - 1] = '\0';
-        }
-
-        String *new_string = cr_std_string_new(line);
-        if (!new_string) {
-            cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_filesystem_read_file_as_vector -> failed to allocate memory for String struct");
-            free(line);
-            fclose(file);
-            cr_std_vector_free(&vector);
-            return NULL;
-        }
-        cr_std_vector_push_back(vector, new_string);
-        current_index = getline(&line, &line_length, file);
-    }
-
-    free(line);
-    fclose(file);
-    return vector;
+    cr_std_string_free(&file_contents);
+    return file_lines;
 }
 
 Vector *cr_std_filesystem_get_entries(const char *file_path, bool include_files, bool include_dirs, bool recursive) {
@@ -247,26 +220,27 @@ Vector *cr_std_filesystem_get_entries(const char *file_path, bool include_files,
         custom_entry->d_hidden = (file_name->c_str[0] == '.') ? 1 : 0;
 
         // Set file extension
-        if (entry->d_type != DT_DIR && cr_std_string_find_char_last(file_name, '.') != -1) {
-            custom_entry->d_ext = cr_std_string_sub_string(file_name, cr_std_string_find_char_last(file_name, '.'), file_name->length);
-        } else {
-            custom_entry->d_ext = cr_std_string_new("N/A");
-        }
-
-        // Get file stats
         struct stat file_stat;
         if (stat(full_path->c_str, &file_stat) == 0) {
+            if (!S_ISDIR(file_stat.st_mode) && cr_std_string_find_char_last(file_name, '.') != -1) {
+                custom_entry->d_ext = cr_std_string_sub_string(file_name, cr_std_string_find_char_last(file_name, '.'), file_name->length);
+            } else {
+                custom_entry->d_ext = cr_std_string_new("N/A");
+            }
+
+            // Get file stats
             custom_entry->d_size = file_stat.st_size;
             custom_entry->d_inode = file_stat.st_ino;
             custom_entry->d_permissions = file_stat.st_mode;
         } else {
+            custom_entry->d_ext = cr_std_string_new("N/A");
             custom_entry->d_size = -1;
             custom_entry->d_inode = 0;
             custom_entry->d_permissions = 0;
         }
 
         // Only push the entry to the vector if it matches the include conditions
-        if ((entry->d_type == DT_DIR && include_dirs) || (entry->d_type != DT_DIR && include_files)) {
+        if ((S_ISDIR(file_stat.st_mode) && include_dirs) || (!S_ISDIR(file_stat.st_mode) && include_files)) {
             cr_std_vector_push_back(vector, custom_entry);
         } else {
             // If the entry is not included, free the memory
@@ -274,7 +248,7 @@ Vector *cr_std_filesystem_get_entries(const char *file_path, bool include_files,
         }
 
         // Recursive call for directories if enabled
-        if (recursive && entry->d_type == DT_DIR) {
+        if (recursive && S_ISDIR(file_stat.st_mode)) {
             Vector *sub_dir_vector = cr_std_filesystem_get_entries(full_path->c_str, include_files, include_dirs, recursive);
             if (sub_dir_vector) {
                 cr_std_vector_extend(vector, sub_dir_vector);
