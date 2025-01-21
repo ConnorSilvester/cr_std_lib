@@ -117,7 +117,7 @@ int cr_std_string_builder_append_single(StringBuilder *string_builder, const cha
 
 int cr_std_string_builder_appendf(StringBuilder *string_builder, const char *format, ...) {
     if (!string_builder) {
-        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_builder_append -> given string builder is NULL");
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_builder_appendf -> given string builder is NULL");
         return 1;
     }
 
@@ -126,14 +126,21 @@ int cr_std_string_builder_appendf(StringBuilder *string_builder, const char *for
     size_t string_to_append_length = vsnprintf(NULL, 0, format, args);
     va_end(args);
 
-    char buffer[string_to_append_length + 1];
+    char *buffer = (char *)malloc(string_to_append_length + 1);
+    if (!buffer) {
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_builder_appendf -> memory allocation failed for buffer");
+        return 1;
+    }
 
     va_start(args, format);
     vsnprintf(buffer, string_to_append_length + 1, format, args);
     va_end(args);
 
-    buffer[string_to_append_length + 1] = '\0';
-    return cr_std_string_builder_append_single(string_builder, buffer);
+    buffer[string_to_append_length] = '\0';
+    int result = cr_std_string_builder_append_single(string_builder, buffer);
+
+    free(buffer);
+    return result;
 }
 
 int cr_std_string_builder_append_null_terminated(StringBuilder *string_builder, ...) {
@@ -700,13 +707,19 @@ String *cr_std_string_sub_string(String *string, int start_index, int end_index)
     }
 
     size_t sub_length = end_index - start_index;
-    char sub_data[sub_length];
+
+    char *sub_data = (char *)malloc(sub_length + 1);
+    if (!sub_data) {
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_sub_string -> failed to allocate memory for substring");
+        return cr_std_string_new("");
+    }
 
     strncpy(sub_data, string->c_str + start_index, sub_length);
-
     sub_data[sub_length] = '\0';
+    String *new_string = cr_std_string_new(sub_data);
 
-    return cr_std_string_new(sub_data);
+    free(sub_data);
+    return new_string;
 }
 
 String *cr_std_string_from_string_ptr_vector(Vector *vector, const char *delimiter) {

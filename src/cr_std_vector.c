@@ -129,7 +129,7 @@ int cr_std_vector_remove_element(Vector *vector, size_t index) {
         if (bytes_to_move > 0) {
             char *dest = (char *)vector->elements + (index * vector->type_size);
             char *src = (char *)vector->elements + ((index + 1) * vector->type_size);
-            memcpy(dest, src, bytes_to_move);
+            memmove(dest, src, bytes_to_move);
         }
     }
 
