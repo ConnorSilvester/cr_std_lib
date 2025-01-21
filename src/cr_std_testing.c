@@ -47,5 +47,5 @@ void cr_std_testing_run_tests(Vector *tests) {
             printf("\033[31mFailed Test\033[0m : %s\n", test->name);
         }
     }
-    free(list_of_errors);
+    cr_std_vector_free(&list_of_errors);
 }

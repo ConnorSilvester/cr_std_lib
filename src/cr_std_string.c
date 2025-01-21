@@ -494,7 +494,7 @@ Vector *cr_std_string_split(String *string, char delimiter) {
     }
     Vector *vector = cr_std_vector_new(String *);
     vector->free_function = cr_std_string_free_ptr;
-    vector->copy_function = cr_std_string_make_copy_ptr;
+
     char buffer[string->length + 1];
     int buffer_index = 0;
     for (size_t i = 0; i < string->length; i++) {

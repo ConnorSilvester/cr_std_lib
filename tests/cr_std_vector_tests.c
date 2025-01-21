@@ -597,7 +597,6 @@ int cr_std_vector_test_extend_custom_pointer() {
     Vector *dest = cr_std_vector_new(String *);
     dest->free_function = cr_std_string_free_ptr;
     Vector *src = cr_std_vector_new(String *);
-    src->free_function = cr_std_string_free_ptr;
 
     int expected_size = 4;
     String *string_1 = cr_std_string_new("String 1");
@@ -619,8 +618,8 @@ int cr_std_vector_test_extend_custom_pointer() {
     int compare_function_result = cr_std_string_compare(string, expected_string);
     int result = dest != NULL && src != NULL && expected_size == dest->size && extend_function_result == 0 && compare_function_result == 1;
 
-    free(src);
     cr_std_vector_free(&dest);
+    cr_std_vector_free(&src);
     cr_std_string_free(&expected_string);
     return result;
 }
@@ -686,6 +685,9 @@ int cr_std_vector_test_extend_incorrect_types() {
     int function_result = cr_std_vector_extend(dest, src);
 
     int result = dest != NULL && src != NULL && expected_size == dest->size && function_result == 1;
+
+    cr_std_string_free(&string_4);
+    cr_std_string_free(&string_5);
     cr_std_vector_free(&src);
     cr_std_vector_free(&dest);
     return result;
