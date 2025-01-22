@@ -36,6 +36,7 @@ Vector *cr_std_vector_new_t(size_t type_size);
  * @return `1` on failure.
  */
 int cr_std_vector_free(Vector **vector_ptr);
+#define cr_std_vector_free_ptr ((int (*)(void **))cr_std_vector_free)
 
 /**
  * @brief Adds an element to the vector.

@@ -1,5 +1,6 @@
 #include "cr_std_logger.h"
 #include <stdarg.h>
+#include <stdlib.h>
 #include <time.h>
 
 static int cr_std_logger_current_log_level = CR_STD_LOGGER_LOG_LEVEL_ALL;
@@ -46,13 +47,21 @@ void cr_std_logger_outf(int log_type, const char *formatted_str, ...) {
     va_start(args, formatted_str);
 
     int length_of_string = vsnprintf(NULL, 0, formatted_str, args);
-    char result[length_of_string];
+    va_end(args);
+
+    char *result = (char *)malloc(length_of_string + 1);
+    if (result == NULL) {
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "memory allocation failed in cr_std_logger_outf");
+        return;
+    }
 
     va_start(args, formatted_str);
     vsnprintf(result, length_of_string + 1, formatted_str, args);
     va_end(args);
 
     cr_std_logger_out(log_type, result);
+
+    free(result);
 }
 
 int cr_std_logger_set_log_level(int log_level) {

@@ -154,7 +154,9 @@ String *cr_std_filesystem_read_file_as_string(const char *file_path) {
     buffer[file_size] = '\0';
 
     fclose(file);
-    return cr_std_string_new(buffer);
+    String *result = cr_std_string_new(buffer);
+    free(buffer);
+    return result;
 }
 
 Vector *cr_std_filesystem_read_file_as_vector(const char *file_path) {
