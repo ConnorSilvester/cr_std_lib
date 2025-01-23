@@ -2,7 +2,7 @@
 CC = gcc
 
 # Compiler flags
-CFLAGS = -std=c99 -Wall -Werror
+CFLAGS = -std=c99
 
 # Change this as needed
 # Installation directories
@@ -77,8 +77,9 @@ clean:
 	rm -rf $(OBJ_DIR) bin $(LIB_FILE)
 
 # Debug build
-debug: CFLAGS += -g
+debug: CFLAGS += -g -Wall -Werror -fsanitize=address
 debug: $(EXEC)
+	$(EXEC)
 
 .PHONY: all clean run install debug run_tests
 
