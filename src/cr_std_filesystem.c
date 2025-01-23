@@ -161,7 +161,6 @@ String *cr_std_filesystem_read_file_as_string(const char *file_path) {
 
 Vector *cr_std_filesystem_read_file_as_vector(const char *file_path) {
     String *file_contents = cr_std_filesystem_read_file_as_string(file_path);
-    printf("%p", file_contents);
     if (!file_contents) {
         cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_filesystem_read_file_as_vector -> failed to read file contents -> %s", file_path);
         return NULL;
