@@ -12,25 +12,45 @@ Some features may only work on Linux I have not tested on other platforms, this 
 - **String Handling**
 - **Logging**
 
-## Installation
-To build and install the library, follow these steps:
+## Pre-Installation
+Before installing, make sure to change the library "Installation Directories" in the `CMakeLists.txt` file if needed.
+To build and install the library you must use `cmake`
+```cmake
+# Installation directories (Change For Your System)
+set(LIB_DEST_DIR /usr/local/lib)
+set(INCLUDE_DEST_DIR /usr/local/include)
+```
+**Install CMake and a C compiler**
 
+**Windows**:
+```txt
+https://cmake.org/download/
+https://visualstudio.microsoft.com/
+```
+**Linux**:
+```bash
+sudo apt update
+sudo apt install cmake gcc
+```
+## Steps
 1. **Clone the repository**:
 ```bash
 git clone git@github.com:ConnorSilvester/cr_std_lib.git
 cd cr_std_lib
 ```
-2. **Build the Library**:
-```bash 
-make
+2. **Create the Build Dir**:
+```bash
+mkdir build
+cd build
 ```
-3. **Install the Library**:
-```bash 
-sudo make install
+3. **Build The Library**:
+```bash
+cmake ..
+cmake --build .
 ```
-4. **Clean Up**:
-```bash 
-make clean
+4. **Install the Library**:
+```bash
+sudo cmake --install .
 ```
 
 ## Usage
@@ -200,7 +220,10 @@ If you would like to test the library before install you can use the main.c file
 
 Use the command:
 ```bash 
-make run
+cd build
+cmake --build .
+./bin/main
+
 ```
 
 This will compile all the code and run the main function for you. 

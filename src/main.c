@@ -6,8 +6,7 @@
 #include "cr_std_vector.h"
 #include <stdio.h>
 
-// Use if you want to test the library
-// Use `make run` to run this.
+// If you want to test the library see the end of the README.md file
 int main(int argc, char **argv) {
 
     String *string = cr_std_string_newf("Hello, %s", "World");
