@@ -4,7 +4,7 @@
 
 This is not meant as a professional project, but rather just something for me to develop as i learn C.
 
-Some features may only work on Linux I have not tested on other platforms, this will come later, the MakeFile will need to change if you are using Windows / MacOS.
+Currently some features are Linux-only, but Windows support is in progress.
 
 ## Features so far
 - **Filesystem Operations**
@@ -13,10 +13,13 @@ Some features may only work on Linux I have not tested on other platforms, this 
 - **Logging**
 
 ## Pre-Installation
-Before installing, make sure to change the library "Installation Directories" in the `CMakeLists.txt` file if needed.
-To build and install the library you must use `cmake`
+If you are wanting to install the library system wide, make sure to change the library "Installation Directories" in the `CMakeLists.txt` file if needed.
+
+To build and install the library you must have `cmake` installed.
 ```cmake
-# Installation directories (Change For Your System)
+# Inside CMakeLists.txt
+
+# Installation directories (change for your system if you want to install)
 set(LIB_DEST_DIR /usr/local/lib)
 set(INCLUDE_DEST_DIR /usr/local/include)
 ```
@@ -24,15 +27,26 @@ set(INCLUDE_DEST_DIR /usr/local/include)
 
 **Windows**:
 ```txt
+# CMake
 https://cmake.org/download/
+
+# C Compiler, included with the C++ desktop development module
 https://visualstudio.microsoft.com/
+
+# GCC for Windows, if you don't want to use VS
+https://www.mingw-w64.org/
 ```
 **Linux**:
 ```bash
 sudo apt update
 sudo apt install cmake gcc
 ```
-## Steps
+## Build Script
+Run the build script located in the `scripts` folder.
+
+Make sure to run the one for your platform.
+
+## Manual Build
 1. **Clone the repository**:
 ```bash
 git clone git@github.com:ConnorSilvester/cr_std_lib.git
@@ -48,8 +62,21 @@ cd build
 cmake ..
 cmake --build .
 ```
-4. **Install the Library**:
+## Try Before Install
+You can test the library before installing it by running the included `main.c` file.
+Use the `run` script (found in the `scripts/` folder) for your platform or manually execute:
 ```bash
+./bin/main
+```
+
+## System Wide Install Script
+Run the install script for your platform scripts are found in the `scripts` directory
+
+## System Wide Manual Install
+```bash
+cd build
+cmake ..
+cmake --build .
 sudo cmake --install .
 ```
 
@@ -71,11 +98,13 @@ Once installed you can add the following to your program depending what your nee
 
 **Strings** : Prefix is cr_std_string *
 ```c
+// Create a new dynamically allocated string
 String *str = cr_std_string_new("Hello, World");
 String *str = cr_std_string_newf("Hello, %s", "World");
 String *str = cr_std_string_newf("Hello, %s%d", "World", 4);
 ```
 ```c
+// Concat strings
 cr_std_string_concat(str, ", This", " Has", " Been", " Concatenated");
 cr_std_string_contains_string(str, "Been");
 cr_std_string_split(str, " ");
@@ -85,22 +114,23 @@ cr_std_string_free(&str);
 
 **Vectors** : Prefix is cr_std_vector *
 ```c
+// New vector containing int values
 Vector *int_vector = cr_std_vector_new(int);
 
-// How to use the [] syntax use the cr_std_vector_get_all macro, works with any type.
-int *numbers = cr_std_vector_get_all(int_vector, int); // Vector and the type its storing
+// Use the cr_std_vector_get_all macro to get a c style array
+int *numbers = cr_std_vector_get_all(int_vector, int); // Vector and the type its storing (int, String, char)
 for (int i = 0; i < int_vector->size; i++) {
     printf("%d\n", numbers[i]);
 }
 
-// String custom free function, String custom copy function.
-// This will copy on push, and free each string on vector_free.
+// String custom copy function, String custom free function
+// This will copy on push, and free each string on vector_free
 Vector *string_vector = cr_std_vector_new(String *);
 string_vector->free_function = cr_std_string_free_ptr;
 string_vector->copy_function = cr_std_string_make_copy_ptr;
 
-// This data will not be copied on push.
-// General use free function use in case of basic struct.
+// This data will not be copied on push
+// General use free function use in case of basic struct, with no sub allocations
 Vector *tests_vector = cr_std_vector_new(TestCase *);
 test_vector->free_function = cr_std_free_ptr;
 
@@ -134,13 +164,13 @@ String *string_2 = cr_std_string_new("String 2");
 String *string_3 = cr_std_string_new("String 3");
 String *string_4 = cr_std_string_new("String 4");
 
-// On push data will be copied to a new String struct, if the custom_copy function is provided.
+// On push data will be copied to a new String struct, if the custom_copy function is provided
 cr_std_vector_push_back(dest, string_1);
 cr_std_vector_push_back(dest, string_2);
 cr_std_vector_push_back(src, string_3);
 cr_std_vector_push_back(src, string_4);
 
-// Copies all data from src to dest vectors.
+// Copies all data from src to dest vectors
 cr_std_vector_extend(dest, src);
 
 // Get all elements and print them out
@@ -149,7 +179,7 @@ for (int i = 0; i < dest->size; i++) {
     printf("%s\n", string_vector[i]->c_str);
 }
 
-// You can safely free all previous elements as the data is copied into the vector.
+// You can safely free all previous elements as the data is copied into the vector
 cr_std_vector_free(&src);
 cr_std_string_free(&string_1);
 
@@ -159,16 +189,16 @@ cr_std_vector_free(&dest);
 **Filesystem** : Prefix is cr_std_filesystem *
 ```c
 cr_std_filesystem_write_to_file("test.txt", "This is test data");
-cr_std_filesystem_append_to_file("test.txt", "."); //file will contain 'This is test data.'
+cr_std_filesystem_append_to_file("test.txt", "."); // File will contain 'This is test data.'
 
 String *string = cr_std_filesystem_read_file_as_string("test.txt");
 Vector *vector = cr_std_filesystem_read_file_as_vector("test.txt");
 
 // Returns a vector of custom Dirent structs.
 Vector *vector = cr_std_filesystem_get_dirs("/home/connor/Downloads");
-Vector *vector = cr_std_filesystem_get_dirs_r("/home/connor/Downloads"); //recursive search
+Vector *vector = cr_std_filesystem_get_dirs_r("/home/connor/Downloads"); // Recursive search
 Vector *vector = cr_std_filesystem_get_dirs_files("src");
-Vector *vector = cr_std_filesystem_get_dirs_files_r("src"); //recursive search
+Vector *vector = cr_std_filesystem_get_dirs_files_r("src"); // Recursive search
 ```
 
 **Logging** : Prefix is cr_std_logger *
@@ -194,7 +224,7 @@ cr_std_logger_set_log_level(CR_STD_LOGGER_LOG_LEVEL_NONE);
 cr_std_logger_set_log_level(CR_STD_LOGGER_LOG_LEVEL_ALL);
 
 cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_INFO, "This is a info message");
-cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR, "This is a error message with filename : %s", file_name); //Same formatting as printf
+cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR, "This is a error message with filename : %s", file_name); // Same formatting as printf
 ```
 
 
@@ -215,17 +245,3 @@ cr_std_testing_run_tests(tests);
 cr_std_vector_free(&tests);
 
 ```
-## Try Before Install
-If you would like to test the library before install you can use the main.c file included.
-
-Use the command:
-```bash 
-cd build
-cmake --build .
-./bin/main
-
-```
-
-This will compile all the code and run the main function for you. 
-
-Feel free to run the already written code demonstrating the string concatenation.
