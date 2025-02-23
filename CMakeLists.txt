@@ -7,7 +7,6 @@ set(CMAKE_C_STANDARD 99)
 # Directories
 set(SRC_DIR src)
 set(INC_DIR include)
-set(OBJ_DIR obj)
 set(BIN_DIR bin)
 set(TEST_DIR tests)
 

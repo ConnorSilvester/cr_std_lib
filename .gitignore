@@ -12,3 +12,6 @@
 
 !include/
 !include/**
+
+!scripts/
+!scripts/**
