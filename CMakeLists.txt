@@ -11,8 +11,13 @@ set(BIN_DIR bin)
 set(TEST_DIR tests)
 
 # Installation directories (Change For Your System)
-set(LIB_DEST_DIR /usr/local/lib)
-set(INCLUDE_DEST_DIR /usr/local/include)
+if(WIN32)
+    set(LIB_DEST_DIR "${CMAKE_INSTALL_PREFIX}/lib")
+    set(INCLUDE_DEST_DIR "${CMAKE_INSTALL_PREFIX}/include")
+else()
+    set(LIB_DEST_DIR "/usr/local/lib")
+    set(INCLUDE_DEST_DIR "/usr/local/include")
+endif()
 
 # Set output directory for executables
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${BIN_DIR})

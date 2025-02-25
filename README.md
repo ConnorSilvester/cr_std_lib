@@ -4,8 +4,6 @@
 
 This is not meant as a professional project, but rather just something for me to develop as i learn C.
 
-Currently some features are Linux-only, but Windows support is in progress.
-
 ## Features so far
 - **Filesystem Operations**
 - **Dynamic Arrays**
@@ -16,15 +14,22 @@ Currently some features are Linux-only, but Windows support is in progress.
 If you are wanting to install the library system wide, make sure to change the library "Installation Directories" in the `CMakeLists.txt` file if needed.
 
 To build and install the library you must have `cmake` installed.
-```cmake
-# Inside CMakeLists.txt
 
-# Installation directories (change for your system if you want to install)
-set(LIB_DEST_DIR /usr/local/lib)
-set(INCLUDE_DEST_DIR /usr/local/include)
+Installation directories
+These can be updated in the `CMakeLists.txt` file or with the flag `-DCMAKE_INSTALL_PREFIX=""`
+
+**Linux**:
 ```
-**Install CMake and a C compiler**
+/usr/local/lib
+/usr/local/include
+```
+**Windows**:
+```
+C:\Program Files\CR_STD_LIB\lib
+C:\Program Files\CR_STD_LIB\include
+```
 
+**Install CMake and a C compiler**
 **Windows**:
 ```txt
 # CMake
@@ -60,7 +65,7 @@ cd build
 3. **Build The Library**:
 ```bash
 cmake ..
-cmake --build .
+cmake --build . --config Release
 ```
 ## Try Before Install
 You can test the library before installing it by running the included `main.c` file.
@@ -71,12 +76,13 @@ Use the `run` script (found in the `scripts/` folder) for your platform or manua
 
 ## System Wide Install Script
 Run the install script for your platform scripts are found in the `scripts` directory
+Make sure to run as administrator on Windows if needed
 
 ## System Wide Manual Install
 ```bash
 cd build
 cmake ..
-cmake --build .
+cmake --build . --config Release
 sudo cmake --install .
 ```
 

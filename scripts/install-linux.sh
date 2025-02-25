@@ -9,5 +9,5 @@ mkdir -p "$BUILD_DIR"
 cd "$BUILD_DIR" || exit
 
 cmake ..
-cmake --build .
+cmake --build . --config Release
 cmake --install .

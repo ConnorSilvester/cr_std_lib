@@ -9,7 +9,7 @@ mkdir -p "$BUILD_DIR"
 
 cd "$BUILD_DIR" || exit
 cmake ..
-cmake --build .
+cmake --build . --config Release
 
 # Run the program with any passed arguments
 EXECUTABLE="$BUILD_DIR/bin/main"

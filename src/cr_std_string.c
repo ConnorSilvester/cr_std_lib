@@ -495,7 +495,13 @@ Vector *cr_std_string_split(String *string, char delimiter) {
     Vector *vector = cr_std_vector_new(String *);
     vector->free_function = cr_std_string_free_ptr;
 
-    char buffer[string->length + 1];
+    char *buffer = (char *)malloc(string->length + 1);
+    if (!buffer) {
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_split -> memory allocation failed");
+        cr_std_vector_free(&vector);
+        return NULL;
+    }
+
     int buffer_index = 0;
     for (size_t i = 0; i < string->length; i++) {
         if (string->c_str[i] == delimiter || i == string->length - 1) {
@@ -664,23 +670,33 @@ int cr_std_string_remove_numeric(String *string) {
     return 0;
 }
 
-long int cr_std_string_to_int(String *string) {
+int cr_std_string_to_int(String *string) {
     if (!string) {
         cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_to_int -> string pointer is NULL");
         return 0;
     }
     String *string_copy = cr_std_string_make_copy(string);
     cr_std_string_remove_non_numeric(string_copy);
-    long int result = strtol(string_copy->c_str, NULL, 10);
+    int result = strtol(string_copy->c_str, NULL, 10);
     cr_std_string_free(&string_copy);
     return result;
 }
 
-String *cr_std_string_from_int(int number) {
-    size_t max_buffer_size = 50;
-    char str_buffer[max_buffer_size];
-    snprintf(str_buffer, max_buffer_size, "%d", number);
-    return cr_std_string_new(str_buffer);
+String* cr_std_string_from_int(int number) {
+    char str_buffer[50];
+    int result = snprintf(str_buffer, sizeof(str_buffer), "%d", number);
+
+    if (result < 0 || result >= sizeof(str_buffer)) {
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_from_int -> snprintf failed");
+        return NULL;
+    }
+
+    String* string = cr_std_string_new(str_buffer);
+    if (!string) {
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_from_int -> failed to create String");
+        return NULL;
+    }
+    return string;
 }
 
 String *cr_std_string_sub_string(String *string, int start_index, int end_index) {

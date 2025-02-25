@@ -4,6 +4,20 @@
 #include <stdint.h>
 #include <sys/types.h>
 
+#ifdef _WIN32
+#define DT_UNKNOWN 0
+#define DT_FIFO    1
+#define DT_CHR     2
+#define DT_DIR     4
+#define DT_BLK     6
+#define DT_REG     8
+#define DT_LNK     10
+#define DT_SOCK    12
+#define DT_WHT     14
+#else
+#include <dirent.h>
+#endif
+
 typedef struct String String;
 typedef struct Vector Vector;
 
@@ -14,7 +28,7 @@ typedef struct Dirent {
     int64_t d_size;         // Entry size in bytes
     uint64_t d_inode;       // Entry inode number
     uint64_t d_permissions; // Entry permissions
-    unsigned char d_type;   // Entry type (from struct dirent)
+    unsigned char d_type;   // Entry type
     bool d_hidden;          // 1 = hidden, 0 = not hidden
 } Dirent;
 
@@ -50,6 +64,7 @@ int cr_std_filesystem_copy_file(const char *src, const char *dest);
  */
 int cr_std_filesystem_move_file(const char *src, const char *dest);
 
+#ifdef _WIN32
 /**
  * @brief Makes a directory
  *
@@ -58,7 +73,22 @@ int cr_std_filesystem_move_file(const char *src, const char *dest);
  * @return `0` on success.
  * @return `1` on failure.
  */
+int cr_std_filesystem_make_dir(const char* dir_path);
+#endif // _WIN32
+
+#ifdef __linux__
+/**
+ * @brief Makes a directory
+ *
+ * @param `dir_path` The directory path to create
+ * @param `permissions` The permissions of the dir
+ *
+ * @return `0` on success.
+ * @return `1` on failure.
+ */
 int cr_std_filesystem_make_dir(const char *dir_path, mode_t permissions);
+#endif // __linux__
+
 
 /**
  * @brief Writes the contents of `data` into the file at `file_path`

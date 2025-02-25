@@ -328,9 +328,9 @@ int cr_std_string_remove_numeric(String *string);
  *
  * @param `string` The `String` to work on.
  *
- * @return `long int` The numerical representation of the string
+ * @return `int` The numerical representation of the string
  */
-long int cr_std_string_to_int(String *string);
+int cr_std_string_to_int(String *string);
 
 /**
  * @brief Returns the string representation of a number.

@@ -729,18 +729,18 @@ int cr_std_string_test_remove_numeric_null() {
 }
 
 int cr_std_string_test_to_int() {
-    String *string = cr_std_string_new("66778868880092");
-    long int function_result = cr_std_string_to_int(string);
-    long int expected_function_result = 66778868880092;
+    String *string = cr_std_string_new("555666");
+    int function_result = cr_std_string_to_int(string);
+    int expected_function_result = 555666;
     int result = string != NULL && function_result == expected_function_result;
     cr_std_string_free(&string);
     return result;
 }
 
 int cr_std_string_test_to_int_mixed_string() {
-    String *string = cr_std_string_new("Hello667788, Hello 68880092World");
-    long int function_result = cr_std_string_to_int(string);
-    long int expected_function_result = 66778868880092;
+    String *string = cr_std_string_new("Hello555, Hello 666World");
+    int function_result = cr_std_string_to_int(string);
+    int expected_function_result = 555666;
     int result = string != NULL && function_result == expected_function_result;
     cr_std_string_free(&string);
     return result;
