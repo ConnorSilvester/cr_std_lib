@@ -28,6 +28,8 @@ int cr_std_string_test_compare_length_right();
 int cr_std_string_test_compare_partial_equal();
 int cr_std_string_test_compare_fully_equal();
 int cr_std_string_test_compare_empty_string();
+int cr_std_string_test_compare_c_str_fully_equal();
+int cr_std_string_test_compare_c_str_empty_string();
 
 // Trim String
 int cr_std_string_test_trim_left();

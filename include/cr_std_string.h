@@ -190,6 +190,19 @@ int cr_std_string_concat_null_terminated(String *string, ...);
 int cr_std_string_compare(String *arg, String *arg1);
 
 /**
+ * @brief Compares String and a c str.
+ *
+ * @param `arg` The first string to compare.
+ * @param `arg1` The second raw string to compare.
+ *
+ * @return `1` if full equality (same characters in the same order).
+ * @return `0` if equal in length but different characters.
+ * @return `-1` if the first string is longer.
+ * @return `-2` if the second string is longer.
+ */
+int cr_std_string_compare_c_str(String *arg, char *arg1);
+
+/**
  * @brief Trims a string of white space in both directions of the string.
  *
  * @param `string` The string to trim.

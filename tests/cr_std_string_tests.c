@@ -36,6 +36,8 @@ void cr_std_string_test_all() {
     cr_std_vector_push_back(tests, cr_std_testing_new_test("Compare String -> Same Length Not Equal", cr_std_string_test_compare_partial_equal));
     cr_std_vector_push_back(tests, cr_std_testing_new_test("Compare String -> Same Length And Equal", cr_std_string_test_compare_fully_equal));
     cr_std_vector_push_back(tests, cr_std_testing_new_test("Compare String -> Empty", cr_std_string_test_compare_empty_string));
+    cr_std_vector_push_back(tests, cr_std_testing_new_test("Compare C_String -> Same Length And Equal", cr_std_string_test_compare_c_str_fully_equal));
+    cr_std_vector_push_back(tests, cr_std_testing_new_test("Compare C_String -> Empty", cr_std_string_test_compare_c_str_empty_string));
 
     // Trim String
     cr_std_vector_push_back(tests, cr_std_testing_new_test("Trim String Left -> Normal", cr_std_string_test_trim_left));
@@ -303,6 +305,24 @@ int cr_std_string_test_compare_empty_string() {
     int result = string != NULL && string2 != NULL && compare_result == expected;
     cr_std_string_free(&string);
     cr_std_string_free(&string2);
+    return result;
+}
+
+int cr_std_string_test_compare_c_str_fully_equal() {
+    String *string = cr_std_string_new("Hello World");
+    int compare_result = cr_std_string_compare_c_str(string, "Hello World");
+    int expected = 1;
+    int result = string != NULL && compare_result == expected;
+    cr_std_string_free(&string);
+    return result;
+}
+
+int cr_std_string_test_compare_c_str_empty_string() {
+    String *string = cr_std_string_new("");
+    int compare_result = cr_std_string_compare_c_str(string, "");
+    int expected = 1;
+    int result = string != NULL && compare_result == expected;
+    cr_std_string_free(&string);
     return result;
 }
 
