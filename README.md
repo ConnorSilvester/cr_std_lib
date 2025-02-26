@@ -11,23 +11,7 @@ This is not meant as a professional project, but rather just something for me to
 - **Logging**
 
 ## Pre-Installation
-If you are wanting to install the library system wide, make sure to change the library "Installation Directories" in the `CMakeLists.txt` file if needed.
-
 To build and install the library you must have `cmake` installed.
-
-Installation directories
-These can be updated in the `CMakeLists.txt` file or with the flag `-DCMAKE_INSTALL_PREFIX=""`
-
-**Linux**:
-```
-/usr/local/lib
-/usr/local/include
-```
-**Windows**:
-```
-C:\Program Files\CR_STD_LIB\lib
-C:\Program Files\CR_STD_LIB\include
-```
 
 **Install CMake and a C compiler**
 **Windows**:
@@ -45,6 +29,20 @@ https://www.mingw-w64.org/
 ```bash
 sudo apt update
 sudo apt install cmake gcc
+```
+
+## Installation Directories
+These can be updated in the `CMakeLists.txt` file or with the flag `-DCMAKE_INSTALL_PREFIX=""`
+
+**Linux**:
+```
+/usr/local/lib
+/usr/local/include
+```
+**Windows**:
+```
+C:\Program Files\CR_STD_LIB\lib
+C:\Program Files\CR_STD_LIB\include
 ```
 ## Build Script
 Run the build script located in the `scripts` folder.

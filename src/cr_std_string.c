@@ -682,7 +682,7 @@ int cr_std_string_to_int(String *string) {
     return result;
 }
 
-String* cr_std_string_from_int(int number) {
+String *cr_std_string_from_int(int number) {
     char str_buffer[50];
     int result = snprintf(str_buffer, sizeof(str_buffer), "%d", number);
 
@@ -691,7 +691,7 @@ String* cr_std_string_from_int(int number) {
         return NULL;
     }
 
-    String* string = cr_std_string_new(str_buffer);
+    String *string = cr_std_string_new(str_buffer);
     if (!string) {
         cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_from_int -> failed to create String");
         return NULL;
