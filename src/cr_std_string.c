@@ -547,6 +547,43 @@ Vector *cr_std_string_split(String *string, char delimiter) {
     return vector;
 }
 
+Vector *cr_std_string_split_hard(String *string, char delimiter) {
+    if (!string) {
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_split_hard -> string pointer is NULL");
+        return NULL;
+    }
+    Vector *vector = cr_std_vector_new(String *);
+    vector->free_function = cr_std_string_free_ptr;
+
+    char *buffer = (char *)malloc(string->length + 1);
+    if (!buffer) {
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_split_hard -> memory allocation failed");
+        cr_std_vector_free(&vector);
+        return NULL;
+    }
+
+    int buffer_index = 0;
+    for (size_t i = 0; i < string->length; i++) {
+        if (string->c_str[i] == delimiter || i == string->length - 1) {
+            if (string->c_str[i] != delimiter) {
+                buffer[buffer_index] = string->c_str[i];
+                buffer_index++;
+            }
+
+            buffer[buffer_index] = '\0';
+
+            String *string = cr_std_string_new(buffer);
+            cr_std_vector_push_back(vector, string);
+
+            buffer_index = 0;
+        } else {
+            buffer[buffer_index] = string->c_str[i];
+            buffer_index++;
+        }
+    }
+    return vector;
+}
+
 int cr_std_string_to_upper(String *string) {
     if (!string) {
         cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_to_upper -> string pointer is NULL");

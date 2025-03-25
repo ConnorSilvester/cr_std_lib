@@ -74,9 +74,7 @@ int cr_std_filesystem_move_file(const char *src, const char *dest);
  * @return `1` on failure.
  */
 int cr_std_filesystem_make_dir(const char* dir_path);
-#endif // _WIN32
-
-#ifdef __linux__
+#else
 /**
  * @brief Makes a directory
  *
@@ -87,7 +85,7 @@ int cr_std_filesystem_make_dir(const char* dir_path);
  * @return `1` on failure.
  */
 int cr_std_filesystem_make_dir(const char *dir_path, mode_t permissions);
-#endif // __linux__
+#endif // _WIN32
 
 
 /**

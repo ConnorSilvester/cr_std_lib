@@ -65,6 +65,8 @@ int cr_std_string_test_split();
 int cr_std_string_test_split_invalid();
 int cr_std_string_test_split_null_value();
 int cr_std_string_test_split_empty();
+int cr_std_string_test_split_empty_split();
+int cr_std_string_test_split_hard_empty_split();
 
 // To Upper
 int cr_std_string_test_to_upper();
@@ -119,7 +121,6 @@ int cr_std_string_test_sub_string_index_too_high();
 int cr_std_string_test_sub_string_index_invalid();
 int cr_std_string_test_sub_string_empty();
 int cr_std_string_test_sub_string_null();
-
 
 /**
  * String Builder Tests Below

@@ -73,6 +73,8 @@ void cr_std_string_test_all() {
     cr_std_vector_push_back(tests, cr_std_testing_new_test("Split -> Invalid Char", cr_std_string_test_split_invalid));
     cr_std_vector_push_back(tests, cr_std_testing_new_test("Split -> NULL Value", cr_std_string_test_split_null_value));
     cr_std_vector_push_back(tests, cr_std_testing_new_test("Split -> Empty String", cr_std_string_test_split_empty));
+    cr_std_vector_push_back(tests, cr_std_testing_new_test("Split -> Empty Split String", cr_std_string_test_split_empty_split));
+    cr_std_vector_push_back(tests, cr_std_testing_new_test("Split -> Hard Split String", cr_std_string_test_split_hard_empty_split));
 
     // To Upper
     cr_std_vector_push_back(tests, cr_std_testing_new_test("To Upper -> Normal", cr_std_string_test_to_upper));
@@ -559,6 +561,28 @@ int cr_std_string_test_split_empty() {
     Vector *vector = cr_std_string_split(string, 'x');
     int actual_size = vector->size;
     int expected_size = 0;
+    int result = string != NULL && vector != NULL && actual_size == expected_size;
+    cr_std_string_free(&string);
+    cr_std_vector_free(&vector);
+    return result;
+}
+
+int cr_std_string_test_split_empty_split() {
+    String *string = cr_std_string_new("Hello World   ");
+    Vector *vector = cr_std_string_split(string, ' ');
+    int actual_size = vector->size;
+    int expected_size = 2;
+    int result = string != NULL && vector != NULL && actual_size == expected_size;
+    cr_std_string_free(&string);
+    cr_std_vector_free(&vector);
+    return result;
+}
+
+int cr_std_string_test_split_hard_empty_split() {
+    String *string = cr_std_string_new("Hello World   ");
+    Vector *vector = cr_std_string_split_hard(string, ' ');
+    int actual_size = vector->size;
+    int expected_size = 4;
     int result = string != NULL && vector != NULL && actual_size == expected_size;
     cr_std_string_free(&string);
     cr_std_vector_free(&vector);

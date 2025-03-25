@@ -201,9 +201,7 @@ Vector *cr_std_filesystem_get_entries(const char *file_path, bool include_files,
     return vector;
 }
 
-#endif // _WIN32
-
-#ifdef __linux__
+#else
 // Clashing Linux Functions
 #include <dirent.h>
 
@@ -317,7 +315,7 @@ Vector *cr_std_filesystem_get_entries(const char *file_path, bool include_files,
 
     return vector;
 }
-#endif // __linux__
+#endif // _WIN32
 
 int cr_std_filesystem_write_file_operations(const char *file_path, const char *data, const char *mode) {
     if (!data || !file_path || !mode) {
@@ -382,7 +380,7 @@ Vector *cr_std_filesystem_read_file_as_vector(const char *file_path) {
         return NULL;
     }
 
-    Vector *file_lines = cr_std_string_split(file_contents, '\n');
+    Vector *file_lines = cr_std_string_split_hard(file_contents, '\n');
     if (!file_lines) {
         cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_filesystem_read_file_as_vector -> failed to split file contents -> %s", file_path);
     }

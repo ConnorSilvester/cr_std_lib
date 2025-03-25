@@ -275,6 +275,7 @@ unsigned long cr_std_string_hash_code(String *string);
 
 /**
  * @brief Splits a string into a `Vector`.
+ * @brief Removes white space, use cr_std_string_split_hard if you require white space.
  *
  * @param `string` The string to split.
  * @param `delimiter` The character to split the string by.
@@ -283,6 +284,18 @@ unsigned long cr_std_string_hash_code(String *string);
  * @return `NULL` if error.
  */
 Vector *cr_std_string_split(String *string, char delimiter);
+
+/**
+ * @brief Splits a string into a `Vector` (includes white space / empty strings).
+ * @brief Includes any white space and includes empty string.
+ *
+ * @param `string` The string to split.
+ * @param `delimiter` The character to split the string by.
+ *
+ * @return A pointer to a new `Vector` of the split strings.
+ * @return `NULL` if error.
+ */
+Vector *cr_std_string_split_hard(String *string, char delimiter);
 
 /**
  * @Convert a string to upper case.
