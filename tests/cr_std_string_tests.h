@@ -78,6 +78,11 @@ int cr_std_string_test_to_lower();
 int cr_std_string_test_to_lower_empty();
 int cr_std_string_test_to_lower_invalid();
 
+// To Title
+int cr_std_string_test_to_title();
+int cr_std_string_test_to_title_empty();
+int cr_std_string_test_to_title_invalid();
+
 // Replace String
 int cr_std_string_test_replace_string();
 int cr_std_string_test_replace_string_multi();

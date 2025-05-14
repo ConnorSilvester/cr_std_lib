@@ -86,6 +86,11 @@ void cr_std_string_test_all() {
     cr_std_vector_push_back(tests, cr_std_testing_new_test("To Lower -> Empty String", cr_std_string_test_to_lower_empty));
     cr_std_vector_push_back(tests, cr_std_testing_new_test("To Lower -> NULL Value", cr_std_string_test_to_lower_invalid));
 
+    // To Lower
+    cr_std_vector_push_back(tests, cr_std_testing_new_test("To Title -> Normal", cr_std_string_test_to_title));
+    cr_std_vector_push_back(tests, cr_std_testing_new_test("To Title -> Empty String", cr_std_string_test_to_title_empty));
+    cr_std_vector_push_back(tests, cr_std_testing_new_test("To Title -> NULL Value", cr_std_string_test_to_title_invalid));
+
     // Replace String
     cr_std_vector_push_back(tests, cr_std_testing_new_test("Replace String -> Normal", cr_std_string_test_replace_string));
     cr_std_vector_push_back(tests, cr_std_testing_new_test("Replace String -> Multi", cr_std_string_test_replace_string_multi));
@@ -646,6 +651,36 @@ int cr_std_string_test_to_lower_empty() {
 int cr_std_string_test_to_lower_invalid() {
     String *string = NULL;
     int function_result = cr_std_string_to_lower(string);
+    return function_result != 0;
+}
+
+int cr_std_string_test_to_title() {
+    String *string = cr_std_string_new("HELLO WORLD");
+    String *string_expected = cr_std_string_new("Hello World");
+    int function_result = cr_std_string_to_title(string);
+    int compare_result = cr_std_string_compare(string, string_expected);
+    int expected = 1;
+    int result = string != NULL && string_expected != NULL && compare_result == expected && function_result == 0;
+    cr_std_string_free(&string);
+    cr_std_string_free(&string_expected);
+    return result;
+}
+
+int cr_std_string_test_to_title_empty() {
+    String *string = cr_std_string_new("");
+    String *string_expected = cr_std_string_new("");
+    int function_result = cr_std_string_to_upper(string);
+    int compare_result = cr_std_string_compare(string, string_expected);
+    int expected = 1;
+    int result = string != NULL && string_expected != NULL && compare_result == expected && function_result == 0;
+    cr_std_string_free(&string);
+    cr_std_string_free(&string_expected);
+    return result;
+}
+
+int cr_std_string_test_to_title_invalid() {
+    String *string = NULL;
+    int function_result = cr_std_string_to_title(string);
     return function_result != 0;
 }
 

@@ -12,14 +12,14 @@ set(TEST_DIR tests)
 
 # Installation directories (Change For Your System)
 if(WIN32)
-    set(LIB_DEST_DIR "${CMAKE_INSTALL_PREFIX}/lib")
-    set(INCLUDE_DEST_DIR "${CMAKE_INSTALL_PREFIX}/include")
+  set(LIB_DEST_DIR "${CMAKE_INSTALL_PREFIX}/lib")
+  set(INCLUDE_DEST_DIR "${CMAKE_INSTALL_PREFIX}/include")
 else()
-    set(LIB_DEST_DIR "/usr/local/lib")
-    set(INCLUDE_DEST_DIR "/usr/local/include")
+  set(LIB_DEST_DIR "/usr/local/lib")
+  set(INCLUDE_DEST_DIR "/usr/local/include")
 endif()
 
-# Set output directory for executables
+# Set output directory for the executable
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${BIN_DIR})
 
 # Library and Executable Names
@@ -48,11 +48,10 @@ add_executable(${TEST_EXEC} ${TEST_SRCS})
 target_link_libraries(${TEST_EXEC} ${LIB_NAME})
 target_compile_definitions(${TEST_EXEC} PRIVATE CR_STD_TESTING_MODE)
 
-# Debug flags (for debug builds)
-# cmake .. -DCMAKE_BUILD_TYPE=Debug
+# Debug flags (for debug builds) cmake .. -DCMAKE_BUILD_TYPE=Debug
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    target_compile_options(${EXEC} PRIVATE -g -Wall -Werror -fsanitize=address)
-    target_link_options(${EXEC} PRIVATE -fsanitize=address)
+  target_compile_options(${EXEC} PRIVATE -g -Wall -Werror -fsanitize=address)
+  target_link_options(${EXEC} PRIVATE -fsanitize=address)
 endif()
 
 # Install rules (for library and headers)

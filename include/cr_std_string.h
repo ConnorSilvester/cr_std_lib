@@ -318,6 +318,16 @@ int cr_std_string_to_upper(String *string);
 int cr_std_string_to_lower(String *string);
 
 /**
+ * @Convert a string to title case.
+ *
+ * @param `string` The string to work on.
+ *
+ * @return `0` if the string is changed.
+ * @return `1` if error.
+ */
+int cr_std_string_to_title(String *string);
+
+/**
  * @brief Replaces all occurrences of `from` with `to` in a given string.
  *
  * @param `string` The string to work on.

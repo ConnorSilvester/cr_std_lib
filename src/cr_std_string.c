@@ -606,6 +606,31 @@ int cr_std_string_to_lower(String *string) {
     return 0;
 }
 
+int cr_std_string_to_title(String *string) {
+    if (!string) {
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_to_title -> string pointer is NULL");
+        return 1;
+    }
+    if (string->length < 1) {
+        return 1;
+    }
+
+    bool new_word = true;
+    for (size_t i = 0; i < string->length; i++) {
+        char c = string->c_str[i];
+        if (isspace(c) || ispunct(c)) {
+            new_word = true;
+        } else if (new_word) {
+            string->c_str[i] = toupper(c);
+            new_word = false;
+        } else {
+            string->c_str[i] = tolower(c);
+        }
+    }
+
+    return 0;
+}
+
 int cr_std_string_replace_string(String *string, char *from, char *to) {
     if (!string) {
         cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_replace_string -> string pointer is NULL");
