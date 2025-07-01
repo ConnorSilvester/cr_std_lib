@@ -8,6 +8,8 @@
 #include <string.h>
 #include <wctype.h>
 
+#define CR_STD_STRING_ANSI_COLOR_ESCAPE_SEQ "\033[%dm%s\033[0m"
+
 StringBuilder *cr_std_string_builder_new(const char *string) {
     if (!string) {
         cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_builder_new -> char* input was NULL");
@@ -631,7 +633,7 @@ int cr_std_string_to_title(String *string) {
     return 0;
 }
 
-int cr_std_string_replace_string(String *string, char *from, char *to) {
+int cr_std_string_replace_string(String *string, const char *from, const char *to) {
     if (!string) {
         cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_replace_string -> string pointer is NULL");
         return 0;
@@ -890,4 +892,32 @@ String *cr_std_string_from_char_ptr_vector(Vector *vector, const char *delimiter
     }
 
     return final_string;
+}
+
+String *cr_std_string_color_string(String *string, int color_code) {
+    if (!string || !string->c_str) {
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_color_string -> string is NULL");
+        return NULL;
+    }
+    if (color_code < 30 || color_code >= 40) {
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_WARNING, "cr_std_string_color_string -> invalid color code");
+        color_code = 39;
+    }
+    return cr_std_string_newf(CR_STD_STRING_ANSI_COLOR_ESCAPE_SEQ, color_code, string->c_str);
+}
+
+String *cr_std_string_color_phrase(String *string, const char *phrase, int color_code) {
+    if (!string || !string->c_str) {
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_color_phrase -> string is NULL");
+        return NULL;
+    }
+    if (color_code < 30 || color_code >= 40) {
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_WARNING, "cr_std_string_color_phrase -> invalid color code");
+        color_code = 39;
+    }
+    String *str_copy = cr_std_string_make_copy(string);
+    String *phrase_colored = cr_std_string_newf(CR_STD_STRING_ANSI_COLOR_ESCAPE_SEQ, color_code, phrase);
+    cr_std_string_replace_string(str_copy, phrase, phrase_colored->c_str);
+    cr_std_string_free(&phrase_colored);
+    return str_copy;
 }

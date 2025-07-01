@@ -20,6 +20,15 @@ typedef struct StringBuilder {
 #define CR_STD_STRING_TRIM_RIGHT 1
 #define CR_STD_STRING_BUILDER_DEFAULT_CAP 256
 
+#define CR_STD_STRING_COLOR_BLACK 30
+#define CR_STD_STRING_COLOR_RED 31
+#define CR_STD_STRING_COLOR_GREEN 32
+#define CR_STD_STRING_COLOR_YELLOW 33
+#define CR_STD_STRING_COLOR_BLUE 34
+#define CR_STD_STRING_COLOR_MAGENTA 35
+#define CR_STD_STRING_COLOR_CYAN 36
+#define CR_STD_STRING_COLOR_WHITE 37
+
 /**
  * @brief Creates a new `StringBuilder` struct with the provided string.
  *
@@ -337,7 +346,7 @@ int cr_std_string_to_title(String *string);
  * @return `number of replaced words`.
  * @return `0` if nothing is replaced.
  */
-int cr_std_string_replace_string(String *string, char *from, char *to);
+int cr_std_string_replace_string(String *string, const char *from, const char *to);
 
 /**
  * @brief Removes all characters that are not numbers.
@@ -377,7 +386,6 @@ int cr_std_string_to_int(String *string);
  */
 String *cr_std_string_from_int(int number);
 
-
 /**
  * @brief Returns a sub-string of a given string and index.
  *
@@ -387,7 +395,7 @@ String *cr_std_string_from_int(int number);
  *
  * @return `String` A pointer to a `String` struct representing the sub-string.
  */
-String *cr_std_string_sub_string(String* string, int start_index, int end_index);
+String *cr_std_string_sub_string(String *string, int start_index, int end_index);
 
 /**
  * @brief Returns the string representation of a `Vector` struct.
@@ -408,4 +416,27 @@ String *cr_std_string_from_string_ptr_vector(Vector *vector, const char *delimit
  * @return `String` A pointer to a `String` struct the joined vector.
  */
 String *cr_std_string_from_char_ptr_vector(Vector *vector, const char *delimiter);
+
+/**
+ * @brief Colors an entire string to one color
+ *
+ * @param `string` The `String` to work from.
+ * @param `color_code` The color code from ANSI escape codes, see `CR_STD_COLOR`.
+ *
+ * @return `String` A pointer to the new colored string.
+ * @return `NULL` If something failed.
+ */
+String *cr_std_string_color_string(String *string, int color_code);
+
+/**
+ * @brief Colors a specific phrase within a string
+ *
+ * @param `string` The `String` to work from.
+ * @param `phrase` The phrase to color
+ * @param `color_code` The color code from ANSI escape codes, see `CR_STD_COLOR`.
+ *
+ * @return `String` A pointer to the new colored string.
+ * @return `NULL` If something failed.
+ */
+String *cr_std_string_color_phrase(String *string, const char *phrase, int color_code);
 #endif // CR_STD_STRING
