@@ -49,8 +49,14 @@ void cr_std_string_test_all() {
     // Find Char
     cr_std_vector_push_back(tests, cr_std_testing_new_test("Find Char In String -> Valid Char", cr_std_string_test_find_char_valid));
     cr_std_vector_push_back(tests, cr_std_testing_new_test("Find Char In String -> Invalid Char", cr_std_string_test_find_char_invalid));
-    cr_std_vector_push_back(tests, cr_std_testing_new_test("Find Last Char In String -> Valid Char", cr_std_string_test_find_char_valid));
-    cr_std_vector_push_back(tests, cr_std_testing_new_test("Find Last Char In String -> Invalid Char", cr_std_string_test_find_char_invalid));
+    cr_std_vector_push_back(tests, cr_std_testing_new_test("Find Last Char In String -> Valid Char", cr_std_string_test_find_last_char_valid));
+    cr_std_vector_push_back(tests, cr_std_testing_new_test("Find Last Char In String -> Invalid Char", cr_std_string_test_find_last_char_invalid));
+
+    // Find String
+    cr_std_vector_push_back(tests, cr_std_testing_new_test("Find String In String -> Valid String", cr_std_string_test_find_string_valid));
+    cr_std_vector_push_back(tests, cr_std_testing_new_test("Find String In String -> Invalid String", cr_std_string_test_find_string_invalid));
+    cr_std_vector_push_back(tests, cr_std_testing_new_test("Find Last String In String -> Valid String", cr_std_string_test_find_last_string_valid));
+    cr_std_vector_push_back(tests, cr_std_testing_new_test("Find Last String In String -> Invalid String", cr_std_string_test_find_last_string_invalid));
 
     // Contains String
     cr_std_vector_push_back(tests, cr_std_testing_new_test("Contains String -> Normal", cr_std_string_test_contains_string));
@@ -413,7 +419,7 @@ int cr_std_string_test_find_char_invalid() {
 
 int cr_std_string_test_find_last_char_valid() {
     String *string = cr_std_string_new("Hello Hello");
-    int function_result = cr_std_string_find_char(string, 'H');
+    int function_result = cr_std_string_find_char_last(string, 'H');
     int expected = 6;
     int result = string != NULL && function_result == expected;
     cr_std_string_free(&string);
@@ -422,7 +428,43 @@ int cr_std_string_test_find_last_char_valid() {
 
 int cr_std_string_test_find_last_char_invalid() {
     String *string = cr_std_string_new("Hello World");
-    int function_result = cr_std_string_find_char(string, 'x');
+    int function_result = cr_std_string_find_char_last(string, 'x');
+    int expected = -1;
+    int result = string != NULL && function_result == expected;
+    cr_std_string_free(&string);
+    return result;
+}
+
+int cr_std_string_test_find_string_valid() {
+    String *string = cr_std_string_new("Hello World");
+    int function_result = cr_std_string_find_string(string, "World");
+    int expected = 6;
+    int result = string != NULL && function_result == expected;
+    cr_std_string_free(&string);
+    return result;
+}
+
+int cr_std_string_test_find_string_invalid() {
+    String *string = cr_std_string_new("Hello World");
+    int function_result = cr_std_string_find_string(string, "Bench");
+    int expected = -1;
+    int result = string != NULL && function_result == expected;
+    cr_std_string_free(&string);
+    return result;
+}
+
+int cr_std_string_test_find_last_string_valid() {
+    String *string = cr_std_string_new("Hello Hello Hello Hello");
+    int function_result = cr_std_string_find_string_last(string, "Hello");
+    int expected = 18;
+    int result = string != NULL && function_result == expected;
+    cr_std_string_free(&string);
+    return result;
+}
+
+int cr_std_string_test_find_last_string_invalid() {
+    String *string = cr_std_string_new("Hello World");
+    int function_result = cr_std_string_find_string_last(string, "Bench");
     int expected = -1;
     int result = string != NULL && function_result == expected;
     cr_std_string_free(&string);

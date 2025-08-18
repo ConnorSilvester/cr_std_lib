@@ -44,6 +44,12 @@ int cr_std_string_test_find_char_invalid();
 int cr_std_string_test_find_last_char_valid();
 int cr_std_string_test_find_last_char_invalid();
 
+// Find String
+int cr_std_string_test_find_string_valid();
+int cr_std_string_test_find_string_invalid();
+int cr_std_string_test_find_last_string_valid();
+int cr_std_string_test_find_last_string_invalid();
+
 // Contains String
 int cr_std_string_test_contains_string();
 int cr_std_string_test_contains_string_multi();
