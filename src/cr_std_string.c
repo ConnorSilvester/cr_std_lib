@@ -627,6 +627,28 @@ int cr_std_string_starts_with_string(String *string, const char *prefix) {
     return 1;
 }
 
+int cr_std_string_ends_with_string(String *string, const char *suffix) {
+    if (!string) {
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_ends_with_string -> string pointer is NULL");
+        return 0;
+    }
+
+    int suffix_length = strlen(suffix);
+    if (suffix_length > string->length || suffix_length < 1) {
+        return 0;
+    }
+
+    int start_index = string->length - suffix_length;
+
+    for (int i = 0; i < suffix_length; i++) {
+        if (string->c_str[start_index + i] != suffix[i]) {
+            return 0;
+        }
+    }
+
+    return 1;
+}
+
 int cr_std_string_starts_with_char(String *string, char prefix) {
     if (!string) {
         cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_starts_with_char -> string pointer is NULL");
@@ -638,6 +660,19 @@ int cr_std_string_starts_with_char(String *string, char prefix) {
     }
 
     return (string->c_str[0] == prefix) ? 1 : 0;
+}
+
+int cr_std_string_ends_with_char(String *string, char suffix) {
+    if (!string) {
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_ends_with_char -> string pointer is NULL");
+        return 0;
+    }
+
+    if (string->length < 1) {
+        return 0;
+    }
+
+    return (string->c_str[string->length - 1] == suffix) ? 1 : 0;
 }
 
 unsigned long cr_std_string_hash_code(String *string) {

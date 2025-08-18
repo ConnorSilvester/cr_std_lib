@@ -61,10 +61,20 @@ int cr_std_string_test_starts_with_string();
 int cr_std_string_test_starts_with_string_invalid();
 int cr_std_string_test_starts_with_string_null();
 
+// Ends With String
+int cr_std_string_test_ends_with_string();
+int cr_std_string_test_ends_with_string_invalid();
+int cr_std_string_test_ends_with_string_null();
+
 // Starts With Char
 int cr_std_string_test_starts_with_char();
 int cr_std_string_test_starts_with_char_invalid();
 int cr_std_string_test_starts_with_char_null();
+
+// Ends With Char
+int cr_std_string_test_ends_with_char();
+int cr_std_string_test_ends_with_char_invalid();
+int cr_std_string_test_ends_with_char_null();
 
 // Contains String
 int cr_std_string_test_contains_string();

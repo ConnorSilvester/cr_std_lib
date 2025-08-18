@@ -330,6 +330,17 @@ int cr_std_string_contains_char(String *string, char ch);
 int cr_std_string_starts_with_string(String *string, const char *prefix);
 
 /**
+ * @brief Check if a string has a suffix
+ *
+ * @param `string` The string to check.
+ * @param `suffix` The suffix to check.
+ *
+ * @return `1` if the string has the suffix
+ * @return `0` if the string does not have the suffix
+ */
+int cr_std_string_ends_with_string(String *string, const char *suffix);
+
+/**
  * @brief Check if a string has a prefix
  *
  * @param `string` The string to check.
@@ -339,6 +350,17 @@ int cr_std_string_starts_with_string(String *string, const char *prefix);
  * @return `0` if the string does not have the prefix
  */
 int cr_std_string_starts_with_char(String *string, char prefix);
+
+/**
+ * @brief Check if a string has a suffix
+ *
+ * @param `string` The string to check.
+ * @param `ch` The suffix to check.
+ *
+ * @return `1` if the string has the suffix
+ * @return `0` if the string does not have the suffix
+ */
+int cr_std_string_ends_with_char(String *string, char suffix);
 
 /**
  * @brief Calculate the hash code of a string.
