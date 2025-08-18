@@ -609,7 +609,7 @@ int cr_std_string_contains_char(String *string, char ch) {
 
 int cr_std_string_starts_with_string(String *string, const char *prefix) {
     if (!string) {
-        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_contains_string_prefix -> string pointer is NULL");
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_starts_with_string -> string pointer is NULL");
         return 0;
     }
 
@@ -627,9 +627,9 @@ int cr_std_string_starts_with_string(String *string, const char *prefix) {
     return 1;
 }
 
-int cr_std_string_starts_with_char(String *string, char ch) {
+int cr_std_string_starts_with_char(String *string, char prefix) {
     if (!string) {
-        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_contains_char_prefix -> string pointer is NULL");
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_starts_with_char -> string pointer is NULL");
         return 0;
     }
 
@@ -637,7 +637,7 @@ int cr_std_string_starts_with_char(String *string, char ch) {
         return 0;
     }
 
-    return (string->c_str[0] == ch) ? 1 : 0;
+    return (string->c_str[0] == prefix) ? 1 : 0;
 }
 
 unsigned long cr_std_string_hash_code(String *string) {
