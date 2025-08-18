@@ -607,6 +607,39 @@ int cr_std_string_contains_char(String *string, char ch) {
     return occurrences;
 }
 
+int cr_std_string_starts_with_string(String *string, const char *prefix) {
+    if (!string) {
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_contains_string_prefix -> string pointer is NULL");
+        return 0;
+    }
+
+    int prefix_length = strlen(prefix);
+    if (prefix_length > string->length || prefix_length < 1) {
+        return 0;
+    }
+
+    for (int i = 0; i < prefix_length; i++) {
+        if (string->c_str[i] != prefix[i]) {
+            return 0;
+        }
+    }
+
+    return 1;
+}
+
+int cr_std_string_starts_with_char(String *string, char ch) {
+    if (!string) {
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_contains_char_prefix -> string pointer is NULL");
+        return 0;
+    }
+
+    if (string->length < 1) {
+        return 0;
+    }
+
+    return (string->c_str[0] == ch) ? 1 : 0;
+}
+
 unsigned long cr_std_string_hash_code(String *string) {
     if (!string) {
         cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_hash_code -> string pointer is NULL");

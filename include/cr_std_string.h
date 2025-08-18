@@ -319,6 +319,28 @@ int cr_std_string_contains_string(String *string, const char *phrase);
 int cr_std_string_contains_char(String *string, char ch);
 
 /**
+ * @brief Check if a string has a prefix
+ *
+ * @param `string` The string to check.
+ * @param `prefix` The prefix to check.
+ *
+ * @return `1` if the string has the prefix
+ * @return `0` if the string does not have the prefix
+ */
+int cr_std_string_starts_with_string(String *string, const char *prefix);
+
+/**
+ * @brief Check if a string has a prefix
+ *
+ * @param `string` The string to check.
+ * @param `ch` The prefix to check.
+ *
+ * @return `1` if the string has the prefix
+ * @return `0` if the string does not have the prefix
+ */
+int cr_std_string_starts_with_char(String *string, char prefix);
+
+/**
  * @brief Calculate the hash code of a string.
  *
  * @param `string` The string to calculate the hash code for.

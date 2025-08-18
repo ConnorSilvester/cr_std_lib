@@ -64,6 +64,17 @@ void cr_std_string_test_all() {
     cr_std_vector_push_back(tests, cr_std_testing_new_test("Find n String In String -> Invalid String", cr_std_string_test_find_string_n_invalid));
     cr_std_vector_push_back(tests, cr_std_testing_new_test("Find n String In String -> Negative n", cr_std_string_test_find_string_n_negative));
 
+    // Starts With String
+    cr_std_vector_push_back(tests, cr_std_testing_new_test("Starts With String -> Normal", cr_std_string_test_starts_with_string));
+    cr_std_vector_push_back(tests, cr_std_testing_new_test("Starts With String -> Invalid", cr_std_string_test_starts_with_string_invalid));
+    cr_std_vector_push_back(tests, cr_std_testing_new_test("Starts With String -> NULL", cr_std_string_test_starts_with_string_null));
+
+
+    // Starts With Char
+    cr_std_vector_push_back(tests, cr_std_testing_new_test("Starts With char -> Normal", cr_std_string_test_starts_with_char));
+    cr_std_vector_push_back(tests, cr_std_testing_new_test("Starts With char -> Invalid", cr_std_string_test_starts_with_char_invalid));
+    cr_std_vector_push_back(tests, cr_std_testing_new_test("Starts With char -> NULL", cr_std_string_test_starts_with_char_null));
+
     // Contains String
     cr_std_vector_push_back(tests, cr_std_testing_new_test("Contains String -> Normal", cr_std_string_test_contains_string));
     cr_std_vector_push_back(tests, cr_std_testing_new_test("Contains String -> Multi", cr_std_string_test_contains_string_multi));
@@ -528,6 +539,61 @@ int cr_std_string_test_find_string_n_negative() {
     int expected = 0;
     int result = string != NULL && function_result == expected;
     cr_std_string_free(&string);
+    return result;
+}
+
+int cr_std_string_test_starts_with_string() {
+    String *string = cr_std_string_new("Hello World");
+    char *phrase = "Hello";
+    int function_result = cr_std_string_starts_with_string(string, phrase);
+    int expected = 1;
+    int result = string != NULL && function_result == expected;
+    cr_std_string_free(&string);
+    return result;
+}
+
+int cr_std_string_test_starts_with_string_invalid() {
+    String *string = cr_std_string_new("Hello World");
+    char *phrase = "Helo";
+    int function_result = cr_std_string_starts_with_string(string, phrase);
+    int expected = 0;
+    int result = string != NULL && function_result == expected;
+    cr_std_string_free(&string);
+    return result;
+}
+
+int cr_std_string_test_starts_with_string_null() {
+    String *string = NULL;
+    char *phrase = "Hello";
+    int function_result = cr_std_string_starts_with_string(string, phrase);
+    int expected = 0;
+    int result = function_result == expected;
+    return result;
+}
+
+int cr_std_string_test_starts_with_char() {
+    String *string = cr_std_string_new("Hello World");
+    int function_result = cr_std_string_starts_with_char(string, 'H');
+    int expected = 1;
+    int result = string != NULL && function_result == expected;
+    cr_std_string_free(&string);
+    return result;
+}
+
+int cr_std_string_test_starts_with_char_invalid() {
+    String *string = cr_std_string_new("Hello World");
+    int function_result = cr_std_string_starts_with_char(string, 'x');
+    int expected = 0;
+    int result = string != NULL && function_result == expected;
+    cr_std_string_free(&string);
+    return result;
+}
+
+int cr_std_string_test_starts_with_char_null() {
+    String *string = NULL;
+    int function_result = cr_std_string_starts_with_char(string, 'H');
+    int expected = 0;
+    int result = function_result == expected;
     return result;
 }
 
