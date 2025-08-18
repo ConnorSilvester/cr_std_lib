@@ -43,6 +43,9 @@ int cr_std_string_test_find_char_valid();
 int cr_std_string_test_find_char_invalid();
 int cr_std_string_test_find_last_char_valid();
 int cr_std_string_test_find_last_char_invalid();
+int cr_std_string_test_find_char_n_valid();
+int cr_std_string_test_find_char_n_invalid();
+int cr_std_string_test_find_char_n_negative();
 
 // Find String
 int cr_std_string_test_find_string_valid();

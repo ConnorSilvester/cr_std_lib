@@ -440,6 +440,30 @@ int cr_std_string_find_char(String *string, char ch) {
     return -1;
 }
 
+int cr_std_string_find_char_n(String *string, char ch, int n) {
+    if (!string) {
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_find_char_n -> string pointer is NULL");
+        return -1;
+    }
+    if (n <= 0) {
+        n = 1;
+    }
+
+    int current_n = 0;
+    int last_char_index = -1;
+    for (int i = 0; i <= string->length; i++) {
+        if (string->c_str[i] == ch) {
+            last_char_index = i;
+            current_n++;
+        }
+
+        if (current_n == n) {
+            return last_char_index;
+        }
+    }
+    return -1;
+}
+
 int cr_std_string_find_char_last(String *string, char ch) {
     if (!string) {
         cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_find_char_last -> string pointer is NULL");
@@ -479,33 +503,6 @@ int cr_std_string_find_string(String *string, const char *phrase) {
     return -1;
 }
 
-int cr_std_string_find_string_last(String *string, const char *phrase) {
-    if (!string) {
-        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_find_string_last -> string pointer is NULL");
-        return 0;
-    }
-
-    int phrase_length = strlen(phrase);
-    if (phrase_length > string->length || phrase_length < 1) {
-        return 0;
-    }
-
-    int last_string_index = -1;
-    for (int string_index = 0; string_index <= string->length - phrase_length; string_index++) {
-        int found = 1;
-        for (int phrase_index = 0; phrase_index < phrase_length; phrase_index++) {
-            if (string->c_str[string_index + phrase_index] != phrase[phrase_index]) {
-                found = 0;
-                break;
-            }
-        }
-        if (found) {
-            last_string_index = string_index;
-        }
-    }
-    return last_string_index;
-}
-
 int cr_std_string_find_string_n(String *string, const char *phrase, int n) {
     if (!string) {
         cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_find_string_n -> string pointer is NULL");
@@ -539,6 +536,33 @@ int cr_std_string_find_string_n(String *string, const char *phrase, int n) {
         }
     }
     return -1;
+}
+
+int cr_std_string_find_string_last(String *string, const char *phrase) {
+    if (!string) {
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_find_string_last -> string pointer is NULL");
+        return 0;
+    }
+
+    int phrase_length = strlen(phrase);
+    if (phrase_length > string->length || phrase_length < 1) {
+        return 0;
+    }
+
+    int last_string_index = -1;
+    for (int string_index = 0; string_index <= string->length - phrase_length; string_index++) {
+        int found = 1;
+        for (int phrase_index = 0; phrase_index < phrase_length; phrase_index++) {
+            if (string->c_str[string_index + phrase_index] != phrase[phrase_index]) {
+                found = 0;
+                break;
+            }
+        }
+        if (found) {
+            last_string_index = string_index;
+        }
+    }
+    return last_string_index;
 }
 
 int cr_std_string_contains_string(String *string, const char *phrase) {

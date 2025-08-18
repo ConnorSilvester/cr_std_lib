@@ -240,6 +240,29 @@ int cr_std_string_trim(String *string, int direction);
 int cr_std_string_find_char(String *string, char ch);
 
 /**
+ * @brief Finds the n index of a character in a given string.
+ *
+ * @param `string` The string to search through.
+ * @param `ch` The character to locate.
+ * @param `n` The n index to find
+ *
+ * @return The index of the n character in the string.
+ * @return `-1` if the character is not found.
+ */
+int cr_std_string_find_char_n(String *string, char ch, int n);
+
+/**
+ * @brief Finds the last index of a character in a given string.
+ *
+ * @param `string` The string to search through.
+ * @param `ch` The character to locate.
+ *
+ * @return The index of the character in the string.
+ * @return `-1` if the character is not found.
+ */
+int cr_std_string_find_char_last(String *string, char ch);
+
+/**
  * @brief Finds the first index of a string in a given string.
  *
  * @param `string` The string to search through.
@@ -255,8 +278,9 @@ int cr_std_string_find_string(String *string, const char *phrase);
  *
  * @param `string` The string to search through.
  * @param `phrase` The string to locate.
+ * @param `n` The n index to find
  *
- * @return The index of the phrase in the string.
+ * @return The index of the n phrase in the string.
  * @return `-1` if the phrase is not found.
  */
 int cr_std_string_find_string_n(String *string, const char *phrase, int n);
@@ -271,17 +295,6 @@ int cr_std_string_find_string_n(String *string, const char *phrase, int n);
  * @return `-1` if the phrase is not found.
  */
 int cr_std_string_find_string_last(String *string, const char *phrase);
-
-/**
- * @brief Finds the last index of a character in a given string.
- *
- * @param `string` The string to search through.
- * @param `ch` The character to locate.
- *
- * @return The index of the character in the string.
- * @return `-1` if the character is not found.
- */
-int cr_std_string_find_char_last(String *string, char ch);
 
 /**
  * @brief Check if a string contains a phrase.
