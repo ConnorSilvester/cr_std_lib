@@ -84,6 +84,12 @@ void cr_std_string_test_all() {
     cr_std_vector_push_back(tests, cr_std_testing_new_test("Ends With char -> Invalid", cr_std_string_test_ends_with_char_invalid));
     cr_std_vector_push_back(tests, cr_std_testing_new_test("Ends With char -> NULL", cr_std_string_test_ends_with_char_null));
 
+    // Char At
+    cr_std_vector_push_back(tests, cr_std_testing_new_test("Char At -> Normal", cr_std_string_test_char_at));
+    cr_std_vector_push_back(tests, cr_std_testing_new_test("Char At -> Invalid Index Low", cr_std_string_test_char_at_invalid_index_low));
+    cr_std_vector_push_back(tests, cr_std_testing_new_test("Char At -> Invalid Index High", cr_std_string_test_char_at_invalid_index_high));
+    cr_std_vector_push_back(tests, cr_std_testing_new_test("Char At -> NULL", cr_std_string_test_char_at_null));
+
     // Contains String
     cr_std_vector_push_back(tests, cr_std_testing_new_test("Contains String -> Normal", cr_std_string_test_contains_string));
     cr_std_vector_push_back(tests, cr_std_testing_new_test("Contains String -> Multi", cr_std_string_test_contains_string_multi));
@@ -658,6 +664,42 @@ int cr_std_string_test_ends_with_char_null() {
     int function_result = cr_std_string_ends_with_char(string, 'H');
     int expected = 0;
     int result = function_result == expected;
+    return result;
+}
+
+int cr_std_string_test_char_at() {
+    String *string = cr_std_string_new("Hello World");
+    char function_result = cr_std_string_char_at(string, 1);
+    char expected = 'e';
+    int result = string != NULL && function_result == expected;
+    cr_std_string_free(&string);
+    return result;
+}
+
+int cr_std_string_test_char_at_invalid_index_low() {
+    String *string = cr_std_string_new("Hello World");
+    char function_result = cr_std_string_char_at(string, -1);
+    char expected = 'H';
+    int result = string != NULL && function_result == expected;
+    cr_std_string_free(&string);
+    return result;
+}
+
+int cr_std_string_test_char_at_invalid_index_high() {
+    String *string = cr_std_string_new("Hello World");
+    char function_result = cr_std_string_char_at(string, 111);
+    char expected = 'd';
+    int result = string != NULL && function_result == expected;
+    cr_std_string_free(&string);
+    return result;
+}
+
+int cr_std_string_test_char_at_null() {
+    String *string = NULL;
+    char function_result = cr_std_string_char_at(string, 1);
+    char expected = ' ';
+    int result = function_result == expected;
+    cr_std_string_free(&string);
     return result;
 }
 

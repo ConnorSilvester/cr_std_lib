@@ -675,6 +675,27 @@ int cr_std_string_ends_with_char(String *string, char suffix) {
     return (string->c_str[string->length - 1] == suffix) ? 1 : 0;
 }
 
+char cr_std_string_char_at(String *string, int index) {
+    if (!string) {
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_char_at -> string pointer is NULL");
+        return ' ';
+    }
+    if (!string->c_str) {
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_char_at -> string->c_str pointer is NULL");
+        return ' ';
+    }
+
+    if (index < 0) {
+        index = 0;
+    }
+
+    if (index >= string->length) {
+        index = string->length - 1;
+    }
+
+    return string->c_str[index];
+}
+
 unsigned long cr_std_string_hash_code(String *string) {
     if (!string) {
         cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_hash_code -> string pointer is NULL");

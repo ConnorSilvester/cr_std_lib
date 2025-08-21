@@ -76,6 +76,12 @@ int cr_std_string_test_ends_with_char();
 int cr_std_string_test_ends_with_char_invalid();
 int cr_std_string_test_ends_with_char_null();
 
+// Char At
+int cr_std_string_test_char_at();
+int cr_std_string_test_char_at_invalid_index_low();
+int cr_std_string_test_char_at_invalid_index_high();
+int cr_std_string_test_char_at_null();
+
 // Contains String
 int cr_std_string_test_contains_string();
 int cr_std_string_test_contains_string_multi();

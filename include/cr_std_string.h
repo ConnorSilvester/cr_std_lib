@@ -363,6 +363,17 @@ int cr_std_string_starts_with_char(String *string, char prefix);
 int cr_std_string_ends_with_char(String *string, char suffix);
 
 /**
+ * @brief Fetch char at index
+ *
+ * @param `string` The string to work on.
+ * @param `index` The index to fetch.
+ *
+ * @return `char` char at index
+ * @return ' ' if error
+ */
+char cr_std_string_char_at(String* string, int index);
+
+/**
  * @brief Calculate the hash code of a string.
  *
  * @param `string` The string to calculate the hash code for.
