@@ -371,7 +371,7 @@ int cr_std_string_ends_with_char(String *string, char suffix);
  * @return `char` char at index
  * @return ' ' if error
  */
-char cr_std_string_char_at(String* string, int index);
+char cr_std_string_char_at(String *string, int index);
 
 /**
  * @brief Calculate the hash code of a string.
@@ -522,7 +522,7 @@ String *cr_std_string_from_char_ptr_vector(Vector *vector, const char *delimiter
  * @brief Colors an entire string to one color
  *
  * @param `string` The `String` to work from.
- * @param `color_code` The color code from ANSI escape codes, see `CR_STD_COLOR`.
+ * @param `color_code` The color code from ANSI escape codes, see `CR_STD_STRING_COLOR`.
  *
  * @return `String` A pointer to the new colored string.
  * @return `NULL` If something failed.
@@ -534,7 +534,7 @@ String *cr_std_string_color_string(String *string, int color_code);
  *
  * @param `string` The `String` to work from.
  * @param `phrase` The phrase to color
- * @param `color_code` The color code from ANSI escape codes, see `CR_STD_COLOR`.
+ * @param `color_code` The color code from ANSI escape codes, see `CR_STD_STRING_COLOR`.
  *
  * @return `String` A pointer to the new colored string.
  * @return `NULL` If something failed.
