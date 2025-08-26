@@ -3,13 +3,25 @@
 
 #include <stdbool.h>
 #include <stdio.h>
+
+/**
+ * @brief Dynamic growing vector.
+ *
+ * Can store any type.
+ * For each field see inline comments.
+ *
+ * Memory ownership:
+ * - The Vector owns memory for the elements void *.
+ * - The Vector can own memory stored at elements if copy_function is defined.
+ * - Freeing a Vector can free the elements if free_function is defined.
+ */
 typedef struct Vector {
-    size_t size;
-    size_t capacity;
-    size_t type_size;
-    int (*free_function)(void **);
-    void *(*copy_function)(void *);
-    void *elements;
+    size_t size;                    // Current size of the elements array.
+    size_t capacity;                // Current capacity of the elements.
+    size_t type_size;               // The size of the elements being stored in the Vector.
+    int (*free_function)(void **);  // If defined; It will free each element when cr_std_vector_free is called.
+    void *(*copy_function)(void *); // If defined; It will copy each element when cr_std_vector_push_back is called.
+    void *elements;                 // The raw elements pointer, is allocated and owned by the struct.
 } Vector;
 
 #define CR_STD_VECTOR_DEFAULT_SIZE 8

@@ -6,6 +6,15 @@
 #define TEST_FAILED "\033[31mFAILED\033[0m"
 
 typedef struct Vector Vector;
+
+/**
+ * @brief Represents a test case.
+ *
+ * Includes a const char * which is not allocated or freed.
+ *
+ * Memory ownership:
+ * - This struct owns no memory.
+ */
 typedef struct TestCase {
     const char *name;
     int (*test_function)(void); // Function that returns 1 for pass, 0 for fail

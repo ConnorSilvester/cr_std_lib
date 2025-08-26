@@ -4,11 +4,27 @@
 #include <stdio.h>
 
 typedef struct Vector Vector;
+
+/**
+ * @brief Represents a string.
+ *
+ * Memory ownership:
+ * - This struct owns the char *.
+ * - Freeing a String struct will also free the char *.
+ */
 typedef struct String {
     char *c_str;
     size_t length;
 } String;
 
+
+/**
+ * @brief A dynamic growing string object, it will realloc on grow.
+ *
+ * Memory ownership:
+ * - This struct owns the char *.
+ * - Freeing a StringBuilder struct will also free the char *.
+ */
 typedef struct StringBuilder {
     char *c_str;
     size_t size;

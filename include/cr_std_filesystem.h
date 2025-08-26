@@ -21,6 +21,15 @@
 typedef struct String String;
 typedef struct Vector Vector;
 
+/**
+ * @brief Represents a single directory entry.
+ *
+ * Stores relevant information on the entry.
+ *
+ * Memory ownership:
+ * - This struct owns all the String objects.
+ * - Freeing a Dirent struct will also free all String objects.
+ */
 typedef struct Dirent {
     String *d_name;         // Entry name
     String *d_path;         // Entry full path
