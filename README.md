@@ -9,6 +9,7 @@ This is not meant as a professional project, but rather just something for me to
 - **Dynamic Arrays**
 - **String Handling**
 - **Logging**
+- **File Parsing**
 
 ## Pre-Installation
 To build and install the library you must have `cmake` installed.
@@ -96,6 +97,7 @@ Once installed you can add the following to your program depending what your nee
 #include <cr_std_vector.h>
 #include <cr_std_testing.h>
 #include <cr_std_utils.h>
+#include <cr_std_csv.h>
 ```
 
 ## Code Examples
@@ -231,6 +233,42 @@ cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_INFO, "This is a info message");
 cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR, "This is a error message with filename : %s", file_name); // Same formatting as printf
 ```
 
+
+**CSV** : Prefix is cr_std_csv *
+```c
+typedef struct CSVFile {
+    Vector *titles; // Vector <String>
+    Vector *rows;   // Vector <CSVRow>
+} CSVFile;
+
+typedef struct CSVRow {
+    Vector *fields; // Vector <String>
+} CSVRow;
+
+
+CSVFile *csv = cr_std_csv_parse_file("test_file.csv");
+cr_std_csv_print_contents(csv);
+cr_std_csv_free(&csv);
+
+
+
+```
+```c
+
+// Example of how to access all fields
+
+CSVFile *csv = cr_std_csv_parse_file("test_file.csv");
+for (int row_index = 0; row_index < csv->rows->size; row_index++) {
+    CSVRow *row = cr_std_vector_get_at(csv->rows, CSVRow, row_index);
+    printf("Row %d:\n", row_index + 1);
+    for (int field_index = 0; field_index < row->fields->size; field_index++) {
+        String *field = cr_std_vector_get_at(row->fields, String, field_index);
+        printf("Field : %s\n", field->c_str);
+    }
+}
+
+
+```
 
 **Testing** : Prefix is cr_std_testing *
 
