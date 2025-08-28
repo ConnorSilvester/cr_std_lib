@@ -150,6 +150,12 @@ int cr_std_logger_write_history_to_file(const char *filepath) {
             cr_std_string_builder_append_single(sb, current_log->c_str);
         }
         String *output = cr_std_string_builder_to_string(sb);
+
+        // String Color
+        cr_std_string_replace_string(output, "\033[33m", "");
+        cr_std_string_replace_string(output, "\033[31m", "");
+        cr_std_string_replace_string(output, "\033[0m", "");
+
         result = cr_std_filesystem_write_to_file(filepath, output->c_str);
         cr_std_string_builder_free(&sb);
         cr_std_string_free(&output);
