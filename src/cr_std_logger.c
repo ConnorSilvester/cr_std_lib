@@ -58,10 +58,10 @@ void cr_std_logger_record_log(int log_type, const char *log_message) {
 }
 
 void cr_std_logger_out(int log_type, const char *log_message) {
-    cr_std_logger_record_log(log_type, log_message);
     if (log_type < cr_std_logger_current_log_level) {
         return;
     }
+
     char time_str[9]; // HH:MM:SS + null terminator
     cr_std_logger_get_current_time(time_str, sizeof(time_str));
 
@@ -78,6 +78,8 @@ void cr_std_logger_out(int log_type, const char *log_message) {
     default:
         break;
     }
+
+    cr_std_logger_record_log(log_type, log_message);
 }
 
 void cr_std_logger_outf(int log_type, const char *formatted_str, ...) {
