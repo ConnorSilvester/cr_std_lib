@@ -1,6 +1,10 @@
 #ifndef CR_STD_STRING
 #define CR_STD_STRING
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <stdio.h>
 
 typedef struct Vector Vector;
@@ -225,7 +229,7 @@ int cr_std_string_compare(String *arg, String *arg1);
  * @return `-1` if the first string is longer.
  * @return `-2` if the second string is longer.
  */
-int cr_std_string_compare_c_str(String *arg, char *arg1);
+int cr_std_string_compare_c_str(String *arg, const char *arg1);
 
 /**
  * @brief Trims a string of white space in both directions of the string.
@@ -556,4 +560,8 @@ String *cr_std_string_color_string(String *string, int color_code);
  * @return `NULL` If something failed.
  */
 String *cr_std_string_color_phrase(String *string, const char *phrase, int color_code);
+
+#ifdef __cplusplus
+}
+#endif
 #endif // CR_STD_STRING

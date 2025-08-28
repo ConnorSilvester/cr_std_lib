@@ -1,5 +1,10 @@
 #ifndef CR_STD_LOGGER_H
 #define CR_STD_LOGGER_H
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <stdio.h>
 
 #define CR_STD_LOGGER_LOG_TYPE_INFO 0
@@ -78,4 +83,8 @@ void cr_std_logger_clear_history();
  * @return `1` on failure.
  */
 int cr_std_logger_write_history_to_file(const char *filepath);
+
+#ifdef __cplusplus
+}
+#endif
 #endif // CR_STD_LOGGER_H

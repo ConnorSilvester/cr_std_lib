@@ -1,5 +1,10 @@
 #ifndef CR_STD_FILESYSTEM
 #define CR_STD_FILESYSTEM
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <stdbool.h>
 #include <stdint.h>
 #include <sys/types.h>
@@ -203,4 +208,7 @@ Vector *cr_std_filesystem_get_dir_files_r(const char *file_path);
 int cr_std_filesystem_dirent_free(Dirent **dirent_ptr);
 #define cr_std_filesystem_dirent_free_ptr ((int (*)(void **))cr_std_filesystem_dirent_free)
 
+#ifdef __cplusplus
+}
+#endif
 #endif // CR_STD_FILESYSTEM

@@ -2,6 +2,10 @@
 #ifndef CR_STD_CSV
 #define CR_STD_CSV
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct Vector Vector;
 
 /**
@@ -91,4 +95,7 @@ CSVFile *cr_std_csv_parse_file(const char *file_path);
  */
 int cr_std_csv_print_contents(CSVFile *csv);
 
+#ifdef __cplusplus
+}
+#endif
 #endif // CR_STD_CSV

@@ -1,6 +1,10 @@
 #ifndef CR_STD_VECTOR
 #define CR_STD_VECTOR
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <stdbool.h>
 #include <stdio.h>
 
@@ -104,4 +108,8 @@ int cr_std_vector_extend(Vector *dest, Vector *src);
  * @return `false` if it contains data not pointers.
  */
 bool cr_std_vector_contains_pointer(Vector *vector);
+
+#ifdef __cplusplus
+}
+#endif
 #endif // CR_STD_VECTOR

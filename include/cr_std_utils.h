@@ -1,6 +1,10 @@
 #ifndef CR_STD_UTILS
 #define CR_STD_UTILS
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**
  * @brief Custom free function used to free my custom cr_std types.
  *
@@ -12,4 +16,7 @@
 int cr_std_free(void **ptr);
 #define cr_std_free_ptr ((int (*)(void **))cr_std_free)
 
+#ifdef __cplusplus
+}
+#endif
 #endif // CR_STD_UTILS

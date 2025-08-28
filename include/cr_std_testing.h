@@ -1,5 +1,10 @@
 #ifndef CR_STD_TESTING_H
 #define CR_STD_TESTING_H
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <stdio.h>
 
 #define TEST_PASSED "\033[32mPASSED\033[0m"
@@ -38,4 +43,7 @@ TestCase *cr_std_testing_new_test(const char *name, int (*test_function)(void));
  */
 void cr_std_testing_run_tests(Vector *tests);
 
+#ifdef __cplusplus
+}
+#endif
 #endif // CR_STD_TESTING_H

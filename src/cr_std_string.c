@@ -366,7 +366,7 @@ int cr_std_string_compare(String *arg, String *arg1) {
     return 1;
 }
 
-int cr_std_string_compare_c_str(String *arg, char *arg1) {
+int cr_std_string_compare_c_str(String *arg, const char *arg1) {
     // First string is longer
     size_t arg1_length = strlen(arg1);
     if (arg->length > arg1_length) {
