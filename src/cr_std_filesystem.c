@@ -404,6 +404,28 @@ Vector *cr_std_filesystem_get_dir_files_r(const char *file_path) {
     return cr_std_filesystem_get_entries(file_path, true, false, true);
 }
 
+Vector *cr_std_filesystem_get_dirs_files_matching(const char *file_path, const char *extension) {
+    Vector *files = cr_std_filesystem_get_dir_files(file_path);
+    for (int i = files->size - 1; i >= 0; i--) {
+        Dirent *file = cr_std_vector_get_at(files, Dirent, i);
+        if (cr_std_string_compare_c_str(file->d_ext, extension) != 1) {
+            cr_std_vector_remove_element(files, i);
+        }
+    }
+    return files;
+}
+
+Vector *cr_std_filesystem_get_dirs_files_matching_r(const char *file_path, const char *extension) {
+    Vector *files = cr_std_filesystem_get_dir_files_r(file_path);
+    for (int i = files->size - 1; i >= 0; i--) {
+        Dirent *file = cr_std_vector_get_at(files, Dirent, i);
+        if (cr_std_string_compare_c_str(file->d_ext, extension) != 1) {
+            cr_std_vector_remove_element(files, i);
+        }
+    }
+    return files;
+}
+
 int cr_std_filesystem_dirent_free(Dirent **dirent_ptr) {
     if (dirent_ptr && *dirent_ptr) {
         Dirent *entry = *dirent_ptr;

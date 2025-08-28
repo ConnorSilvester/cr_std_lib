@@ -198,6 +198,28 @@ Vector *cr_std_filesystem_get_dir_files(const char *file_path);
 Vector *cr_std_filesystem_get_dir_files_r(const char *file_path);
 
 /**
+ * @brief Reads the contents of a file dir that match the extension
+ *
+ * @param `file_path` A raw string of the file path.
+ * @param `extension` The extension to filter by.
+ *
+ * @return `Vector`struct containing `Dirent` structs of the files in the dir that match the extension.
+ * @return `NULL` on failure.
+ */
+Vector *cr_std_filesystem_get_dirs_files_matching(const char *file_path, const char *extension);
+
+/**
+ * @brief Reads the contents of a file dir recursively and returns the ones that match the extension.
+ *
+ * @param `file_path` A raw string of the file path.
+ * @param `extension` The extension to filter by.
+ *
+ * @return `Vector`struct containing `Dirent` structs of the files that match the extension.
+ * @return `NULL` on failure.
+ */
+Vector *cr_std_filesystem_get_dirs_files_matching_r(const char *file_path, const char *extension);
+
+/**
  * @brief Free a `Dirent` struct
  *
  * @param `dirent_ptr` A pointer to a pointer that stores the `Dirent`

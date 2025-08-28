@@ -205,6 +205,10 @@ Vector *vector = cr_std_filesystem_get_dirs("/home/connor/Downloads");
 Vector *vector = cr_std_filesystem_get_dirs_r("/home/connor/Downloads"); // Recursive search
 Vector *vector = cr_std_filesystem_get_dirs_files("src");
 Vector *vector = cr_std_filesystem_get_dirs_files_r("src"); // Recursive search
+
+// Filter out filetypes
+Vector *vector = cr_std_filesystem_get_dirs_files_matching("src", ".txt");
+Vector *vector = cr_std_filesystem_get_dirs_files_matching_r("src", ".csv"); // Recursive search
 ```
 
 **Logging** : Prefix is cr_std_logger *
