@@ -174,6 +174,11 @@ int cr_std_string_builder_test_new_normal();
 int cr_std_string_builder_test_new_empty();
 int cr_std_string_builder_test_new_formatted();
 
+// String Builder Ensure Capacity
+int cr_std_string_builder_test_ensure_capacity();
+int cr_std_string_builder_test_ensure_capacity_low();
+int cr_std_string_builder_test_ensure_capacity_null();
+
 // String Builder Free
 int cr_std_string_builder_test_free();
 int cr_std_string_builder_test_free_null_value();

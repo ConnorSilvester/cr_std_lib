@@ -183,6 +183,11 @@ void cr_std_string_test_all() {
     cr_std_vector_push_back(tests, cr_std_testing_new_test("Make String Builder -> Empty", cr_std_string_builder_test_new_empty));
     cr_std_vector_push_back(tests, cr_std_testing_new_test("Make String Builder -> Formatted", cr_std_string_builder_test_new_formatted));
 
+    // Ensure Capacity
+    cr_std_vector_push_back(tests, cr_std_testing_new_test("Ensure Capacity -> Normal", cr_std_string_builder_test_ensure_capacity));
+    cr_std_vector_push_back(tests, cr_std_testing_new_test("Ensure Capacity -> Low", cr_std_string_builder_test_ensure_capacity_low));
+    cr_std_vector_push_back(tests, cr_std_testing_new_test("Ensure Capacity -> Null", cr_std_string_builder_test_ensure_capacity_null));
+
     // Free String Builder
     cr_std_vector_push_back(tests, cr_std_testing_new_test("Free String Builder -> Normal", cr_std_string_builder_test_free));
     cr_std_vector_push_back(tests, cr_std_testing_new_test("Free String Builder -> Null Value", cr_std_string_builder_test_free_null_value));
@@ -1340,6 +1345,32 @@ int cr_std_string_builder_test_new_formatted() {
     StringBuilder *sb = cr_std_string_builder_newf("Hello %s", "World");
     int result = sb != NULL;
     cr_std_string_builder_free(&sb);
+    return result;
+}
+
+int cr_std_string_builder_test_ensure_capacity() {
+    StringBuilder *sb = cr_std_string_builder_new("");
+    int desired_add = 1024;
+    cr_std_string_builder_ensure_capacity(sb, desired_add);
+    int result = sb != NULL && sb->capacity == desired_add;
+    cr_std_string_builder_free(&sb);
+    return result;
+}
+
+int cr_std_string_builder_test_ensure_capacity_low() {
+    StringBuilder *sb = cr_std_string_builder_new("");
+    int desired_add = 16;
+    cr_std_string_builder_ensure_capacity(sb, desired_add);
+    int result = sb != NULL && sb->capacity == CR_STD_STRING_BUILDER_DEFAULT_CAP;
+    cr_std_string_builder_free(&sb);
+    return result;
+}
+
+int cr_std_string_builder_test_ensure_capacity_null() {
+    StringBuilder *sb = NULL;
+    int desired_add = 16;
+    int function_result = cr_std_string_builder_ensure_capacity(sb, desired_add);
+    int result = function_result == 1;
     return result;
 }
 

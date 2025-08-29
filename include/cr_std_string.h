@@ -21,7 +21,6 @@ typedef struct String {
     size_t length;
 } String;
 
-
 /**
  * @brief A dynamic growing string object, it will realloc on grow.
  *
@@ -69,6 +68,17 @@ StringBuilder *cr_std_string_builder_new(const char *string);
  * @return `NULL` if allocation fails.
  */
 StringBuilder *cr_std_string_builder_newf(const char *format, ...);
+
+/**
+ * @brief Reserves additional space in the string builder array if needed.
+ *
+ * @param `string_builder` The `StringBuilder` struct to work on.
+ * @param `additional` The amount of extra space wanted.
+ *
+ * @return `0` on success.
+ * @return `1` on failure.
+ */
+int cr_std_string_builder_ensure_capacity(StringBuilder *string_builder, size_t additional);
 
 /**
  * @brief Adds a single string to the string builder.

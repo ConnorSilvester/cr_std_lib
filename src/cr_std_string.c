@@ -92,6 +92,27 @@ StringBuilder *cr_std_string_builder_newf(const char *format, ...) {
     return string_builder;
 }
 
+int cr_std_string_builder_ensure_capacity(StringBuilder *string_builder, size_t additional) {
+    if (!string_builder) {
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_builder_ensure_capacity -> StringBuilder is NULL");
+        return 1;
+    }
+
+    if (string_builder->size + additional < string_builder->capacity) {
+        return 0;
+    }
+
+    string_builder->capacity = (string_builder->size + additional);
+    void *temp = realloc(string_builder->c_str, string_builder->capacity);
+    if (!temp) {
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_builder_ensure_capacity -> Failed to reallocate memory");
+        return 1;
+    }
+    string_builder->c_str = temp;
+
+    return 0;
+}
+
 int cr_std_string_builder_append_string(StringBuilder *string_builder, const char *string) {
     if (!string_builder) {
         cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_builder_append_string -> given string builder is NULL");
