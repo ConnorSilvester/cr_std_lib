@@ -236,8 +236,10 @@ int cr_std_string_concat_null_terminated(String *string, ...);
  * @return `0` if equal in length but different characters.
  * @return `-1` if the first string is longer.
  * @return `-2` if the second string is longer.
+ * @return `CR_STD_STRING_COMPARE_ERROR` in case of errors.
  */
 int cr_std_string_compare(String *arg, String *arg1);
+#define CR_STD_STRING_COMPARE_ERROR 3
 
 /**
  * @brief Compares String and a c str.
@@ -581,6 +583,17 @@ String *cr_std_string_color_string(String *string, int color_code);
  * @return `NULL` If something failed.
  */
 String *cr_std_string_color_phrase(String *string, const char *phrase, int color_code);
+
+/**
+ * @brief Repeats a string n times.
+ *
+ * @param `string` The `String` to repeat.
+ * @param `n` The number of times to repeat.
+ *
+ * @return `String` A pointer to the new full string.
+ * @return `String` A pointer to an empty string.
+ */
+String *cr_std_string_repeat(const char *string, size_t n);
 
 #ifdef __cplusplus
 }

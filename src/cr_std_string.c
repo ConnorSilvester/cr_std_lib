@@ -3,6 +3,7 @@
 #include "cr_std_vector.h"
 #include <ctype.h>
 #include <stdarg.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -393,6 +394,11 @@ int cr_std_string_concat_null_terminated(String *string, ...) {
 }
 
 int cr_std_string_compare(String *arg, String *arg1) {
+    if (!arg || !arg1) {
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_compare -> string pointer is NULL");
+        return CR_STD_STRING_COMPARE_ERROR;
+    }
+
     // First string is longer
     if (arg->length > arg1->length) {
         return -1;
@@ -1166,4 +1172,32 @@ String *cr_std_string_color_phrase(String *string, const char *phrase, int color
     cr_std_string_replace_string(str_copy, phrase, phrase_colored->c_str);
     cr_std_string_free(&phrase_colored);
     return str_copy;
+}
+
+String *cr_std_string_repeat(const char *string, size_t n) {
+    if (!string) {
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_repeat -> string is NULL");
+        return NULL;
+    }
+
+    if (n == 0) {
+        return cr_std_string_new("");
+    }
+
+    size_t len = strlen(string);
+    if (len > SIZE_MAX / n) {
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_repeat -> string is too large (n might be negative)");
+        return cr_std_string_new("");
+    }
+    size_t total_length = len * n;
+
+    StringBuilder *sb = cr_std_string_builder_new("");
+    cr_std_string_builder_ensure_capacity(sb, total_length);
+    for (size_t i = 0; i < n; i++) {
+        cr_std_string_builder_append_string(sb, string);
+    }
+
+    String *result = cr_std_string_builder_to_string(sb);
+    cr_std_string_builder_free(&sb);
+    return result;
 }

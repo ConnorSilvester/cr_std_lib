@@ -174,6 +174,11 @@ void cr_std_string_test_all() {
     cr_std_vector_push_back(tests, cr_std_testing_new_test("Sub String -> Empty", cr_std_string_test_sub_string_empty));
     cr_std_vector_push_back(tests, cr_std_testing_new_test("Sub String -> Null", cr_std_string_test_sub_string_null));
 
+    // Repeat
+    cr_std_vector_push_back(tests, cr_std_testing_new_test("Repeat String -> Normal", cr_std_string_test_repeat));
+    cr_std_vector_push_back(tests, cr_std_testing_new_test("Repeat String -> Negative", cr_std_string_test_repeat_negative));
+    cr_std_vector_push_back(tests, cr_std_testing_new_test("Repeat String -> 0", cr_std_string_test_repeat_0));
+
     /**
      * String Builder Tests Below
      */
@@ -1320,6 +1325,45 @@ int cr_std_string_test_sub_string_null() {
     cr_std_string_free(&string);
     cr_std_string_free(&string_expected);
     cr_std_string_free(&result_string);
+    return result;
+}
+
+int cr_std_string_test_repeat() {
+    String *string = cr_std_string_repeat("Test", 2);
+    String *string_expected = cr_std_string_new("TestTest");
+
+    int compare_result = cr_std_string_compare(string, string_expected);
+    int expected_compare_result = 1;
+    int result = string_expected != NULL && string != NULL && compare_result == expected_compare_result;
+
+    cr_std_string_free(&string);
+    cr_std_string_free(&string_expected);
+    return result;
+}
+
+int cr_std_string_test_repeat_0() {
+    String *string = cr_std_string_repeat("Test", 0);
+    String *string_expected = cr_std_string_new("");
+
+    int compare_result = cr_std_string_compare(string, string_expected);
+    int expected_compare_result = 1;
+    int result = string_expected != NULL && string != NULL && compare_result == expected_compare_result;
+
+    cr_std_string_free(&string);
+    cr_std_string_free(&string_expected);
+    return result;
+}
+
+int cr_std_string_test_repeat_negative() {
+    String *string = cr_std_string_repeat("Test", -1);
+    String *string_expected = cr_std_string_new("");
+
+    int compare_result = cr_std_string_compare(string, string_expected);
+    int expected_compare_result = 1;
+    int result = string_expected != NULL && string != NULL && compare_result == expected_compare_result;
+
+    cr_std_string_free(&string);
+    cr_std_string_free(&string_expected);
     return result;
 }
 
