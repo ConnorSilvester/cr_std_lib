@@ -190,7 +190,8 @@ void cr_std_string_test_all() {
     // String Builder Append
     cr_std_vector_push_back(tests, cr_std_testing_new_test("String Builder Append -> Normal", cr_std_string_builder_test_append));
     cr_std_vector_push_back(tests, cr_std_testing_new_test("String Builder Append -> Formatted", cr_std_string_builder_test_appendf));
-    cr_std_vector_push_back(tests, cr_std_testing_new_test("String Builder Append -> Single", cr_std_string_builder_test_append_single));
+    cr_std_vector_push_back(tests, cr_std_testing_new_test("String Builder Append -> String", cr_std_string_builder_test_append_string));
+    cr_std_vector_push_back(tests, cr_std_testing_new_test("String Builder Append -> Char", cr_std_string_builder_test_append_char));
     cr_std_vector_push_back(tests, cr_std_testing_new_test("String Builder Append -> Empty", cr_std_string_builder_test_append_empty));
     cr_std_vector_push_back(tests, cr_std_testing_new_test("String Builder Append -> NULL Value", cr_std_string_builder_test_append_null_value));
 
@@ -1374,10 +1375,19 @@ int cr_std_string_builder_test_appendf() {
     return result;
 }
 
-int cr_std_string_builder_test_append_single() {
+int cr_std_string_builder_test_append_string() {
     StringBuilder *sb = cr_std_string_builder_new("Hello World");
     int expected_size = 11 + 15;
-    int function_result = cr_std_string_builder_append_single(sb, " This is a test");
+    int function_result = cr_std_string_builder_append_string(sb, " This is a test");
+    int result = sb != NULL && function_result == 0 && sb->size == expected_size;
+    cr_std_string_builder_free(&sb);
+    return result;
+}
+
+int cr_std_string_builder_test_append_char() {
+    StringBuilder *sb = cr_std_string_builder_new("Hello World");
+    int expected_size = 11 + 1;
+    int function_result = cr_std_string_builder_append_char(sb, '!');
     int result = sb != NULL && function_result == 0 && sb->size == expected_size;
     cr_std_string_builder_free(&sb);
     return result;

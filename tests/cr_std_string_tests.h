@@ -181,7 +181,8 @@ int cr_std_string_builder_test_free_null_value();
 // String Builder Append
 int cr_std_string_builder_test_append();
 int cr_std_string_builder_test_appendf();
-int cr_std_string_builder_test_append_single();
+int cr_std_string_builder_test_append_string();
+int cr_std_string_builder_test_append_char();
 int cr_std_string_builder_test_append_empty();
 int cr_std_string_builder_test_append_null_value();
 

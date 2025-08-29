@@ -92,9 +92,9 @@ StringBuilder *cr_std_string_builder_newf(const char *format, ...) {
     return string_builder;
 }
 
-int cr_std_string_builder_append_single(StringBuilder *string_builder, const char *string) {
+int cr_std_string_builder_append_string(StringBuilder *string_builder, const char *string) {
     if (!string_builder) {
-        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_builder_append -> given string builder is NULL");
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_builder_append_string -> given string builder is NULL");
         return 1;
     }
 
@@ -104,7 +104,7 @@ int cr_std_string_builder_append_single(StringBuilder *string_builder, const cha
 
         void *temp = realloc(string_builder->c_str, string_builder->capacity);
         if (!temp) {
-            cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_builder_append -> failed to realloc memory for StringBuilder->c_str");
+            cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_builder_append_string -> failed to realloc memory for StringBuilder->c_str");
             return 1;
         }
         string_builder->c_str = temp;
@@ -114,6 +114,30 @@ int cr_std_string_builder_append_single(StringBuilder *string_builder, const cha
 
     string_builder->size += string_to_append_length;
     string_builder->c_str[string_builder->size] = '\0';
+    return 0;
+}
+
+int cr_std_string_builder_append_char(StringBuilder *string_builder, char ch) {
+    if (!string_builder) {
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_builder_append_char -> given string builder is NULL");
+        return 1;
+    }
+
+    if (string_builder->size + 1 >= string_builder->capacity) {
+        string_builder->capacity = (string_builder->size + 1) * 2;
+
+        void *temp = realloc(string_builder->c_str, string_builder->capacity);
+        if (!temp) {
+            cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_builder_append_char -> failed to realloc memory");
+            return 1;
+        }
+        string_builder->c_str = temp;
+    }
+
+    string_builder->c_str[string_builder->size] = ch;
+    string_builder->size += 1;
+    string_builder->c_str[string_builder->size] = '\0';
+
     return 0;
 }
 
@@ -139,7 +163,7 @@ int cr_std_string_builder_appendf(StringBuilder *string_builder, const char *for
     va_end(args);
 
     buffer[string_to_append_length] = '\0';
-    int result = cr_std_string_builder_append_single(string_builder, buffer);
+    int result = cr_std_string_builder_append_string(string_builder, buffer);
 
     free(buffer);
     return result;
@@ -156,7 +180,7 @@ int cr_std_string_builder_append_null_terminated(StringBuilder *string_builder, 
 
     char *current_string;
     while ((current_string = va_arg(args, char *)) != NULL) {
-        int result = cr_std_string_builder_append_single(string_builder, current_string);
+        int result = cr_std_string_builder_append_string(string_builder, current_string);
         if (result != 0) {
             return result;
         }

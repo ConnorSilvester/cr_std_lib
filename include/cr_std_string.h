@@ -79,7 +79,18 @@ StringBuilder *cr_std_string_builder_newf(const char *format, ...);
  * @return `0` on success.
  * @return `1` on failure.
  */
-int cr_std_string_builder_append_single(StringBuilder *string_builder, const char *string);
+int cr_std_string_builder_append_string(StringBuilder *string_builder, const char *string);
+
+/**
+ * @brief Adds a single char to the string builder.
+ *
+ * @param `string_builder` The `StringBuilder` struct to work on.
+ * @param `ch` The char to add.
+ *
+ * @return `0` on success.
+ * @return `1` on failure.
+ */
+int cr_std_string_builder_append_char(StringBuilder *string_builder, char ch);
 
 /**
  * @brief Adds a string to the string builder.

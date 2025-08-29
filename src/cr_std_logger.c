@@ -149,7 +149,7 @@ int cr_std_logger_write_history_to_file(const char *filepath) {
         StringBuilder *sb = cr_std_string_builder_new("");
         for (int i = 0; i < cr_std_logger_log_history->size; i++) {
             String *current_log = cr_std_vector_get_at(cr_std_logger_log_history, String, i);
-            cr_std_string_builder_append_single(sb, current_log->c_str);
+            cr_std_string_builder_append_string(sb, current_log->c_str);
         }
         String *output = cr_std_string_builder_to_string(sb);
 

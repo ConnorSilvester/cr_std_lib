@@ -106,7 +106,7 @@ CSVFile *cr_std_csv_parse_file(const char *file_path) {
             in_quotes = true;
         } else if (c == '"' && in_quotes) {
             if (src[index + 1] == '"') {
-                cr_std_string_builder_append_single(sb, "\"");
+                cr_std_string_builder_append_string(sb, "\"");
                 index++;
             } else {
                 in_quotes = false;
@@ -133,7 +133,7 @@ CSVFile *cr_std_csv_parse_file(const char *file_path) {
             cr_std_string_builder_reset(sb);
         } else {
             if (c != '\r') {
-                cr_std_string_builder_append(sb, (char[]){c, '\0'});
+                cr_std_string_builder_append_char(sb, c);
             }
         }
     }
