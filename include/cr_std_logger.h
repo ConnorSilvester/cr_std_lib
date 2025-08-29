@@ -16,6 +16,14 @@ extern "C" {
 #define CR_STD_LOGGER_LOG_LEVEL_ERROR 2
 #define CR_STD_LOGGER_LOG_LEVEL_NONE 3
 
+// Short Hand Logging Macro
+#define CR_LOG_INFO(msg) cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_INFO, msg)
+#define CR_LOG_INFO_FMT(fmt, ...) cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_INFO, fmt, __VA_ARGS__)
+#define CR_LOG_WARNING(msg) cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_WARNING, msg)
+#define CR_LOG_WARNING_FMT(fmt, ...) cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_WARNING, fmt, __VA_ARGS__)
+#define CR_LOG_ERROR(msg) cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, msg)
+#define CR_LOG_ERROR_FMT(fmt, ...) cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR, fmt, __VA_ARGS__)
+
 typedef struct Vector Vector;
 
 /**

@@ -235,6 +235,10 @@ cr_std_logger_set_log_level(CR_STD_LOGGER_LOG_LEVEL_ALL);
 
 cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_INFO, "This is a info message");
 cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR, "This is a error message with filename : %s", file_name); // Same formatting as printf
+
+// Macros for faster logging
+CR_LOG_INFO("Read File");
+CR_LOG_INFO_FMT("Read Line %d", 3);
 ```
 
 
