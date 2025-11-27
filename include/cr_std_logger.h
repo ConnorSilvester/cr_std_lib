@@ -8,17 +8,21 @@ extern "C" {
 #include <stdio.h>
 
 #define CR_STD_LOGGER_LOG_TYPE_INFO 0
-#define CR_STD_LOGGER_LOG_TYPE_WARNING 1
-#define CR_STD_LOGGER_LOG_TYPE_ERROR 2
+#define CR_STD_LOGGER_LOG_TYPE_CUSTOM 1
+#define CR_STD_LOGGER_LOG_TYPE_WARNING 2
+#define CR_STD_LOGGER_LOG_TYPE_ERROR 3
 
 #define CR_STD_LOGGER_LOG_LEVEL_ALL 0
-#define CR_STD_LOGGER_LOG_LEVEL_WARNING 1
-#define CR_STD_LOGGER_LOG_LEVEL_ERROR 2
-#define CR_STD_LOGGER_LOG_LEVEL_NONE 3
+#define CR_STD_LOGGER_LOG_LEVEL_CUSTOM 1
+#define CR_STD_LOGGER_LOG_LEVEL_WARNING 2
+#define CR_STD_LOGGER_LOG_LEVEL_ERROR 3
+#define CR_STD_LOGGER_LOG_LEVEL_NONE 4
 
 // Short Hand Logging Macro
 #define CR_LOG_INFO(msg) cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_INFO, msg)
 #define CR_LOG_INFO_FMT(fmt, ...) cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_INFO, fmt, __VA_ARGS__)
+#define CR_LOG_CUSTOM(type, color_code, msg) cr_std_logger_outc(type, color_code, msg)
+#define CR_LOG_CUSTOM_FMT(type, color_code, fmt, ...) cr_std_logger_outfc(type, color_code, fmt, __VA_ARGS__)
 #define CR_LOG_WARNING(msg) cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_WARNING, msg)
 #define CR_LOG_WARNING_FMT(fmt, ...) cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_WARNING, fmt, __VA_ARGS__)
 #define CR_LOG_ERROR(msg) cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, msg)
@@ -37,11 +41,30 @@ void cr_std_logger_out(int log_type, const char *log_message);
 /**
  * @brief Used to log to the console
  *
+ * @param `type` The custom log type
+ * @param `color_code` The color code for the type
+ * @param `log_message` The message to print to the console.
+ */
+void cr_std_logger_outc(const char *type, int color_code, const char *log_message);
+
+/**
+ * @brief Used to log to the console
+ *
  * @param `log_type` One of the defined log types.
  * @param `formatted_str` The message to print to the console, is formatted.
  * @param `...` This can be any amount of args to add into the format of formatted_str.
  */
 void cr_std_logger_outf(int log_type, const char *formatted_str, ...);
+
+/**
+ * @brief Used to log to the console
+ *
+ * @param `type` The custom log type
+ * @param `color_code` The color code for the type
+ * @param `formatted_str` The message to print to the console, is formatted.
+ * @param `...` This can be any amount of args to add into the format of formatted_str.
+ */
+void cr_std_logger_outfc(const char *type, int color_code, const char *formatted_str, ...);
 
 /**
  * @brief Used to set the log level

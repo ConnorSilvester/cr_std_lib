@@ -47,6 +47,7 @@ typedef struct StringBuilder {
 #define CR_STD_STRING_COLOR_MAGENTA 35
 #define CR_STD_STRING_COLOR_CYAN 36
 #define CR_STD_STRING_COLOR_WHITE 37
+#define CR_STD_STRING_COLOR_NONE 39
 
 /**
  * @brief Creates a new `StringBuilder` struct with the provided string.
@@ -583,6 +584,16 @@ String *cr_std_string_color_string(String *string, int color_code);
  * @return `NULL` If something failed.
  */
 String *cr_std_string_color_phrase(String *string, const char *phrase, int color_code);
+
+/**
+ * @brief Strips the colors from a string
+ *
+ * @param `string` The `String` to work from.
+ *
+ * @return `0` on success
+ * @return `1` on failure
+ */
+int cr_std_string_color_strip(String *string);
 
 /**
  * @brief Repeats a string n times.

@@ -1153,7 +1153,7 @@ String *cr_std_string_color_string(String *string, int color_code) {
     }
     if (color_code < 30 || color_code >= 40) {
         cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_WARNING, "cr_std_string_color_string -> invalid color code");
-        color_code = 39;
+        color_code = CR_STD_STRING_COLOR_NONE;
     }
     return cr_std_string_newf(CR_STD_STRING_ANSI_COLOR_ESCAPE_SEQ, color_code, string->c_str);
 }
@@ -1165,13 +1165,29 @@ String *cr_std_string_color_phrase(String *string, const char *phrase, int color
     }
     if (color_code < 30 || color_code >= 40) {
         cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_WARNING, "cr_std_string_color_phrase -> invalid color code");
-        color_code = 39;
+        color_code = CR_STD_STRING_COLOR_NONE;
     }
     String *str_copy = cr_std_string_make_copy(string);
     String *phrase_colored = cr_std_string_newf(CR_STD_STRING_ANSI_COLOR_ESCAPE_SEQ, color_code, phrase);
     cr_std_string_replace_string(str_copy, phrase, phrase_colored->c_str);
     cr_std_string_free(&phrase_colored);
     return str_copy;
+}
+
+int cr_std_string_color_strip(String *string) {
+    if (!string || !string->c_str) {
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_color_strip -> string is NULL");
+        return 1;
+    }
+
+    for (int i = 30; i < 40; i++) {
+        char color_code[16];
+        snprintf(color_code, sizeof(color_code), "\033[%dm", i);
+        cr_std_string_replace_string(string, color_code, "");
+    }
+
+    cr_std_string_replace_string(string, "\033[0m", "");
+    return 0;
 }
 
 String *cr_std_string_repeat(const char *string, size_t n) {

@@ -57,6 +57,20 @@ void cr_std_logger_record_log(int log_type, const char *log_message) {
     }
 }
 
+void cr_std_logger_record_log_custom(const char *type, int color_code, const char *log_message) {
+    if (cr_std_logger_record_log_flag) {
+        cr_std_logger_init_history();
+
+        char time_str[9]; // HH:MM:SS + null terminator
+        cr_std_logger_get_current_time(time_str, sizeof(time_str));
+
+        String *log = cr_std_string_newf("[%s] \033[%dm[%s]\033[0m %s\n", time_str, color_code, type, log_message);
+        if (log) {
+            cr_std_vector_push_back(cr_std_logger_log_history, log);
+        }
+    }
+}
+
 void cr_std_logger_out(int log_type, const char *log_message) {
     if (log_type < cr_std_logger_current_log_level) {
         return;
@@ -82,6 +96,23 @@ void cr_std_logger_out(int log_type, const char *log_message) {
     cr_std_logger_record_log(log_type, log_message);
 }
 
+void cr_std_logger_outc(const char *type, int color_code, const char *log_message) {
+    if (CR_STD_LOGGER_LOG_TYPE_CUSTOM < cr_std_logger_current_log_level) {
+        return;
+    }
+
+    if (color_code < 30 || color_code >= 40) {
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_WARNING, "cr_std_logger_out_custom -> invalid color code");
+        color_code = CR_STD_STRING_COLOR_NONE;
+    }
+
+    char time_str[9]; // HH:MM:SS + null terminator
+    cr_std_logger_get_current_time(time_str, sizeof(time_str));
+    printf("[%s] \033[%dm[%s]\033[0m %s\n", time_str, color_code, type, log_message);
+
+    cr_std_logger_record_log_custom(type, color_code, log_message);
+}
+
 void cr_std_logger_outf(int log_type, const char *formatted_str, ...) {
     va_list args;
     va_start(args, formatted_str);
@@ -100,6 +131,28 @@ void cr_std_logger_outf(int log_type, const char *formatted_str, ...) {
     va_end(args);
 
     cr_std_logger_out(log_type, result);
+
+    free(result);
+}
+
+void cr_std_logger_outfc(const char *type, int color_code, const char *formatted_str, ...) {
+    va_list args;
+    va_start(args, formatted_str);
+
+    int length_of_string = vsnprintf(NULL, 0, formatted_str, args);
+    va_end(args);
+
+    char *result = (char *)malloc(length_of_string + 1);
+    if (result == NULL) {
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "memory allocation failed in cr_std_logger_outf");
+        return;
+    }
+
+    va_start(args, formatted_str);
+    vsnprintf(result, length_of_string + 1, formatted_str, args);
+    va_end(args);
+
+    cr_std_logger_outc(type, color_code, result);
 
     free(result);
 }
@@ -152,12 +205,7 @@ int cr_std_logger_write_history_to_file(const char *filepath) {
             cr_std_string_builder_append_string(sb, current_log->c_str);
         }
         String *output = cr_std_string_builder_to_string(sb);
-
-        // String Color
-        cr_std_string_replace_string(output, "\033[33m", "");
-        cr_std_string_replace_string(output, "\033[31m", "");
-        cr_std_string_replace_string(output, "\033[0m", "");
-
+        cr_std_string_color_strip(output);
         result = cr_std_filesystem_write_to_file(filepath, output->c_str);
         cr_std_string_builder_free(&sb);
         cr_std_string_free(&output);
