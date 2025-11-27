@@ -5,6 +5,8 @@
 extern "C" {
 #endif
 
+#define CR_STD_PATH_MAX_SIZE 1024
+
 /**
  * @brief Custom free function used to free my custom cr_std types.
  *

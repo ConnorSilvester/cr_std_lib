@@ -21,6 +21,7 @@ extern "C" {
 #define DT_WHT     14
 #else
 #include <dirent.h>
+#include <unistd.h>
 #endif
 
 typedef struct String String;
@@ -80,6 +81,14 @@ int cr_std_filesystem_move_file(const char *src, const char *dest);
 
 #ifdef _WIN32
 /**
+ * @brief Gets the current working directory
+ *
+ * @return `String *` on success, containing the path.
+ * @return `NULL` on failure.
+ */
+String *cr_std_filesystem_get_cwd();
+
+/**
  * @brief Makes a directory
  *
  * @param `dir_path` The directory path to create
@@ -89,6 +98,14 @@ int cr_std_filesystem_move_file(const char *src, const char *dest);
  */
 int cr_std_filesystem_make_dir(const char* dir_path);
 #else
+/**
+ * @brief Gets the current working directory
+ *
+ * @return `String *` on success, containing the path.
+ * @return `NULL` on failure.
+ */
+String *cr_std_filesystem_get_cwd();
+
 /**
  * @brief Makes a directory
  *
