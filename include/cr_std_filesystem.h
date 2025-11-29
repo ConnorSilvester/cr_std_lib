@@ -81,14 +81,6 @@ int cr_std_filesystem_move_file(const char *src, const char *dest);
 
 #ifdef _WIN32
 /**
- * @brief Gets the current working directory
- *
- * @return `String *` on success, containing the path.
- * @return `NULL` on failure.
- */
-String *cr_std_filesystem_get_cwd();
-
-/**
  * @brief Makes a directory
  *
  * @param `dir_path` The directory path to create
@@ -96,15 +88,8 @@ String *cr_std_filesystem_get_cwd();
  * @return `0` on success.
  * @return `1` on failure.
  */
-int cr_std_filesystem_make_dir(const char* dir_path);
+int cr_std_filesystem_make_dir(const char *dir_path);
 #else
-/**
- * @brief Gets the current working directory
- *
- * @return `String *` on success, containing the path.
- * @return `NULL` on failure.
- */
-String *cr_std_filesystem_get_cwd();
 
 /**
  * @brief Makes a directory
@@ -118,6 +103,13 @@ String *cr_std_filesystem_get_cwd();
 int cr_std_filesystem_make_dir(const char *dir_path, mode_t permissions);
 #endif // _WIN32
 
+/**
+ * @brief Gets the current working directory
+ *
+ * @return `String *` on success, containing the path.
+ * @return `NULL` on failure.
+ */
+String *cr_std_filesystem_get_cwd();
 
 /**
  * @brief Writes the contents of `data` into the file at `file_path`
