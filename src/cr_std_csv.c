@@ -9,7 +9,8 @@
 CSVFile *cr_std_csv_new() {
     CSVFile *csv = (CSVFile *)malloc(sizeof(CSVFile));
     if (!csv) {
-        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_csv_new -> Failed to allocate memory for CSVFile");
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR,
+                          "cr_std_csv_new -> Failed to allocate memory for CSVFile");
         return NULL;
     }
     csv->titles = cr_std_vector_new(String *);
@@ -24,7 +25,8 @@ CSVFile *cr_std_csv_new() {
 CSVRow *cr_std_csv_row_new() {
     CSVRow *row = (CSVRow *)malloc(sizeof(CSVRow));
     if (!row) {
-        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_csv_row_new -> Failed to allocate memory for Row");
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR,
+                          "cr_std_csv_row_new -> Failed to allocate memory for Row");
         return NULL;
     }
     row->fields = cr_std_vector_new(String *);
@@ -79,7 +81,8 @@ CSVFile *cr_std_csv_parse_file(const char *file_path) {
 
     String *file_contents = cr_std_filesystem_read_file_as_string(file_path);
     if (!file_contents) {
-        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_WARNING, "cr_std_csv_parse_file -> returned empty CSVFile");
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_WARNING,
+                          "cr_std_csv_parse_file -> returned empty CSVFile");
         return csv;
     }
     const char *src = file_contents->c_str;
@@ -91,10 +94,8 @@ CSVFile *cr_std_csv_parse_file(const char *file_path) {
     CSVRow *row = cr_std_csv_row_new();
 
     int index = 0;
-    if (file_contents->length >= 3 &&
-        (unsigned char)src[0] == 0xEF &&
-        (unsigned char)src[1] == 0xBB &&
-        (unsigned char)src[2] == 0xBF) {
+    if (file_contents->length >= 3 && (unsigned char)src[0] == 0xEF &&
+        (unsigned char)src[1] == 0xBB && (unsigned char)src[2] == 0xBF) {
         index = 3; // Skip BOM
     }
 
@@ -152,7 +153,8 @@ CSVFile *cr_std_csv_parse_file(const char *file_path) {
 
 int cr_std_csv_print_contents(CSVFile *csv) {
     if (!csv) {
-        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_csv_print_contents -> CSVFile struct is NULL");
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR,
+                          "cr_std_csv_print_contents -> CSVFile struct is NULL");
         return 1;
     }
 

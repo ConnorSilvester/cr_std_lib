@@ -17,7 +17,9 @@ String *cr_std_filesystem_get_current_time_date(const char *time_date_format) {
     timeinfo = localtime(&rawtime);
 
     if (strftime(time_str, sizeof(time_str), time_date_format, timeinfo) == 0) {
-        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_filesystem_get_current_time -> strftime failed to format the format string");
+        cr_std_logger_out(
+        CR_STD_LOGGER_LOG_TYPE_ERROR,
+        "cr_std_filesystem_get_current_time -> strftime failed to format the format string");
         return NULL;
     }
 
@@ -28,21 +30,24 @@ int cr_std_filesystem_copy_file(const char *src, const char *dest) {
 
     FILE *src_file = fopen(src, "rb");
     if (!src_file) {
-        cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_filesystem_copy_file -> file can't be opened -> %s", src);
+        cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR,
+                           "cr_std_filesystem_copy_file -> file can't be opened -> %s", src);
         return 1;
     }
 
     FILE *dest_file = fopen(dest, "wb");
     if (!dest_file) {
         fclose(src_file);
-        cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_filesystem_copy_file -> file can't be opened -> %s", dest);
+        cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR,
+                           "cr_std_filesystem_copy_file -> file can't be opened -> %s", dest);
         return 1;
     }
 
     int ch;
     while ((ch = fgetc(src_file)) != EOF) {
         if (fputc(ch, dest_file) == EOF) {
-            cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_filesystem_copy_file -> error writing to file -> %s", dest);
+            cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR,
+                               "cr_std_filesystem_copy_file -> error writing to file -> %s", dest);
             fclose(src_file);
             fclose(dest_file);
             return 1;
@@ -50,7 +55,8 @@ int cr_std_filesystem_copy_file(const char *src, const char *dest) {
     }
 
     if (ferror(src_file)) {
-        cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_filesystem_copy_file -> error reading from file -> %s", src);
+        cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR,
+                           "cr_std_filesystem_copy_file -> error reading from file -> %s", src);
         fclose(src_file);
         fclose(dest_file);
         return 1;
@@ -64,39 +70,60 @@ int cr_std_filesystem_copy_file(const char *src, const char *dest) {
 
 int cr_std_filesystem_move_file(const char *src, const char *dest) {
     if (rename(src, dest) == 0) {
-        cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_INFO, "cr_std_filesystem_move_file -> File moved from '%s' to '%s' successfully", src, dest);
+        cr_std_logger_outf(
+        CR_STD_LOGGER_LOG_TYPE_INFO,
+        "cr_std_filesystem_move_file -> File moved from '%s' to '%s' successfully", src, dest);
         return 0;
     } else {
         if (errno == ENOENT) {
-            cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_filesystem_move_file -> Source file '%s' or destination '%s' does not exist", src, dest);
+            cr_std_logger_outf(
+            CR_STD_LOGGER_LOG_TYPE_ERROR,
+            "cr_std_filesystem_move_file -> Source file '%s' or destination '%s' does not exist",
+            src, dest);
         } else if (errno == EACCES) {
-            cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_filesystem_move_file -> Permission denied when accessing '%s' or '%s'", src, dest);
+            cr_std_logger_outf(
+            CR_STD_LOGGER_LOG_TYPE_ERROR,
+            "cr_std_filesystem_move_file -> Permission denied when accessing '%s' or '%s'", src,
+            dest);
         } else if (errno == ENOTDIR) {
-            cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_filesystem_move_file -> Part of the path does not exist in '%s' or '%s'", src, dest);
+            cr_std_logger_outf(
+            CR_STD_LOGGER_LOG_TYPE_ERROR,
+            "cr_std_filesystem_move_file -> Part of the path does not exist in '%s' or '%s'", src,
+            dest);
         } else if (errno == EEXIST) {
-            cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_filesystem_move_file -> The destination file '%s' already exists", dest);
+            cr_std_logger_outf(
+            CR_STD_LOGGER_LOG_TYPE_ERROR,
+            "cr_std_filesystem_move_file -> The destination file '%s' already exists", dest);
         } else if (errno == EXDEV) {
-            cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_filesystem_move_file -> Can not move file across different filesystems");
+            cr_std_logger_out(
+            CR_STD_LOGGER_LOG_TYPE_ERROR,
+            "cr_std_filesystem_move_file -> Can not move file across different filesystems");
         } else {
-            cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_filesystem_move_file -> Failed to move file");
+            cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR,
+                              "cr_std_filesystem_move_file -> Failed to move file");
         }
         return 1;
     }
 }
 
-int cr_std_filesystem_write_file_operations(const char *file_path, const char *data, const char *mode) {
+int cr_std_filesystem_write_file_operations(const char *file_path,
+                                            const char *data,
+                                            const char *mode) {
     if (!data || !file_path || !mode) {
         return 1;
     }
 
     FILE *file = fopen(file_path, mode);
     if (!file) {
-        cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_filesystem_write_file_operations -> file can't be opened -> %s", file_path);
+        cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR,
+                           "cr_std_filesystem_write_file_operations -> file can't be opened -> %s",
+                           file_path);
         return 1;
     }
 
     if (fputs(data, file) == EOF) {
-        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_filesystem_write_file_operations  -> failed to write data");
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR,
+                          "cr_std_filesystem_write_file_operations  -> failed to write data");
         fclose(file);
         return 1;
     }
@@ -116,7 +143,9 @@ int cr_std_filesystem_append_to_file(const char *file_path, const char *data) {
 String *cr_std_filesystem_read_file_as_string(const char *file_path) {
     FILE *file = fopen(file_path, "r");
     if (!file) {
-        cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_filesystem_read_file_as_string -> file can't be found -> %s", file_path);
+        cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR,
+                           "cr_std_filesystem_read_file_as_string -> file can't be found -> %s",
+                           file_path);
         return NULL;
     }
 
@@ -126,7 +155,9 @@ String *cr_std_filesystem_read_file_as_string(const char *file_path) {
 
     char *buffer = malloc(file_size + 1);
     if (!buffer) {
-        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_filesystem_read_file_as_string -> failed to allocate memory for buffer");
+        cr_std_logger_out(
+        CR_STD_LOGGER_LOG_TYPE_ERROR,
+        "cr_std_filesystem_read_file_as_string -> failed to allocate memory for buffer");
         fclose(file);
         return NULL;
     }
@@ -143,13 +174,17 @@ String *cr_std_filesystem_read_file_as_string(const char *file_path) {
 Vector *cr_std_filesystem_read_file_as_vector(const char *file_path) {
     String *file_contents = cr_std_filesystem_read_file_as_string(file_path);
     if (!file_contents) {
-        cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_filesystem_read_file_as_vector -> failed to read file contents -> %s", file_path);
+        cr_std_logger_outf(
+        CR_STD_LOGGER_LOG_TYPE_ERROR,
+        "cr_std_filesystem_read_file_as_vector -> failed to read file contents -> %s", file_path);
         return NULL;
     }
 
     Vector *file_lines = cr_std_string_split_hard(file_contents, '\n');
     if (!file_lines) {
-        cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_filesystem_read_file_as_vector -> failed to split file contents -> %s", file_path);
+        cr_std_logger_outf(
+        CR_STD_LOGGER_LOG_TYPE_ERROR,
+        "cr_std_filesystem_read_file_as_vector -> failed to split file contents -> %s", file_path);
     }
     cr_std_string_free(&file_contents);
     return file_lines;
@@ -209,6 +244,7 @@ int cr_std_filesystem_dirent_free(Dirent **dirent_ptr) {
         *dirent_ptr = NULL;
         return 0;
     }
-    cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_WARNING, "cr_std_filesystem_dirent_free -> tried to free a NULL dirent_ptr*");
+    cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_WARNING,
+                      "cr_std_filesystem_dirent_free -> tried to free a NULL dirent_ptr*");
     return 1;
 }

@@ -64,7 +64,8 @@ void cr_std_logger_record_log_custom(const char *type, int color_code, const cha
         char time_str[9]; // HH:MM:SS + null terminator
         cr_std_logger_get_current_time(time_str, sizeof(time_str));
 
-        String *log = cr_std_string_newf("[%s] \033[%dm[%s]\033[0m %s\n", time_str, color_code, type, log_message);
+        String *log = cr_std_string_newf("[%s] \033[%dm[%s]\033[0m %s\n", time_str, color_code,
+                                         type, log_message);
         if (log) {
             cr_std_vector_push_back(cr_std_logger_log_history, log);
         }
@@ -102,7 +103,8 @@ void cr_std_logger_outc(const char *type, int color_code, const char *log_messag
     }
 
     if (color_code < 30 || color_code >= 40) {
-        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_WARNING, "cr_std_logger_out_custom -> invalid color code");
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_WARNING,
+                          "cr_std_logger_out_custom -> invalid color code");
         color_code = CR_STD_STRING_COLOR_NONE;
     }
 
@@ -122,7 +124,8 @@ void cr_std_logger_outf(int log_type, const char *formatted_str, ...) {
 
     char *result = (char *)malloc(length_of_string + 1);
     if (result == NULL) {
-        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "memory allocation failed in cr_std_logger_outf");
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR,
+                          "memory allocation failed in cr_std_logger_outf");
         return;
     }
 
@@ -144,7 +147,8 @@ void cr_std_logger_outfc(const char *type, int color_code, const char *formatted
 
     char *result = (char *)malloc(length_of_string + 1);
     if (result == NULL) {
-        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "memory allocation failed in cr_std_logger_outf");
+        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR,
+                          "memory allocation failed in cr_std_logger_outf");
         return;
     }
 

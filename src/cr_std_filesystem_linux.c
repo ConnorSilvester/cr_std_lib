@@ -22,26 +22,40 @@ String *cr_std_filesystem_get_cwd() {
 
 int cr_std_filesystem_make_dir(const char *dir_path, mode_t permissions) {
     if (mkdir(dir_path, permissions) == 0) {
-        cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_INFO, "cr_std_filesystem_make_dir -> Directory created '%s'", dir_path);
+        cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_INFO,
+                           "cr_std_filesystem_make_dir -> Directory created '%s'", dir_path);
         return 0;
     } else {
         if (errno == EEXIST) {
-            cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_WARNING, "cr_std_filesystem_make_dir -> Directory already exists '%s'", dir_path);
+            cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_WARNING,
+                               "cr_std_filesystem_make_dir -> Directory already exists '%s'",
+                               dir_path);
         } else if (errno == EACCES) {
-            cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_filesystem_make_dir -> Permission denied could not create directory '%s'", dir_path);
+            cr_std_logger_outf(
+            CR_STD_LOGGER_LOG_TYPE_ERROR,
+            "cr_std_filesystem_make_dir -> Permission denied could not create directory '%s'",
+            dir_path);
         } else if (errno == ENOENT) {
-            cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_filesystem_make_dir -> Part of the directory could not be found '%s'", dir_path);
+            cr_std_logger_outf(
+            CR_STD_LOGGER_LOG_TYPE_ERROR,
+            "cr_std_filesystem_make_dir -> Part of the directory could not be found '%s'",
+            dir_path);
         } else {
-            cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_filesystem_make_dir -> Failed to create directory");
+            cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR,
+                               "cr_std_filesystem_make_dir -> Failed to create directory");
         }
         return 1;
     }
 }
 
-Vector *cr_std_filesystem_get_entries(const char *file_path, bool include_files, bool include_dirs, bool recursive) {
+Vector *cr_std_filesystem_get_entries(const char *file_path,
+                                      bool include_files,
+                                      bool include_dirs,
+                                      bool recursive) {
     DIR *dir = opendir(file_path);
     if (!dir) {
-        cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_filesystem_get_entries -> failed to open dir -> %s", file_path);
+        cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR,
+                           "cr_std_filesystem_get_entries -> failed to open dir -> %s", file_path);
         return NULL;
     }
 
@@ -63,14 +77,19 @@ Vector *cr_std_filesystem_get_entries(const char *file_path, bool include_files,
 
         String *full_path = cr_std_string_newf("%s/%s", file_path, file_name->c_str);
         if (!full_path) {
-            cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_filesystem_get_entries -> memory allocation failed for path -> %s/%s", file_path, file_name->c_str);
+            cr_std_logger_outf(
+            CR_STD_LOGGER_LOG_TYPE_ERROR,
+            "cr_std_filesystem_get_entries -> memory allocation failed for path -> %s/%s",
+            file_path, file_name->c_str);
             cr_std_string_free(&file_name);
             continue;
         }
 
         Dirent *custom_entry = malloc(sizeof(Dirent));
         if (!custom_entry) {
-            cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_filesystem_get_entries -> memory allocation failed for Dirent");
+            cr_std_logger_outf(
+            CR_STD_LOGGER_LOG_TYPE_ERROR,
+            "cr_std_filesystem_get_entries -> memory allocation failed for Dirent");
             cr_std_string_free(&file_name);
             cr_std_string_free(&full_path);
             continue;
@@ -84,7 +103,8 @@ Vector *cr_std_filesystem_get_entries(const char *file_path, bool include_files,
         struct stat file_stat;
         if (stat(full_path->c_str, &file_stat) == 0) {
             if (!S_ISDIR(file_stat.st_mode) && cr_std_string_find_char_last(file_name, '.') != -1) {
-                custom_entry->d_ext = cr_std_string_sub_string(file_name, cr_std_string_find_char_last(file_name, '.'), file_name->length);
+                custom_entry->d_ext = cr_std_string_sub_string(
+                file_name, cr_std_string_find_char_last(file_name, '.'), file_name->length);
             } else {
                 custom_entry->d_ext = cr_std_string_new("N/A");
             }
@@ -100,7 +120,8 @@ Vector *cr_std_filesystem_get_entries(const char *file_path, bool include_files,
         }
 
         // Only push the entry to the vector if it matches the include conditions
-        if ((S_ISDIR(file_stat.st_mode) && include_dirs) || (!S_ISDIR(file_stat.st_mode) && include_files)) {
+        if ((S_ISDIR(file_stat.st_mode) && include_dirs) ||
+            (!S_ISDIR(file_stat.st_mode) && include_files)) {
             cr_std_vector_push_back(vector, custom_entry);
         } else {
             // If the entry is not included, free the memory
@@ -109,7 +130,8 @@ Vector *cr_std_filesystem_get_entries(const char *file_path, bool include_files,
 
         // Recursive call for directories if enabled
         if (recursive && S_ISDIR(file_stat.st_mode)) {
-            Vector *sub_dir_vector = cr_std_filesystem_get_entries(full_path->c_str, include_files, include_dirs, recursive);
+            Vector *sub_dir_vector =
+            cr_std_filesystem_get_entries(full_path->c_str, include_files, include_dirs, recursive);
             if (sub_dir_vector) {
                 cr_std_vector_extend(vector, sub_dir_vector);
                 free(sub_dir_vector);

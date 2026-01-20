@@ -7,7 +7,9 @@
 TestCase *cr_std_testing_new_test(const char *name, int (*test_function)(void)) {
     TestCase *new_test = (TestCase *)malloc(sizeof(TestCase));
     if (!new_test) {
-        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_testing_new_test -> failed to allocate memory for new TestCase struct");
+        cr_std_logger_out(
+        CR_STD_LOGGER_LOG_TYPE_ERROR,
+        "cr_std_testing_new_test -> failed to allocate memory for new TestCase struct");
         return NULL;
     }
 
