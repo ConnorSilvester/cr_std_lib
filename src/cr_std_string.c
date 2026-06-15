@@ -896,6 +896,7 @@ Vector *cr_std_string_split_hard(String *string, char delimiter) {
             buffer_index++;
         }
     }
+    free(buffer);
     return vector;
 }
 
