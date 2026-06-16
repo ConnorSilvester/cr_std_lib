@@ -9,10 +9,6 @@ int cr_std_string_test_new_string_normal();
 int cr_std_string_test_new_string_empty();
 int cr_std_string_test_new_string_formatted();
 
-// Free String
-int cr_std_string_test_free();
-int cr_std_string_test_free_null_value();
-
 // Copy String
 int cr_std_string_test_copy_string();
 int cr_std_string_test_copy_string_empty();
@@ -148,22 +144,11 @@ int cr_std_string_test_to_int_null();
 int cr_std_string_test_from_int();
 int cr_std_string_test_from_int_negative();
 
-// From String Pointer Vector
-int cr_std_string_test_from_string_ptr_vector();
-int cr_std_string_test_from_string_ptr_vector_empty();
-int cr_std_string_test_from_string_ptr_vector_null();
-
-// From Char Pointer Vector
-int cr_std_string_test_from_char_ptr_vector();
-int cr_std_string_test_from_char_ptr_vector_empty();
-int cr_std_string_test_from_char_ptr_vector_null();
-
 // Sub String
 int cr_std_string_test_sub_string();
 int cr_std_string_test_sub_string_index_too_low();
 int cr_std_string_test_sub_string_index_too_high();
 int cr_std_string_test_sub_string_index_invalid();
-int cr_std_string_test_sub_string_empty();
 int cr_std_string_test_sub_string_null();
 
 // Repeat
@@ -184,10 +169,6 @@ int cr_std_string_builder_test_new_formatted();
 int cr_std_string_builder_test_ensure_capacity();
 int cr_std_string_builder_test_ensure_capacity_low();
 int cr_std_string_builder_test_ensure_capacity_null();
-
-// String Builder Free
-int cr_std_string_builder_test_free();
-int cr_std_string_builder_test_free_null_value();
 
 // String Builder Append
 int cr_std_string_builder_test_append();

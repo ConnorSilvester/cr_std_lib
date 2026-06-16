@@ -7,6 +7,7 @@ extern "C" {
 #endif
 
 typedef struct Vector Vector;
+typedef struct Arena Arena;
 
 /**
  * @brief Represents an entire CSV file in memory.
@@ -40,50 +41,33 @@ typedef struct CSVRow {
 /**
  * @brief Creates a new `CSVFile` struct
  *
+ * @param `arena` The arena to store the memory in
+ *
  * @return A pointer to the new `CSVFile` struct.
  * @return `NULL` if allocation fails.
  */
-CSVFile *cr_std_csv_new();
+CSVFile *cr_std_csv_new(Arena *arena);
 
 /**
  * @brief Creates a new `CSVRow` struct
  *
+ * @param `arena` The arena to store the memory in
+ *
  * @return A pointer to the new `CSVRow` struct.
  * @return `NULL` if allocation fails.
  */
-CSVRow *cr_std_csv_row_new();
-
-/**
- * @brief Free a `CSVFile` struct, sets pointer to `NULL`.
- *
- * @param `csv_ptr` A pointer to a pointer containing a `CSVFile` struct.
- *
- * @return `0` on success.
- * @return `1` on failure.
- */
-int cr_std_csv_free(CSVFile **csv_ptr);
-
-/**
- * @brief Free a `CSVRow` struct, sets pointer to `NULL`.
- *
- * @param `row_ptr` A pointer to a pointer containing a `CSVRow` struct.
- *
- * @return `0` on success.
- * @return `1` on failure.
- */
-int cr_std_csv_row_free(CSVRow **row_ptr);
-#define cr_std_csv_free_ptr ((int (*)(void **))cr_std_csv_free)
-#define cr_std_csv_row_free_ptr ((int (*)(void **))cr_std_csv_row_free)
+CSVRow *cr_std_csv_row_new(Arena *arena);
 
 /**
  * @brief Parse a csv file into a CSVFile struct.
  *
+ * @param `arena` The arena to store the memory in
  * @param `file_path` The path to the csv file.
  *
  * @return `CSVFile *` on success, which contains the csv file contents.
  * @return `NULL` on failure.
  */
-CSVFile *cr_std_csv_parse_file(const char *file_path);
+CSVFile *cr_std_csv_parse_file(Arena *arena, const char *file_path);
 
 /**
  * @brief Prints the contents of a CSVFile struct.

@@ -1,4 +1,5 @@
 #include "cr_std_cli.h"
+#include "cr_std_arena.h"
 #include "cr_std_logger.h"
 #include "cr_std_string.h"
 #include "cr_std_vector.h"
@@ -15,50 +16,27 @@ int is_flag(Vector *expected_args, char *arg) {
     return 0;
 }
 
-ArgumentDefinition *cr_std_cli_new_argument_definition(const char *flag, int expected_param_count) {
-    ArgumentDefinition *arg = malloc(sizeof(ArgumentDefinition));
+ArgumentDefinition *
+cr_std_cli_new_argument_definition(Arena *arena, const char *flag, int expected_param_count) {
+    if (!arena) {
+        CR_LOG_ERROR("cr_std_cli_new_argument_definition -> arena* was NULL");
+        return NULL;
+    }
+
+    ArgumentDefinition *arg = cr_std_arena_alloc(arena, sizeof(*arg));
 
     if (!arg) {
         cr_std_logger_out(
         CR_STD_LOGGER_LOG_TYPE_ERROR,
-        "cr_std_cli_new_argument_definition -> Failed to allocate memory for ArgumentDefinition");
+        "cr_std_cli_new_argument_definition -> failed to allocate memory for ArgumentDefinition");
         return NULL;
     }
 
-    arg->parameters = cr_std_vector_new(String *);
-    arg->parameters->free_function = cr_std_string_free_ptr;
-    arg->flag = cr_std_string_new(flag);
+    arg->parameters = cr_std_vector_new(arena);
+    arg->flag = cr_std_string_new(arena, flag);
     arg->expected_param_count = expected_param_count;
 
     return arg;
-}
-
-int cr_std_cli_free_argument_definition(ArgumentDefinition **arg_ptr) {
-    if (!arg_ptr || !*arg_ptr) {
-        CR_LOG_ERROR("cr_std_cli_free_argument_definition -> arg_ptr is NULL");
-        return 1;
-    }
-
-    ArgumentDefinition *arg = *arg_ptr;
-    if (arg->parameters) {
-        cr_std_vector_free(&(arg->parameters));
-        arg->parameters = NULL;
-    }
-
-    if (arg->flag) {
-        cr_std_string_free(&(arg->flag));
-        arg->flag = NULL;
-    }
-
-    if (arg->help_text) {
-        cr_std_string_free(&(arg->help_text));
-        arg->help_text = NULL;
-    }
-
-    free(arg);
-    *arg_ptr = NULL;
-
-    return 0;
 }
 
 int cr_std_cli_parse_args(Vector *argument_definitions, int argc, char **argv) {

@@ -1,4 +1,5 @@
 #include "cr_std_filesystem.h"
+#include "cr_std_arena.h"
 #include "cr_std_logger.h"
 #include "cr_std_string.h"
 #include "cr_std_vector.h"
@@ -8,7 +9,12 @@
 #include <sys/stat.h>
 #include <time.h>
 
-String *cr_std_filesystem_get_current_time_date(const char *time_date_format) {
+String *cr_std_filesystem_get_current_time_date(Arena *arena, const char *time_date_format) {
+    if (!arena) {
+        CR_LOG_ERROR("cr_std_filesystem_get_current_time -> arena* was NULL");
+        return NULL;
+    }
+
     time_t rawtime;
     struct tm *timeinfo;
     char time_str[256];
@@ -23,7 +29,7 @@ String *cr_std_filesystem_get_current_time_date(const char *time_date_format) {
         return NULL;
     }
 
-    return cr_std_string_new(time_str);
+    return cr_std_string_new(arena, time_str);
 }
 
 int cr_std_filesystem_copy_file(const char *src, const char *dest) {
@@ -140,7 +146,12 @@ int cr_std_filesystem_append_to_file(const char *file_path, const char *data) {
     return cr_std_filesystem_write_file_operations(file_path, data, "a");
 }
 
-String *cr_std_filesystem_read_file_as_string(const char *file_path) {
+String *cr_std_filesystem_read_file_as_string(Arena *arena, const char *file_path) {
+    if (!arena) {
+        CR_LOG_ERROR("cr_std_filesystem_read_file_as_string -> arena* was NULL");
+        return NULL;
+    }
+
     FILE *file = fopen(file_path, "r");
     if (!file) {
         cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR,
@@ -153,7 +164,7 @@ String *cr_std_filesystem_read_file_as_string(const char *file_path) {
     long file_size = ftell(file);
     fseek(file, 0, SEEK_SET);
 
-    char *buffer = malloc(file_size + 1);
+    char *buffer = cr_std_arena_alloc(arena, file_size + 1);
     if (!buffer) {
         cr_std_logger_out(
         CR_STD_LOGGER_LOG_TYPE_ERROR,
@@ -166,13 +177,11 @@ String *cr_std_filesystem_read_file_as_string(const char *file_path) {
     buffer[file_size] = '\0';
 
     fclose(file);
-    String *result = cr_std_string_new(buffer);
-    free(buffer);
-    return result;
+    return cr_std_string_new(arena, buffer);
 }
 
-Vector *cr_std_filesystem_read_file_as_vector(const char *file_path) {
-    String *file_contents = cr_std_filesystem_read_file_as_string(file_path);
+Vector *cr_std_filesystem_read_file_as_vector(Arena *arena, const char *file_path) {
+    String *file_contents = cr_std_filesystem_read_file_as_string(arena, file_path);
     if (!file_contents) {
         cr_std_logger_outf(
         CR_STD_LOGGER_LOG_TYPE_ERROR,
@@ -180,34 +189,29 @@ Vector *cr_std_filesystem_read_file_as_vector(const char *file_path) {
         return NULL;
     }
 
-    Vector *file_lines = cr_std_string_split_hard(file_contents, '\n');
-    if (!file_lines) {
-        cr_std_logger_outf(
-        CR_STD_LOGGER_LOG_TYPE_ERROR,
-        "cr_std_filesystem_read_file_as_vector -> failed to split file contents -> %s", file_path);
-    }
-    cr_std_string_free(&file_contents);
-    return file_lines;
+    return cr_std_string_split_hard(arena, file_contents, '\n');
 }
 
-Vector *cr_std_filesystem_get_dirs(const char *file_path) {
-    return cr_std_filesystem_get_entries(file_path, false, true, false);
+Vector *cr_std_filesystem_get_dirs(Arena *arena, const char *file_path) {
+    return cr_std_filesystem_get_entries(arena, file_path, false, true, false);
 }
 
-Vector *cr_std_filesystem_get_dirs_r(const char *file_path) {
-    return cr_std_filesystem_get_entries(file_path, false, true, true);
+Vector *cr_std_filesystem_get_dirs_r(Arena *arena, const char *file_path) {
+    return cr_std_filesystem_get_entries(arena, file_path, false, true, true);
 }
 
-Vector *cr_std_filesystem_get_dir_files(const char *file_path) {
-    return cr_std_filesystem_get_entries(file_path, true, false, false);
+Vector *cr_std_filesystem_get_dir_files(Arena *arena, const char *file_path) {
+    return cr_std_filesystem_get_entries(arena, file_path, true, false, false);
 }
 
-Vector *cr_std_filesystem_get_dir_files_r(const char *file_path) {
-    return cr_std_filesystem_get_entries(file_path, true, false, true);
+Vector *cr_std_filesystem_get_dir_files_r(Arena *arena, const char *file_path) {
+    return cr_std_filesystem_get_entries(arena, file_path, true, false, true);
 }
 
-Vector *cr_std_filesystem_get_dirs_files_matching(const char *file_path, const char *extension) {
-    Vector *files = cr_std_filesystem_get_dir_files(file_path);
+Vector *cr_std_filesystem_get_dirs_files_matching(Arena *arena,
+                                                  const char *file_path,
+                                                  const char *extension) {
+    Vector *files = cr_std_filesystem_get_dir_files(arena, file_path);
     for (int i = files->size - 1; i >= 0; i--) {
         Dirent *file = cr_std_vector_get_at(files, Dirent, i);
         if (cr_std_string_compare_c_str(file->d_ext, extension) != 1) {
@@ -217,8 +221,10 @@ Vector *cr_std_filesystem_get_dirs_files_matching(const char *file_path, const c
     return files;
 }
 
-Vector *cr_std_filesystem_get_dirs_files_matching_r(const char *file_path, const char *extension) {
-    Vector *files = cr_std_filesystem_get_dir_files_r(file_path);
+Vector *cr_std_filesystem_get_dirs_files_matching_r(Arena *arena,
+                                                    const char *file_path,
+                                                    const char *extension) {
+    Vector *files = cr_std_filesystem_get_dir_files_r(arena, file_path);
     for (int i = files->size - 1; i >= 0; i--) {
         Dirent *file = cr_std_vector_get_at(files, Dirent, i);
         if (cr_std_string_compare_c_str(file->d_ext, extension) != 1) {
@@ -226,25 +232,4 @@ Vector *cr_std_filesystem_get_dirs_files_matching_r(const char *file_path, const
         }
     }
     return files;
-}
-
-int cr_std_filesystem_dirent_free(Dirent **dirent_ptr) {
-    if (dirent_ptr && *dirent_ptr) {
-        Dirent *entry = *dirent_ptr;
-        if (entry->d_name) {
-            cr_std_string_free(&(entry->d_name));
-        }
-        if (entry->d_path) {
-            cr_std_string_free(&(entry->d_path));
-        }
-        if (entry->d_ext) {
-            cr_std_string_free(&(entry->d_ext));
-        }
-        free(entry);
-        *dirent_ptr = NULL;
-        return 0;
-    }
-    cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_WARNING,
-                      "cr_std_filesystem_dirent_free -> tried to free a NULL dirent_ptr*");
-    return 1;
 }

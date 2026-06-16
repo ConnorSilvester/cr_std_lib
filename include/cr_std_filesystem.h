@@ -11,14 +11,14 @@ extern "C" {
 
 #ifdef _WIN32
 #define DT_UNKNOWN 0
-#define DT_FIFO    1
-#define DT_CHR     2
-#define DT_DIR     4
-#define DT_BLK     6
-#define DT_REG     8
-#define DT_LNK     10
-#define DT_SOCK    12
-#define DT_WHT     14
+#define DT_FIFO 1
+#define DT_CHR 2
+#define DT_DIR 4
+#define DT_BLK 6
+#define DT_REG 8
+#define DT_LNK 10
+#define DT_SOCK 12
+#define DT_WHT 14
 #else
 #include <dirent.h>
 #include <unistd.h>
@@ -26,6 +26,7 @@ extern "C" {
 
 typedef struct String String;
 typedef struct Vector Vector;
+typedef struct Arena Arena;
 
 /**
  * @brief Represents a single directory entry.
@@ -50,12 +51,13 @@ typedef struct Dirent {
 /**
  * @brief Get local time or date information
  *
+ * @param `arena` The arena to store the memory in
  * @param `time_date_format` The format for the string, example ("%d-%m-%Y %H:%M:%S")
  *
  * @return `String` containing the information on success.
  * @return `NULL` on failure.
  */
-String *cr_std_filesystem_get_current_time_date(const char *time_date_format);
+String *cr_std_filesystem_get_current_time_date(Arena *arena, const char *time_date_format);
 
 /**
  * @brief Copy a file from src to dest
@@ -106,10 +108,12 @@ int cr_std_filesystem_make_dir(const char *dir_path, mode_t permissions);
 /**
  * @brief Gets the current working directory
  *
+ * @param `arena` The arena to store the memory in
+ *
  * @return `String *` on success, containing the path.
  * @return `NULL` on failure.
  */
-String *cr_std_filesystem_get_cwd();
+String *cr_std_filesystem_get_cwd(Arena *arean);
 
 /**
  * @brief Writes the contents of `data` into the file at `file_path`
@@ -136,26 +140,29 @@ int cr_std_filesystem_append_to_file(const char *file_path, const char *data);
 /**
  * @brief Reads file contents into a `String` struct.
  *
+ * @param `arena` The arena to store the memory in
  * @param `file_path` A raw string of the file path.
  *
  * @return A pointer to the new `String` struct containing the file contents.
  * @return `NULL` on failure.
  */
-String *cr_std_filesystem_read_file_as_string(const char *file_path);
+String *cr_std_filesystem_read_file_as_string(Arena *arena, const char *file_path);
 
 /**
  * @brief Reads file contents into a `Vector` struct, splitting by newline.
  *
+ * @param `arena` The arena to store the memory in
  * @param `file_path` A raw string of the file path.
  *
  * @return A pointer to a new `Vector` struct containing the file contents.
  * @return `NULL` on failure.
  */
-Vector *cr_std_filesystem_read_file_as_vector(const char *file_path);
+Vector *cr_std_filesystem_read_file_as_vector(Arena *arena, const char *file_path);
 
 /**
  * @brief Gets entries given a path and settings.
  *
+ * @param `arena` The arena to store the memory in
  * @param `file_path` A raw string of the file path.
  * @param `include_files` A flag to include files or not.
  * @param `include_dirs` A flag to include dirs or not.
@@ -164,80 +171,88 @@ Vector *cr_std_filesystem_read_file_as_vector(const char *file_path);
  * @return A pointer to a new `Vector` struct containing the entries contents.
  * @return `NULL` on failure.
  */
-Vector *cr_std_filesystem_get_entries(const char *file_path, bool include_files, bool include_dirs, bool recursive);
+Vector *cr_std_filesystem_get_entries(Arena *arena,
+                                      const char *file_path,
+                                      bool include_files,
+                                      bool include_dirs,
+                                      bool recursive);
 
 /**
  * @brief Reads the contents of a file dir
  *
+ * @param `arena` The arena to store the memory in
  * @param `file_path` A raw string of the file path.
  *
- * @return A pointer to a new `Vector` struct containing `Dirent` structs of the directories in the dir.
+ * @return A pointer to a new `Vector` struct containing `Dirent` structs of the directories in the
+ * dir.
  * @return `NULL` on failure.
  */
-Vector *cr_std_filesystem_get_dirs(const char *file_path);
+Vector *cr_std_filesystem_get_dirs(Arena *arena, const char *file_path);
 
 /**
  * @brief Reads the contents of a file dir recursively.
  *
+ * @param `arena` The arena to store the memory in
  * @param `file_path` A raw string of the file path.
  *
- * @return A pointer to a new `Vector` struct containing `Dirent` structs of the directories in the dir and all sub dirs.
+ * @return A pointer to a new `Vector` struct containing `Dirent` structs of the directories in the
+ * dir and all sub dirs.
  * @return `NULL` on failure.
  */
-Vector *cr_std_filesystem_get_dirs_r(const char *file_path);
+Vector *cr_std_filesystem_get_dirs_r(Arena *arena, const char *file_path);
 
 /**
  * @brief Reads the contents of a file dir
  *
+ * @param `arena` The arena to store the memory in
  * @param `file_path` A raw string of the file path.
  *
  * @return A pointer to a new `Vector` struct containing `Dirent` structs of the files in the dir.
  * @return `NULL` on failure.
  */
-Vector *cr_std_filesystem_get_dir_files(const char *file_path);
+Vector *cr_std_filesystem_get_dir_files(Arena *arena, const char *file_path);
 
 /**
  * @brief Reads the contents of a file dir recursively
  *
+ * @param `arena` The arena to store the memory in
  * @param `file_path` A raw string of the file path.
  *
- * @return A pointer to a new `Vector` struct containing `Dirent` structs of the files in the dir and all sub dirs.
+ * @return A pointer to a new `Vector` struct containing `Dirent` structs of the files in the dir
+ * and all sub dirs.
  * @return `NULL` on failure.
  */
-Vector *cr_std_filesystem_get_dir_files_r(const char *file_path);
+Vector *cr_std_filesystem_get_dir_files_r(Arena *arena, const char *file_path);
 
 /**
  * @brief Reads the contents of a file dir that match the extension
  *
+ * @param `arena` The arena to store the memory in
  * @param `file_path` A raw string of the file path.
  * @param `extension` The extension to filter by.
  *
- * @return `Vector`struct containing `Dirent` structs of the files in the dir that match the extension.
+ * @return `Vector`struct containing `Dirent` structs of the files in the dir that match the
+ * extension.
  * @return `NULL` on failure.
  */
-Vector *cr_std_filesystem_get_dirs_files_matching(const char *file_path, const char *extension);
+Vector *cr_std_filesystem_get_dirs_files_matching(Arena *arena,
+                                                  const char *file_path,
+                                                  const char *extension);
 
 /**
- * @brief Reads the contents of a file dir recursively and returns the ones that match the extension.
+ * @brief Reads the contents of a file dir recursively and returns the ones that match the
+ * extension.
  *
+ * @param `arena` The arena to store the memory in
  * @param `file_path` A raw string of the file path.
  * @param `extension` The extension to filter by.
  *
  * @return `Vector`struct containing `Dirent` structs of the files that match the extension.
  * @return `NULL` on failure.
  */
-Vector *cr_std_filesystem_get_dirs_files_matching_r(const char *file_path, const char *extension);
-
-/**
- * @brief Free a `Dirent` struct
- *
- * @param `dirent_ptr` A pointer to a pointer that stores the `Dirent`
- *
- * @return `0` on success.
- * @return `1` on failure.
- */
-int cr_std_filesystem_dirent_free(Dirent **dirent_ptr);
-#define cr_std_filesystem_dirent_free_ptr ((int (*)(void **))cr_std_filesystem_dirent_free)
+Vector *cr_std_filesystem_get_dirs_files_matching_r(Arena *arena,
+                                                    const char *file_path,
+                                                    const char *extension);
 
 #ifdef __cplusplus
 }

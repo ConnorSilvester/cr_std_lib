@@ -1,11 +1,12 @@
 #include "cr_std_testing.h"
+#include "cr_std_arena.h"
 #include "cr_std_logger.h"
 #include "cr_std_vector.h"
 #include <stdio.h>
 #include <stdlib.h>
 
-TestCase *cr_std_testing_new_test(const char *name, int (*test_function)(void)) {
-    TestCase *new_test = (TestCase *)malloc(sizeof(TestCase));
+TestCase *cr_std_testing_new_test(Arena *arena, const char *name, int (*test_function)(void)) {
+    TestCase *new_test = cr_std_arena_alloc(arena, sizeof(*new_test));
     if (!new_test) {
         cr_std_logger_out(
         CR_STD_LOGGER_LOG_TYPE_ERROR,
@@ -19,8 +20,8 @@ TestCase *cr_std_testing_new_test(const char *name, int (*test_function)(void)) 
     return new_test;
 }
 
-void cr_std_testing_run_tests(Vector *tests) {
-    Vector *list_of_errors = cr_std_vector_new(TestCase *);
+void cr_std_testing_run_tests(Arena *arena, Vector *tests) {
+    Vector *list_of_errors = cr_std_vector_new(arena);
     printf("--------------------------------------------------------\n");
     for (int i = 0; i < tests->size; i++) {
         TestCase *test = cr_std_vector_get_at(tests, TestCase, i);
@@ -36,7 +37,7 @@ void cr_std_testing_run_tests(Vector *tests) {
                 printf("%s\n", TEST_PASSED);
             } else {
                 printf("%s\n", TEST_FAILED);
-                cr_std_vector_push_back(list_of_errors, test);
+                cr_std_vector_push_back(arena, list_of_errors, test);
             }
         }
     }
@@ -49,5 +50,4 @@ void cr_std_testing_run_tests(Vector *tests) {
             printf("\033[31mFailed Test\033[0m : %s\n", test->name);
         }
     }
-    cr_std_vector_free(&list_of_errors);
 }

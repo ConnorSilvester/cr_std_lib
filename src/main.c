@@ -12,11 +12,12 @@
 
 // If you want to test the library see the end of the README.md file
 int main(int argc, char **argv) {
+    Arena *arena = cr_std_arena_new(1 * CR_STD_MB);
 
-    String *string = cr_std_string_newf("Hello, %s", "World");
-    cr_std_string_concat(string, ", This", " Has", " Been", " Concatenated");
+    String *string = cr_std_string_newf(arena, "Hello, %s", "World");
+    cr_std_string_concat(arena, string, ", This", " Has", " Been", " Concatenated");
     printf("%s\n", string->c_str);
 
-    cr_std_string_free(&string);
+    cr_std_arena_free(&arena);
     return 0;
 }

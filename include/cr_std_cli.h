@@ -7,6 +7,7 @@ extern "C" {
 
 typedef struct Vector Vector;
 typedef struct String String;
+typedef struct Arena Arena;
 
 /**
  * @brief Represents an Argument
@@ -25,6 +26,19 @@ typedef struct ArgumentDefinition {
 } ArgumentDefinition;
 
 /**
+ * @brief Creates a new `ArgumentDefinition` struct
+ *
+ * @param `arena` The arena to store the memory in
+ * @param `flag` The flag of the argument that is expected
+ * @param `expected_param_count` The number of expected parameters
+ *
+ * @return A pointer to the new `CSVFile` struct.
+ * @return `NULL` if allocation fails.
+ */
+ArgumentDefinition *
+cr_std_cli_new_argument_definition(Arena *arena, const char *flag, int expected_param_count);
+
+/**
  * @brief Parses the argv into the structs provided.
  *
  * @param `argument_definitions` A Vector of ArgumentDefinition to search for
@@ -35,24 +49,6 @@ typedef struct ArgumentDefinition {
  * @return `1` on error.
  */
 int cr_std_cli_parse_args(Vector *argument_definitions, int argc, char **argv);
-
-/**
- * @brief Creates a new `ArgumentDefinition` struct
- *
- * @return A pointer to the new `CSVFile` struct.
- * @return `NULL` if allocation fails.
- */
-ArgumentDefinition *cr_std_cli_new_argument_definition(const char *flag, int expected_param_count);
-
-/**
- * @brief Used to free a ArgumentDefinition struct.
- *
- * Frees all elements inside
- *
- * @return `0` on success.
- * @return `1` on failure.
- */
-int cr_std_cli_free_argument_definition(ArgumentDefinition **arg_ptr);
 
 #ifdef __cplusplus
 }

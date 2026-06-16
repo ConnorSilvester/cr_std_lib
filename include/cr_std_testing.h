@@ -11,6 +11,7 @@ extern "C" {
 #define TEST_FAILED "\033[31mFAILED\033[0m"
 
 typedef struct Vector Vector;
+typedef struct Arena Arena;
 
 /**
  * @brief Represents a test case.
@@ -28,20 +29,22 @@ typedef struct TestCase {
 /**
  * @brief Creates a new `TestCase` struct.
  *
+ * @param `arena` The arena to store the memory in
  * @param `name` The name of the test.
  * @param `test_function` The custom test function to be called when running the test.
  *
  * @return A pointer to the new `TestCase` struct.
  * @return `NULL` if allocation fails.
  */
-TestCase *cr_std_testing_new_test(const char *name, int (*test_function)(void));
+TestCase *cr_std_testing_new_test(Arena *arena, const char *name, int (*test_function)(void));
 
 /**
  * @brief Runs the list of tests passed in.
  *
+ * @param `arena` The arena to store the memory in
  * @param `tests` A pointer to a `Vector` struct containing the list of `TestCase` structs
  */
-void cr_std_testing_run_tests(Vector *tests);
+void cr_std_testing_run_tests(Arena *arena, Vector *tests);
 
 #ifdef __cplusplus
 }

@@ -8,6 +8,7 @@ extern "C" {
 #include <stdio.h>
 
 typedef struct Vector Vector;
+typedef struct Arena Arena;
 
 /**
  * @brief Represents a string.
@@ -24,9 +25,8 @@ typedef struct String {
 /**
  * @brief A dynamic growing string object, it will realloc on grow.
  *
- * Memory ownership:
- * - This struct owns the char *.
- * - Freeing a StringBuilder struct will also free the char *.
+ * @note Memory is allocated from an arena passed to functions.
+ *       Does NOT store the arena - user passes it when needed.
  */
 typedef struct StringBuilder {
     char *c_str;
@@ -52,60 +52,71 @@ typedef struct StringBuilder {
 /**
  * @brief Creates a new `StringBuilder` struct with the provided string.
  *
+ * @param `arena` The arena to store the memory in
  * @param `string` The initial string.
  *
  * @return A pointer to the new `StringBuilder` struct.
  * @return `NULL` if allocation fails.
  */
-StringBuilder *cr_std_string_builder_new(const char *string);
+StringBuilder *cr_std_string_builder_new(Arena *arena, const char *string);
 
 /**
- * @brief Creates a new `StringBuilder` struct formatted with the provided format string and arguments if any.
+ * @brief Creates a new `StringBuilder` struct formatted with the provided format string and
+ * arguments if any.
  *
+ * @param `arena` The arena to store the memory in
  * @param `format` The format string used to format like `printf` (`%s`, `%d`, etc.).
  * @param `...` The arguments to format according to the format string.
  *
  * @return A pointer to the new `StringBuilder` struct.
  * @return `NULL` if allocation fails.
  */
-StringBuilder *cr_std_string_builder_newf(const char *format, ...);
+StringBuilder *cr_std_string_builder_newf(Arena *arena, const char *format, ...);
 
 /**
  * @brief Reserves additional space in the string builder array if needed.
  *
+ * @param `arena` The arena to store the memory in
  * @param `string_builder` The `StringBuilder` struct to work on.
  * @param `additional` The amount of extra space wanted.
  *
  * @return `0` on success.
  * @return `1` on failure.
  */
-int cr_std_string_builder_ensure_capacity(StringBuilder *string_builder, size_t additional);
+int cr_std_string_builder_ensure_capacity(Arena *arena,
+                                          StringBuilder *string_builder,
+                                          size_t additional);
 
 /**
  * @brief Adds a single string to the string builder.
  *
+ * @param `arena` The arena to store the memory in
  * @param `string_builder` The `StringBuilder` struct to work on.
  * @param `string` The string to add.
  *
  * @return `0` on success.
  * @return `1` on failure.
  */
-int cr_std_string_builder_append_string(StringBuilder *string_builder, const char *string);
+int cr_std_string_builder_append_string(Arena *arena,
+                                        StringBuilder *string_builder,
+                                        const char *string);
 
 /**
  * @brief Adds a single char to the string builder.
  *
+ * @param `arena` The arena to store the memory in
  * @param `string_builder` The `StringBuilder` struct to work on.
  * @param `ch` The char to add.
  *
  * @return `0` on success.
  * @return `1` on failure.
  */
-int cr_std_string_builder_append_char(StringBuilder *string_builder, char ch);
+int cr_std_string_builder_append_char(Arena *arena, StringBuilder *string_builder, char ch);
 
 /**
  * @brief Adds a string to the string builder.
  *
+ * @param `arena` The arena to store the memory in
  * @param `string_builder` The `StringBuilder` struct to work on.
  * @param `format` The format string used to format like `printf` (`%s`, `%d`, etc.).
  *                 Can also be a single string to add, e.g. "hello".
@@ -113,26 +124,33 @@ int cr_std_string_builder_append_char(StringBuilder *string_builder, char ch);
  * @return `0` on success.
  * @return `1` on failure.
  */
-int cr_std_string_builder_appendf(StringBuilder *string_builder, const char *format, ...);
+int cr_std_string_builder_appendf(Arena *arena,
+                                  StringBuilder *string_builder,
+                                  const char *format,
+                                  ...);
 
 /**
  * @brief Adds strings to the string builder.
  *
+ * @param `arena` The arena to store the memory in
  * @param `string_builder` A pointer to the `StringBuilder` struct to be updated.
  * @param `...` The strings to append.
  *
  * @return `0` on success.
  * @return `1` on failure.
  */
-int cr_std_string_builder_append_null_terminated(StringBuilder *string_builder, ...);
+int cr_std_string_builder_append_null_terminated(Arena *arena, StringBuilder *string_builder, ...);
 
 /**
- * @brief Macro to avoid having to add `NULL` to the end of arguments when calling the concat function.
+ * @brief Macro to avoid having to add `NULL` to the end of arguments when calling the concat
+ * function.
  *
+ * @param `arena` The arena to store the memory in
  * @param `string_builder` A pointer to the `StringBuilder` struct to be updated.
  * @param `...` The strings to append.
  */
-#define cr_std_string_builder_append(string_builder, ...) cr_std_string_builder_append_null_terminated(string_builder, __VA_ARGS__, NULL)
+#define cr_std_string_builder_append(arena, string_builder, ...) \
+    cr_std_string_builder_append_null_terminated(arena, string_builder, __VA_ARGS__, NULL)
 
 /**
  * @brief Resets a string builders string, back to nothing.
@@ -147,85 +165,72 @@ int cr_std_string_builder_reset(StringBuilder *string_builder);
 /**
  * @brief Resets a string builders string, back to nothing.
  *
+ * @param `arena` The arena to store the memory in
  * @param `string_builder` The `StringBuilder` struct to work on.
  *
  * @return A pointer to a new `String` struct.
  * @return `NULL` on failure.
  */
-String *cr_std_string_builder_to_string(StringBuilder *string_builder);
-
-/**
- * @brief Free a `StringBuilder` struct, sets pointer to `NULL`.
- *
- * @param `sb_ptr` A pointer to a pointer containing a `StringBuilder` struct.
- *
- * @return `0` on success.
- * @return `1` on failure.
- */
-int cr_std_string_builder_free(StringBuilder **sb_ptr);
-#define cr_std_string_builder_free_ptr ((int (*)(void **))cr_std_string_builder_free)
+String *cr_std_string_builder_to_string(Arena *arena, StringBuilder *string_builder);
 
 /**
  * @brief Creates a new `String` struct with the string provided.
  *
+ * @param `arena` The arena to store the memory in
  * @param `string` The initial string
  *
  * @return A pointer to the new `String` struct.
  * @return `NULL` if allocation fails.
  */
-String *cr_std_string_new(const char *string);
+String *cr_std_string_new(Arena *arena, const char *string);
 
 /**
- * @brief Creates a new `String` struct formatted with the provided format string and arguments if any.
+ * @brief Creates a new `String` struct formatted with the provided format string and arguments if
+ * any.
  *
+ * @param `arena` The arena to store the memory in
  * @param `format` The format string used to format like `printf` (`%s`, `%d`, etc.).
  * @param `...` The arguments to format according to the format string.
  *
  * @return A pointer to the new `String` struct.
  * @return `NULL` if allocation fails.
  */
-String *cr_std_string_newf(const char *format, ...);
-
-/**
- * @brief Free a `String` struct, sets pointer to `NULL`.
- *
- * @param `string_ptr` A pointer to a pointer containing a `String` struct.
- *
- * @return `0` on success.
- * @return `1` on failure.
- */
-int cr_std_string_free(String **string_ptr);
-#define cr_std_string_free_ptr ((int (*)(void **))cr_std_string_free)
+String *cr_std_string_newf(Arena *arena, const char *format, ...);
 
 /**
  * @brief Copy the contents of a `String` struct to another one.
  *
+ * @param `arena` The arena to store the memory in
  * @param `src_string` A pointer to the source `String` struct.
  *
  * @return A pointer to the new `String` struct.
  * @return `NULL` if copy fails.
  */
-String *cr_std_string_make_copy(String *src_string);
-#define cr_std_string_make_copy_ptr ((void *(*)(void *))cr_std_string_make_copy)
+String *cr_std_string_make_copy(Arena *arena, String *src_string);
+// #define cr_std_string_make_copy_ptr ((void *(*)(void *))cr_std_string_make_copy)
 
 /**
  * @brief Concatenates multiple strings and stores the result in an existing `String` struct.
  *
+ * @param `arena` The arena to store the memory in
  * @param `string` A pointer to the `String` struct to be updated.
  * @param `...` The strings to concatenate, terminated with a `NULL`.
  *
  * @return `0` on success.
  * @return `1` on failure.
  */
-int cr_std_string_concat_null_terminated(String *string, ...);
+int cr_std_string_concat_null_terminated(Arena *arena, String *string, ...);
 
 /**
- * @brief Macro to avoid having to add `NULL` to the end of arguments when calling the concat function.
+ * @brief Macro to avoid having to add `NULL` to the end of arguments when calling the concat
+ * function.
  *
+ * @param `arena` The arena to store the memory in
  * @param `string` A pointer to the `String` struct to be updated.
  * @param `...` The strings to concatenate.
  */
-#define cr_std_string_concat(string, ...) cr_std_string_concat_null_terminated(string, __VA_ARGS__, NULL)
+#define cr_std_string_concat(arena, string, ...) \
+    cr_std_string_concat_null_terminated(arena, string, __VA_ARGS__, NULL)
 
 /**
  * @brief Compares two strings.
@@ -258,6 +263,7 @@ int cr_std_string_compare_c_str(String *arg, const char *arg1);
 /**
  * @brief Trims a string of white space in both directions of the string.
  *
+ * @param `arena` The arena to store the memory in
  * @param `string` The string to trim.
  * @param `direction` Which dir you want to cut or both
  *
@@ -270,7 +276,7 @@ int cr_std_string_compare_c_str(String *arg, const char *arg1);
  * @return `0` if the string is trimmed successfully.
  * @return `1` if the string failed to be trimmed.
  */
-int cr_std_string_trim(String *string, int direction);
+int cr_std_string_trim(Arena *arena, String *string, int direction);
 
 /**
  * @brief Finds the first index of a character in a given string.
@@ -431,25 +437,27 @@ unsigned long cr_std_string_hash_code(String *string);
  * @brief Splits a string into a `Vector`.
  * @brief Removes white space, use cr_std_string_split_hard if you require white space.
  *
+ * @param `arena` The arena to store the memory in
  * @param `string` The string to split.
  * @param `delimiter` The character to split the string by.
  *
  * @return A pointer to a new `Vector` of the split strings.
  * @return `NULL` if error.
  */
-Vector *cr_std_string_split(String *string, char delimiter);
+Vector *cr_std_string_split(Arena *arena, String *string, char delimiter);
 
 /**
  * @brief Splits a string into a `Vector` (includes white space / empty strings).
  * @brief Includes any white space and includes empty string.
  *
+ * @param `arena` The arena to store the memory in
  * @param `string` The string to split.
  * @param `delimiter` The character to split the string by.
  *
  * @return A pointer to a new `Vector` of the split strings.
  * @return `NULL` if error.
  */
-Vector *cr_std_string_split_hard(String *string, char delimiter);
+Vector *cr_std_string_split_hard(Arena *arena, String *string, char delimiter);
 
 /**
  * @Convert a string to upper case.
@@ -484,6 +492,7 @@ int cr_std_string_to_title(String *string);
 /**
  * @brief Replaces all occurrences of `from` with `to` in a given string.
  *
+ * @param `arena` The arena to store the memory in
  * @param `string` The string to work on.
  * @param `from` The string you want to replace.
  * @param `to` The string you want to replace `from` with.
@@ -491,27 +500,29 @@ int cr_std_string_to_title(String *string);
  * @return `number of replaced words`.
  * @return `0` if nothing is replaced.
  */
-int cr_std_string_replace_string(String *string, const char *from, const char *to);
+int cr_std_string_replace_string(Arena *arena, String *string, const char *from, const char *to);
 
 /**
  * @brief Removes all characters that are not numbers.
  *
+ * @param `arena` The arena to store the memory in
  * @param `string` The `String` to work on.
  *
  * @return `0` on success.
  * @return `1` on failure.
  */
-int cr_std_string_remove_non_numeric(String *string);
+int cr_std_string_remove_non_numeric(Arena *arena, String *string);
 
 /**
  * @brief Removes all characters that are considered numbers.
  *
+ * @param `arena` The arena to store the memory in
  * @param `string` The `String` to work on.
  *
  * @return `0` on success.
  * @return `1` on failure.
  */
-int cr_std_string_remove_numeric(String *string);
+int cr_std_string_remove_numeric(Arena *arena, String *string);
 
 /**
  * @brief Returns the numerical representation of a string
@@ -525,22 +536,24 @@ int cr_std_string_to_int(String *string);
 /**
  * @brief Returns the string representation of a number.
  *
+ * @param `arena` The arena to store the memory in
  * @param `number` The number to convert.
  *
  * @return `String` A pointer to a `String` struct representing the number.
  */
-String *cr_std_string_from_int(int number);
+String *cr_std_string_from_int(Arena *arena, int number);
 
 /**
  * @brief Returns a sub-string of a given string and index.
  *
+ * @param `arena` The arena to store the memory in
  * @param `string` The original string.
  * @param `start_index` The index to start the sub-string.
  * @param `end_index` The index to end the sub-string.
  *
  * @return `String` A pointer to a `String` struct representing the sub-string.
  */
-String *cr_std_string_sub_string(String *string, int start_index, int end_index);
+String *cr_std_string_sub_string(Arena *arena, String *string, int start_index, int end_index);
 
 /**
  * @brief Returns the string representation of a `Vector` struct.
@@ -550,7 +563,7 @@ String *cr_std_string_sub_string(String *string, int start_index, int end_index)
  *
  * @return `String` A pointer to a `String` struct the joined vector.
  */
-String *cr_std_string_from_string_ptr_vector(Vector *vector, const char *delimiter);
+// String *cr_std_string_from_string_ptr_vector(Vector *vector, const char *delimiter);
 
 /**
  * @brief Returns the string representation of a `Vector` struct.
@@ -560,22 +573,24 @@ String *cr_std_string_from_string_ptr_vector(Vector *vector, const char *delimit
  *
  * @return `String` A pointer to a `String` struct the joined vector.
  */
-String *cr_std_string_from_char_ptr_vector(Vector *vector, const char *delimiter);
+// String *cr_std_string_from_char_ptr_vector(Vector *vector, const char *delimiter);
 
 /**
  * @brief Colors an entire string to one color
  *
+ * @param `arena` The arena to store the memory in
  * @param `string` The `String` to work from.
  * @param `color_code` The color code from ANSI escape codes, see `CR_STD_STRING_COLOR`.
  *
  * @return `String` A pointer to the new colored string.
  * @return `NULL` If something failed.
  */
-String *cr_std_string_color_string(String *string, int color_code);
+String *cr_std_string_color_string(Arena *arena, String *string, int color_code);
 
 /**
  * @brief Colors a specific phrase within a string
  *
+ * @param `arena` The arena to store the memory in
  * @param `string` The `String` to work from.
  * @param `phrase` The phrase to color
  * @param `color_code` The color code from ANSI escape codes, see `CR_STD_STRING_COLOR`.
@@ -583,28 +598,31 @@ String *cr_std_string_color_string(String *string, int color_code);
  * @return `String` A pointer to the new colored string.
  * @return `NULL` If something failed.
  */
-String *cr_std_string_color_phrase(String *string, const char *phrase, int color_code);
+String *
+cr_std_string_color_phrase(Arena *arena, String *string, const char *phrase, int color_code);
 
 /**
  * @brief Strips the colors from a string
  *
+ * @param `arena` The arena to store the memory in
  * @param `string` The `String` to work from.
  *
  * @return `0` on success
  * @return `1` on failure
  */
-int cr_std_string_color_strip(String *string);
+int cr_std_string_color_strip(Arena *arena, String *string);
 
 /**
  * @brief Repeats a string n times.
  *
+ * @param `arena` The arena to store the memory in
  * @param `string` The `String` to repeat.
  * @param `n` The number of times to repeat.
  *
  * @return `String` A pointer to the new full string.
  * @return `String` A pointer to an empty string.
  */
-String *cr_std_string_repeat(const char *string, size_t n);
+String *cr_std_string_repeat(Arena *arena, const char *string, size_t n);
 
 #ifdef __cplusplus
 }
