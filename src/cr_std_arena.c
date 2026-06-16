@@ -9,6 +9,12 @@ Arena *cr_std_arena_new(size_t capacity) {
         return NULL;
     }
 
+    if (capacity <= 0) {
+        capacity = CR_STD_ARENA_DEFAULT_CAPACITY;
+        CR_LOG_WARNING_FMT("cr_std_arena_new -> capacity <= 0, using default %zu bytes",
+                           CR_STD_ARENA_DEFAULT_CAPACITY);
+    }
+
     arena->memory = malloc(capacity);
     if (!arena->memory) {
         free(arena);

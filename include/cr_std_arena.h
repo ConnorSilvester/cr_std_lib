@@ -1,6 +1,7 @@
 #ifndef CR_STD_ARENA
 #define CR_STD_ARENA
 
+#include "cr_std_utils.h"
 #include <stdio.h>
 #ifdef __cplusplus
 extern "C" {
@@ -11,6 +12,8 @@ typedef struct Arena {
     size_t capacity;
     size_t used;
 } Arena;
+
+#define CR_STD_ARENA_DEFAULT_CAPACITY (1 * CR_STD_MB)
 
 /**
  * @brief Allocates a new Arena struct on the heap

@@ -1,3 +1,4 @@
+#include "cr_std_arena.h"
 #include "cr_std_cli.h"
 #include "cr_std_csv.h"
 #include "cr_std_filesystem.h"
