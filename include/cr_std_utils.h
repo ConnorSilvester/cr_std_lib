@@ -7,6 +7,10 @@ extern "C" {
 
 #define CR_STD_PATH_MAX_SIZE 1024
 
+#define CR_STD_KB (1024ULL)
+#define CR_STD_MB (1024ULL * 1024ULL)
+#define CR_STD_GB (1024ULL * 1024ULL * 1024ULL)
+
 /**
  * @brief Custom free function used to free my custom cr_std types.
  *
