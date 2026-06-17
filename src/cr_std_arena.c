@@ -77,6 +77,22 @@ int cr_std_arena_reset(Arena *arena) {
     return 0;
 }
 
+int cr_std_arena_reset_to_mark(Arena *arena, size_t mark) {
+    if (!arena) {
+        CR_LOG_ERROR("cr_std_arena_reset_to_mark -> arena is NULL");
+        return 1;
+    }
+
+    if (mark > arena->used) {
+        CR_LOG_ERROR_FMT("cr_std_arena_reset_to_mark -> mark %zu > current used %zu", mark,
+                         arena->used);
+        return 1;
+    }
+
+    arena->used = mark;
+    return 0;
+}
+
 int cr_std_arena_free(Arena **arena_ptr) {
     if (arena_ptr && *arena_ptr) {
         if ((*arena_ptr)->memory) {

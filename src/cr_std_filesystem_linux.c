@@ -33,9 +33,9 @@ int cr_std_filesystem_make_dir(const char *dir_path, mode_t permissions) {
         return 0;
     } else {
         if (errno == EEXIST) {
-            cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_WARNING,
-                               "cr_std_filesystem_make_dir -> Directory already exists '%s'",
-                               dir_path);
+            // cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_WARNING,
+            //                    "cr_std_filesystem_make_dir -> Directory already exists '%s'",
+            //                    dir_path);
         } else if (errno == EACCES) {
             cr_std_logger_outf(
             CR_STD_LOGGER_LOG_TYPE_ERROR,

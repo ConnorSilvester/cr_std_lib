@@ -61,6 +61,19 @@ typedef struct StringBuilder {
 StringBuilder *cr_std_string_builder_new(Arena *arena, const char *string);
 
 /**
+ * @brief Creates a new `StringBuilder` struct with the provided string, and capacity.
+ *
+ * @param `arena` The arena to store the memory in
+ * @param `string` The initial string.
+ * @param `initial_capacity` The initial capacity.
+ *
+ * @return A pointer to the new `StringBuilder` struct.
+ * @return `NULL` if allocation fails.
+ */
+StringBuilder *
+cr_std_string_builder_newc(Arena *arena, const char *string, size_t initial_capacity);
+
+/**
  * @brief Creates a new `StringBuilder` struct formatted with the provided format string and
  * arguments if any.
  *
