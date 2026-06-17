@@ -1,5 +1,4 @@
 #ifdef _WIN32
-
 #include "cr_std_filesystem.h"
 #include "cr_std_logger.h"
 #include "cr_std_string.h"
@@ -79,34 +78,40 @@ Vector *cr_std_filesystem_get_entries(Arena *arena,
 
     Vector *vector = cr_std_vector_new(arena);
 
-    String *current_dir = cr_std_string_new(arena, ".");
-    String *parent_dir = cr_std_string_new(arena, "..");
+    // Temp arena for temporary strings
+    Arena *temp_arena = cr_std_arena_new(CR_STD_MB);
+    if (!temp_arena) {
+        CR_LOG_ERROR("cr_std_filesystem_get_entries -> failed to create temp arena");
+        FindClose(hFind);
+        return vector;
+    }
+
+    String *current_dir = cr_std_string_new(temp_arena, ".");
+    String *parent_dir = cr_std_string_new(temp_arena, "..");
+    size_t current_mark = cr_std_arena_get_mark(temp_arena);
 
     do {
-        String *file_name = cr_std_string_new(arena, findData.cFileName);
+        cr_std_arena_reset_to_mark(temp_arena, current_mark);
+        String *file_name = cr_std_string_new(temp_arena, findData.cFileName);
         if (cr_std_string_compare(file_name, current_dir) == 1 ||
             cr_std_string_compare(file_name, parent_dir) == 1) {
             continue;
         }
 
-        String *full_path = cr_std_string_newf(arena, "%s\\%s", file_path, file_name->c_str);
+        String *full_path = cr_std_string_newf(temp_arena, "%s\\%s", file_path, file_name->c_str);
         if (!full_path) {
-            cr_std_logger_outf(
-            CR_STD_LOGGER_LOG_TYPE_ERROR,
-            "cr_std_filesystem_get_entries -> memory allocation failed for path -> %s\\%s",
-            file_path, file_name->c_str);
+            CR_LOG_ERROR_FMT("cr_std_filesystem_get_entries -> failed to create path: %s\\%s",
+                             file_path, file_name->c_str);
             continue;
         }
 
         Dirent *custom_entry = cr_std_arena_alloc(arena, sizeof(*custom_entry));
         if (!custom_entry) {
-            cr_std_logger_outf(
-            CR_STD_LOGGER_LOG_TYPE_ERROR,
-            "cr_std_filesystem_get_entries -> memory allocation failed for Dirent");
+            CR_LOG_ERROR("cr_std_filesystem_get_entries -> failed to allocate Dirent");
             continue;
         }
 
-        custom_entry->d_name = file_name;
+        custom_entry->d_name = cr_std_string_make_copy(arena, file_name);
         custom_entry->d_path = cr_std_string_make_copy(arena, full_path);
         custom_entry->d_type =
         (findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) ? DT_DIR : DT_REG;
@@ -114,8 +119,9 @@ Vector *cr_std_filesystem_get_entries(Arena *arena,
 
         if (!(findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) &&
             cr_std_string_find_char_last(file_name, '.') != -1) {
-            custom_entry->d_ext = cr_std_string_sub_string(
-            arena, file_name, cr_std_string_find_char_last(file_name, '.'), file_name->length);
+            String *temp_ext = cr_std_string_sub_string(
+            temp_arena, file_name, cr_std_string_find_char_last(file_name, '.'), file_name->length);
+            custom_entry->d_ext = cr_std_string_make_copy(arena, temp_ext);
         } else {
             custom_entry->d_ext = cr_std_string_new(arena, "N/A");
         }
@@ -141,13 +147,11 @@ Vector *cr_std_filesystem_get_entries(Arena *arena,
     } while (FindNextFile(hFind, &findData) != 0);
 
     if (GetLastError() != ERROR_NO_MORE_FILES) {
-        cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR,
-                           "cr_std_filesystem_get_entries -> error reading directory: %s",
-                           file_path);
+        CR_LOG_ERROR_FMT("cr_std_filesystem_get_entries -> error reading directory: %s", file_path);
     }
 
     FindClose(hFind);
+    cr_std_arena_free(&temp_arena);
     return vector;
 }
-
 #endif // _WIN32
