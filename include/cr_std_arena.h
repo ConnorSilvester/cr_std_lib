@@ -93,6 +93,16 @@ int cr_std_arena_free(Arena **arena_ptr);
  */
 size_t cr_std_arena_remaining(Arena *arena);
 
+/**
+ * @brief Used to query the current mark in the arena
+ *
+ * @param `arena` A pointer to the Arena struct
+ *
+ * @return `size_t` the current pos of the marker
+ * @return `0` on error.
+ */
+size_t cr_std_arena_get_mark(Arena *arena);
+
 #ifdef __cplusplus
 }
 #endif
