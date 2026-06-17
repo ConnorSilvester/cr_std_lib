@@ -10,6 +10,9 @@ This is not meant as a professional project, but rather just something for me to
 - **String Handling**
 - **Logging**
 - **File Parsing**
+- **CSV Parsing**
+- **CLI Parsing**
+- **Arena Memory Management**
 
 ## Pre-Installation
 To build and install the library you must have `cmake` installed.
@@ -91,6 +94,7 @@ All functions are documented in the respective header file, for help with a spec
 Once installed you can add the following to your program depending what your needs are:
 
 ```c
+#include <cr_std_arena.h>
 #include <cr_std_filesystem.h>
 #include <cr_std_logger.h>
 #include <cr_std_string.h>
@@ -98,117 +102,91 @@ Once installed you can add the following to your program depending what your nee
 #include <cr_std_testing.h>
 #include <cr_std_utils.h>
 #include <cr_std_csv.h>
+#include <cr_std_cli.h>
 ```
 
 ## Code Examples
 
 **Strings** : Prefix is cr_std_string *
 ```c
+Arena *arena = cr_std_arena_new(CR_STD_KB);
+
 // Create a new dynamically allocated string
-String *str = cr_std_string_new("Hello, World");
-String *str = cr_std_string_newf("Hello, %s", "World");
-String *str = cr_std_string_newf("Hello, %s%d", "World", 4);
+// Memory is stored in the arena
+String *str = cr_std_string_new(arena, "Hello, World");
+String *str1 = cr_std_string_newf(arena, "Hello, %s", "World");
+String *str2 = cr_std_string_newf(arena, "Hello, %s%d", "World", 4);
 ```
 ```c
 // Concat strings
-cr_std_string_concat(str, ", This", " Has", " Been", " Concatenated");
+cr_std_string_concat(arena, str, ", This", " Has", " Been", " Concatenated");
 cr_std_string_contains_string(str, "Been");
-cr_std_string_split(str, " ");
+cr_std_string_split(arena, str, " ");
 
-cr_std_string_free(&str);
+cr_std_arena_free(&arena);
 ```
 
 **Vectors** : Prefix is cr_std_vector *
 ```c
-// New vector containing int values
-Vector *int_vector = cr_std_vector_new(int);
+Arena *arena = cr_std_arena_new(CR_STD_KB);
 
-// Use the cr_std_vector_get_all macro to get a c style array
-int *numbers = cr_std_vector_get_all(int_vector, int); // Vector and the type its storing (int, String, char)
-for (int i = 0; i < int_vector->size; i++) {
-    printf("%d\n", numbers[i]);
-}
+// New vector containing pointers, (only stores pointers)
+// Memory is stored in the arena
+Vector *string_vector = cr_std_vector_new(arena);
+String *string = cr_std_string_new(arena, "String");
+cr_std_vector_push_back(arena, string_vector, string);
 
-// String custom copy function, String custom free function
-// This will copy on push, and free each string on vector_free
-Vector *string_vector = cr_std_vector_new(String *);
-string_vector->free_function = cr_std_string_free_ptr;
-string_vector->copy_function = cr_std_string_make_copy_ptr;
-
-// This data will not be copied on push
-// General use free function use in case of basic struct, with no sub allocations
-Vector *tests_vector = cr_std_vector_new(TestCase *);
-test_vector->free_function = cr_std_free_ptr;
-
-```
-```c
-// Primitive example
-int number = 4;
-cr_std_vector_push_back(int_vector, &number);
-
-// As a pointer
-int *result = cr_std_vector_get_at(int_vector, int, 0);
-
-// As a int value
-int result = *cr_std_vector_get_at(int_vector, int, 0);
-cr_std_vector_remove_element(int_vector, 0);
-
-cr_std_vector_free(&int_vector);
-```
-```c
 // String example
-Vector *dest = cr_std_vector_new(String *);
-dest->free_function = cr_std_string_free_ptr;
-dest->copy_function = cr_std_string_make_copy_ptr;
+Vector *dest = cr_std_vector_new(arena);
+Vector *src = cr_std_vector_new(arena);
 
-Vector *src = cr_std_vector_new(String *);
-src->free_function = cr_std_string_free_ptr;
-src->copy_function = cr_std_string_make_copy_ptr;
+String *string_1 = cr_std_string_new(arena, "String 1");
+String *string_2 = cr_std_string_new(arena, "String 2");
+String *string_3 = cr_std_string_new(arena, "String 3");
+String *string_4 = cr_std_string_new(arena, "String 4");
 
-String *string_1 = cr_std_string_new("String 1");
-String *string_2 = cr_std_string_new("String 2");
-String *string_3 = cr_std_string_new("String 3");
-String *string_4 = cr_std_string_new("String 4");
-
-// On push data will be copied to a new String struct, if the custom_copy function is provided
-cr_std_vector_push_back(dest, string_1);
-cr_std_vector_push_back(dest, string_2);
-cr_std_vector_push_back(src, string_3);
-cr_std_vector_push_back(src, string_4);
+cr_std_vector_push_back(arena, dest, string_1);
+cr_std_vector_push_back(arena, dest, string_2);
+cr_std_vector_push_back(arena, src, string_3);
+cr_std_vector_push_back(arena, src, string_4);
 
 // Copies all data from src to dest vectors
-cr_std_vector_extend(dest, src);
+cr_std_vector_extend(arena, dest, src);
 
 // Get all elements and print them out
-String **string_vector = cr_std_vector_get_all(dest, String *); // Vector and the type its storing
+String **strings = cr_std_vector_get_all(dest, String); // Vector and the type its storing
 for (int i = 0; i < dest->size; i++) {
-    printf("%s\n", string_vector[i]->c_str);
+    printf("%s\n", strings[i]->c_str);
 }
 
-// You can safely free all previous elements as the data is copied into the vector
-cr_std_vector_free(&src);
-cr_std_string_free(&string_1);
+// Get element 0 of the vector
+String *string = cr_std_vector_get_at(dest, String, 0);
 
-cr_std_vector_free(&dest);
+// Frees all data inside the arena
+cr_std_arena_free(&arena);
 ```
 
 **Filesystem** : Prefix is cr_std_filesystem *
 ```c
+Arena *arena = cr_std_arena_new(CR_STD_KB);
+
 cr_std_filesystem_write_to_file("test.txt", "This is test data");
 cr_std_filesystem_append_to_file("test.txt", "."); // File will contain 'This is test data.'
 
-String *string = cr_std_filesystem_read_file_as_string("test.txt");
-Vector *vector = cr_std_filesystem_read_file_as_vector("test.txt");
+String *string = cr_std_filesystem_read_file_as_string(arena, "test.txt");
+Vector *vector = cr_std_filesystem_read_file_as_vector(arena, "test.txt");
 
 // Returns a vector of custom Dirent structs.
-Vector *vector = cr_std_filesystem_get_dirs("/home/connor/Downloads");
-Vector *vector = cr_std_filesystem_get_dirs_r("/home/connor/Downloads"); // Recursive search
-Vector *vector = cr_std_filesystem_get_dirs_files("src");
-Vector *vector = cr_std_filesystem_get_dirs_files_r("src"); // Recursive search
+Vector *vector = cr_std_filesystem_get_dirs(arena, "/home/connor/Downloads");
+Vector *vector = cr_std_filesystem_get_dirs_r(arena, "/home/connor/Downloads"); // Recursive search
+Vector *vector = cr_std_filesystem_get_dirs_files(arena, "src");
+Vector *vector = cr_std_filesystem_get_dirs_files_r(arena, "src"); // Recursive search
 
-// Filter out filetypes
-Vector *vector = cr_std_filesystem_get_dirs_files_matching("src", ".txt");
-Vector *vector = cr_std_filesystem_get_dirs_files_matching_r("src", ".csv"); // Recursive search
+// Filter out file types
+Vector *vector = cr_std_filesystem_get_dirs_files_matching(arena, "src", ".txt");
+Vector *vector = cr_std_filesystem_get_dirs_files_matching_r(arena, "src", ".csv"); // Recursive search
+
+cr_std_arena_free(&arena);
 ```
 
 **Logging** : Prefix is cr_std_logger *
@@ -254,10 +232,9 @@ typedef struct CSVRow {
 } CSVRow;
 
 
-CSVFile *csv = cr_std_csv_parse_file("test_file.csv");
+Arena *arena = cr_std_arena_new(CR_STD_KB);
+CSVFile *csv = cr_std_csv_parse_file(arena, "test_file.csv");
 cr_std_csv_print_contents(csv);
-cr_std_csv_free(&csv);
-
 
 
 ```
@@ -265,7 +242,7 @@ cr_std_csv_free(&csv);
 
 // Example of how to access all fields
 
-CSVFile *csv = cr_std_csv_parse_file("test_file.csv");
+CSVFile *csv = cr_std_csv_parse_file(arena, "test_file.csv");
 for (int row_index = 0; row_index < csv->rows->size; row_index++) {
     CSVRow *row = cr_std_vector_get_at(csv->rows, CSVRow, row_index);
     printf("Row %d:\n", row_index + 1);
@@ -275,23 +252,47 @@ for (int row_index = 0; row_index < csv->rows->size; row_index++) {
     }
 }
 
-
+cr_std_arena_free(&arena);
 ```
 
 **Testing** : Prefix is cr_std_testing *
 
 For best examples see the /tests directory in the source code.
 ```c
+Arena *arena = cr_std_arena_new(CR_STD_KB);
+
 // Make vector of test_cases
-Vector *tests = cr_std_vector_new(TestCase *);
-test->free_function = cr_std_free_ptr;
+Vector *tests = cr_std_vector_new(arena);
 
 // cr_std_string_test_new_string_normal is a function pointer to test with. (1 for pass 0 for fail)
-cr_std_vector_push_back(tests, cr_std_testing_new_test("Make String -> Normal", cr_std_string_test_new_string_normal));
-cr_std_vector_push_back(tests, cr_std_testing_new_test("Make String -> Empty", cr_std_string_test_new_string_empty));
-cr_std_vector_push_back(tests, cr_std_testing_new_test("Make String -> Formatted", cr_std_string_test_new_string_formatted));
+cr_std_vector_push_back(arena, tests, cr_std_testing_new_test(arena, "Make String -> Normal", cr_std_string_test_new_string_normal));
+cr_std_vector_push_back(arena, tests, cr_std_testing_new_test(arena, "Make String -> Empty", cr_std_string_test_new_string_empty));
+cr_std_vector_push_back(arena, tests, cr_std_testing_new_test(arena, "Make String -> Formatted", cr_std_string_test_new_string_formatted));
 
-cr_std_testing_run_tests(tests);
-cr_std_vector_free(&tests);
+cr_std_testing_run_tests(arena, tests);
+cr_std_arena_free(&arena);
 
+```
+
+**Arena** : Prefix is cr_std_arena *
+```c
+// Heap
+Arena *arena = cr_std_arena_new(1 * CR_STD_KB);
+
+// Stack
+Arena stack_arena;
+unsigned char stack_arena_memory[1 * CR_STD_KB];
+cr_std_arena_init(&stack_arena, &stack_arena_memory, sizeof(stack_arena_memory));
+
+// Heap
+String *string = cr_std_string_newf(arena, "Hello, %s", "World");
+cr_std_string_concat(arena, string, ", This", " Has", " Been", " Concatenated");
+
+// Stack
+String *stack_string = cr_std_string_new(&stack_arena, "Hello, World");
+printf("%s\n", string->c_str);
+printf("%s\n", stack_string->c_str);
+
+// Do not call free for the stack_arena
+cr_std_arena_free(&arena);
 ```
