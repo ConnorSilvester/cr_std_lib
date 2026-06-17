@@ -13,7 +13,7 @@
 #define CR_STD_STRING_ANSI_COLOR_ESCAPE_SEQ "\033[%dm%s\033[0m"
 
 StringBuilder *cr_std_string_builder_new(Arena *arena, const char *string) {
-    cr_std_string_builder_newc(arena, string, 0);
+    return cr_std_string_builder_newc(arena, string, 0);
 }
 
 StringBuilder *
