@@ -217,7 +217,7 @@ int cr_std_logger_write_history_to_file(const char *filepath) {
             cr_std_string_builder_append_string(g_log_arena, sb, current_log->c_str);
         }
         String *output = cr_std_string_builder_to_string(g_log_arena, sb);
-        cr_std_string_color_strip(g_log_arena, output);
+        cr_std_string_color_strip(output);
         result = cr_std_filesystem_write_to_file(filepath, output->c_str);
     } else {
         result = cr_std_filesystem_write_to_file(filepath, "");

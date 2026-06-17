@@ -162,35 +162,28 @@ int cr_std_string_builder_append_string(Arena *arena,
     }
 
     if (!string_builder) {
-        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR,
-                          "cr_std_string_builder_append_string -> given string builder is NULL");
+        CR_LOG_ERROR("cr_std_string_builder_append_string -> given string builder is NULL");
         return 1;
     }
 
-    size_t string_to_append_length = strlen(string);
-    if (string_builder->size + string_to_append_length >= string_builder->capacity) {
-
-        size_t new_capacity = (string_builder->size + string_to_append_length) * 2;
-        void *temp = cr_std_arena_alloc(arena, new_capacity);
-        if (!temp) {
-            cr_std_logger_out(
-            CR_STD_LOGGER_LOG_TYPE_ERROR,
-            "cr_std_string_builder_append_string -> failed to allocate memory for "
-            "StringBuilder->c_str");
-            return 1;
-        }
-        if (string_builder->c_str) {
-            memcpy(temp, string_builder->c_str, string_builder->size + 1);
-        }
-
-        string_builder->c_str = temp;
-        string_builder->capacity = new_capacity;
+    if (!string) {
+        CR_LOG_ERROR("cr_std_string_builder_append_string -> string is NULL");
+        return 1;
     }
 
-    memcpy(string_builder->c_str + string_builder->size, string, string_to_append_length);
+    size_t len = strlen(string);
+    if (len == 0) {
+        return 0;
+    }
 
-    string_builder->size += string_to_append_length;
+    if (cr_std_string_builder_ensure_capacity(arena, string_builder, len) != 0) {
+        return 1;
+    }
+
+    memcpy(string_builder->c_str + string_builder->size, string, len);
+    string_builder->size += len;
     string_builder->c_str[string_builder->size] = '\0';
+
     return 0;
 }
 
@@ -205,25 +198,13 @@ int cr_std_string_builder_append_char(Arena *arena, StringBuilder *string_builde
         return 1;
     }
 
-    if (string_builder->size + 1 >= string_builder->capacity) {
-        size_t new_capacity = (string_builder->size + 1) * 2;
-        char *temp = cr_std_arena_alloc(arena, new_capacity);
-        if (!temp) {
-            CR_LOG_ERROR(
-            "cr_std_string_builder_append_char -> failed to allocate memory from arena");
-            return 1;
-        }
-
-        if (string_builder->c_str) {
-            memcpy(temp, string_builder->c_str, string_builder->size + 1);
-        }
-
-        string_builder->c_str = temp;
-        string_builder->capacity = new_capacity;
+    if (cr_std_string_builder_ensure_capacity(arena, string_builder, 1) != 0) {
+        CR_LOG_ERROR("cr_std_string_builder_append_char -> failed to ensure capacity");
+        return 1;
     }
 
     string_builder->c_str[string_builder->size] = ch;
-    string_builder->size += 1;
+    string_builder->size++;
     string_builder->c_str[string_builder->size] = '\0';
 
     return 0;
@@ -239,29 +220,31 @@ int cr_std_string_builder_appendf(Arena *arena,
     }
 
     if (!string_builder) {
-        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR,
-                          "cr_std_string_builder_appendf -> given string builder is NULL");
+        CR_LOG_ERROR("cr_std_string_builder_appendf -> given string builder is NULL");
         return 1;
     }
 
     va_list args;
     va_start(args, format);
-    size_t string_to_append_length = vsnprintf(NULL, 0, format, args);
+    int len = vsnprintf(NULL, 0, format, args);
     va_end(args);
 
-    char *buffer = cr_std_arena_alloc(arena, string_to_append_length + 1);
-    if (!buffer) {
-        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR,
-                          "cr_std_string_builder_appendf -> memory allocation failed for buffer");
+    if (len < 0) {
+        CR_LOG_ERROR("cr_std_string_builder_appendf -> vsnprintf failed");
+        return 1;
+    }
+
+    if (cr_std_string_builder_ensure_capacity(arena, string_builder, len) != 0) {
+        CR_LOG_ERROR("cr_std_string_builder_appendf -> failed to ensure capacity");
         return 1;
     }
 
     va_start(args, format);
-    vsnprintf(buffer, string_to_append_length + 1, format, args);
+    vsnprintf(string_builder->c_str + string_builder->size, len + 1, format, args);
     va_end(args);
 
-    buffer[string_to_append_length] = '\0';
-    return cr_std_string_builder_append_string(arena, string_builder, buffer);
+    string_builder->size += len;
+    return 0;
 }
 
 int cr_std_string_builder_append_null_terminated(Arena *arena, StringBuilder *string_builder, ...) {
@@ -282,9 +265,9 @@ int cr_std_string_builder_append_null_terminated(Arena *arena, StringBuilder *st
 
     char *current_string;
     while ((current_string = va_arg(args, char *)) != NULL) {
-        int result = cr_std_string_builder_append_string(arena, string_builder, current_string);
-        if (result != 0) {
-            return result;
+        if (cr_std_string_builder_append_string(arena, string_builder, current_string) != 0) {
+            va_end(args);
+            return 1;
         }
     }
     va_end(args);
@@ -303,6 +286,37 @@ int cr_std_string_builder_reset(StringBuilder *string_builder) {
         string_builder->size = 0;
     }
     return 0;
+}
+
+int cr_std_string_builder_reset_to_mark(StringBuilder *string_builder, size_t mark) {
+    if (!string_builder) {
+        CR_LOG_ERROR("cr_std_string_builder_reset_to_mark -> given string builder is NULL");
+        return 1;
+    }
+
+    if (mark > string_builder->size) {
+        CR_LOG_ERROR_FMT("cr_std_string_builder_reset_to_mark -> mark %zu > size %zu", mark,
+                         string_builder->size);
+        return 1;
+    }
+
+    if (string_builder->c_str) {
+        string_builder->size = mark;
+        string_builder->c_str[mark] = '\0';
+        return 0;
+    }
+
+    CR_LOG_ERROR("cr_std_string_builder_reset_to_mark -> c_str is NULL");
+    return 1;
+}
+
+size_t cr_std_string_builder_get_mark(StringBuilder *string_builder) {
+    if (!string_builder) {
+        CR_LOG_ERROR("cr_std_string_builder_get_mark -> given string builder is NULL");
+        return 1;
+    }
+
+    return string_builder->size;
 }
 
 String *cr_std_string_builder_to_string(Arena *arena, StringBuilder *string_builder) {
@@ -332,21 +346,20 @@ String *cr_std_string_new(Arena *arena, const char *string) {
 
     String *new_string = cr_std_arena_alloc(arena, sizeof(*new_string));
     if (!new_string) {
-        CR_LOG_ERROR("cr_std_string_new -> arena* allocation failed for String struct");
+        CR_LOG_ERROR("cr_std_string_new -> arena allocation failed for String struct");
         return NULL;
     }
 
-    new_string->length = strlen(string);
-
-    char *c_str = cr_std_arena_alloc(arena, new_string->length + 1);
+    size_t len = strlen(string);
+    char *c_str = cr_std_arena_alloc(arena, len + 1);
     if (!c_str) {
-        CR_LOG_ERROR("cr_std_string_new -> arena* allocation failed for c_str");
+        CR_LOG_ERROR("cr_std_string_new -> arena allocation failed for string data");
         return NULL;
     }
 
-    memcpy(c_str, string, new_string->length);
-    c_str[new_string->length] = '\0';
+    memcpy(c_str, string, len + 1);
     new_string->c_str = c_str;
+    new_string->length = len;
 
     return new_string;
 }
@@ -409,45 +422,52 @@ String *cr_std_string_make_copy(Arena *arena, String *src_string) {
 }
 
 int cr_std_string_concat_null_terminated(Arena *arena, String *string, ...) {
-    if (!string) {
-        CR_LOG_ERROR("cr_std_string_concat_null_terminated -> string pointer is NULL");
+    if (!arena) {
+        CR_LOG_ERROR("cr_std_string_concat_null_terminated -> arena* was NULL");
         return 1;
     }
 
-    if (!arena) {
-        CR_LOG_ERROR("cr_std_string_concat_null_terminated -> arena* was NULL");
+    if (!string) {
+        CR_LOG_ERROR("cr_std_string_concat_null_terminated -> string* is NULL");
         return 1;
     }
 
     va_list args;
     va_start(args, string);
 
+    size_t num_strings = 0;
+    const char *current_string;
+
     size_t total_length = string->length;
-    char *current_string;
-    while ((current_string = va_arg(args, char *)) != NULL) {
+    while ((current_string = va_arg(args, const char *)) != NULL) {
         total_length += strlen(current_string);
+        num_strings++;
     }
     va_end(args);
+
+    if (num_strings == 0) {
+        return 0;
+    }
 
     char *new_c_str = cr_std_arena_alloc(arena, total_length + 1);
     if (!new_c_str) {
-        CR_LOG_ERROR("cr_std_string_concat_null_terminated -> arena* allocation failed for c_str");
+        CR_LOG_ERROR("cr_std_string_concat_null_terminated -> allocation failed");
         return 1;
     }
 
-    size_t c_str_current_pos = 0;
+    size_t pos = 0;
     memcpy(new_c_str, string->c_str, string->length);
-    c_str_current_pos += string->length;
+    pos += string->length;
 
     va_start(args, string);
-    while ((current_string = va_arg(args, char *)) != NULL) {
-        size_t current_length = strlen(current_string);
-        memcpy(new_c_str + c_str_current_pos, current_string, current_length);
-        c_str_current_pos += current_length;
+    while ((current_string = va_arg(args, const char *)) != NULL) {
+        size_t len = strlen(current_string);
+        memcpy(new_c_str + pos, current_string, len);
+        pos += len;
     }
     va_end(args);
 
-    new_c_str[c_str_current_pos] = '\0';
+    new_c_str[pos] = '\0';
 
     string->c_str = new_c_str;
     string->length = total_length;
@@ -500,47 +520,35 @@ int cr_std_string_compare_c_str(String *arg, const char *arg1) {
     return 1;
 }
 
-int cr_std_string_trim(Arena *arena, String *string, int direction) {
-    if (string == NULL || string->c_str == NULL || string->length == 0) {
-        CR_LOG_ERROR("cr_std_string_trim -> tried to trim an invalid string");
+int cr_std_string_trim(String *string, int direction) {
+    if (!string || !string->c_str || string->length == 0) {
+        CR_LOG_ERROR("cr_std_string_trim -> invalid string");
         return 1;
     }
 
-    if (!arena) {
-        CR_LOG_ERROR("cr_std_string_trim -> arena* was NULL");
-        return 1;
-    }
+    size_t start = 0;
+    size_t end = string->length - 1;
 
-    int start = 0;
-    int end = string->length - 1;
-
+    // Trim left
     if (direction == CR_STD_STRING_TRIM_LEFT || direction == CR_STD_STRING_TRIM_BOTH) {
-        while (start <= end && iswspace(string->c_str[start])) {
+        while (start <= end && isspace((unsigned char)string->c_str[start])) {
             start++;
         }
     }
 
+    // Trim right
     if (direction == CR_STD_STRING_TRIM_RIGHT || direction == CR_STD_STRING_TRIM_BOTH) {
-        while (end >= start && iswspace(string->c_str[end])) {
+        while (end > start && isspace((unsigned char)string->c_str[end])) {
             end--;
         }
     }
 
-    int new_length = end - start + 1;
-    if (new_length == 0) {
-        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_WARNING,
-                          "cr_std_string_trim -> new string is empty");
-    }
-    char *new_str = cr_std_arena_alloc(arena, new_length + 1);
-    if (!new_str) {
-        CR_LOG_ERROR("cr_std_string_trim -> arena* allocation failed for c_str");
-        return 1;
+    size_t new_length = end - start + 1;
+    if (start > 0 && start < string->length) {
+        memmove(string->c_str, string->c_str + start, new_length);
     }
 
-    memcpy(new_str, string->c_str + start, new_length);
-    new_str[new_length] = '\0';
-
-    string->c_str = new_str;
+    string->c_str[new_length] = '\0';
     string->length = new_length;
 
     return 0;
@@ -857,7 +865,8 @@ Vector *cr_std_string_split(Arena *arena, String *string, char delimiter) {
 
     Vector *vector = cr_std_vector_new(arena);
 
-    char *buffer = cr_std_arena_alloc(arena, string->length + 1);
+    Arena *temp_arena = cr_std_arena_new(string->length + 128);
+    char *buffer = cr_std_arena_alloc(temp_arena, string->length + 1);
     if (!buffer) {
         cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR,
                           "cr_std_string_split -> memory allocation failed");
@@ -886,6 +895,7 @@ Vector *cr_std_string_split(Arena *arena, String *string, char delimiter) {
             buffer_index++;
         }
     }
+    cr_std_arena_free(&temp_arena);
     return vector;
 }
 
@@ -902,7 +912,8 @@ Vector *cr_std_string_split_hard(Arena *arena, String *string, char delimiter) {
 
     Vector *vector = cr_std_vector_new(arena);
 
-    char *buffer = cr_std_arena_alloc(arena, string->length + 1);
+    Arena *temp_arena = cr_std_arena_new(string->length + 128);
+    char *buffer = cr_std_arena_alloc(temp_arena, string->length + 1);
     if (!buffer) {
         cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR,
                           "cr_std_string_split_hard -> memory allocation failed");
@@ -928,6 +939,7 @@ Vector *cr_std_string_split_hard(Arena *arena, String *string, char delimiter) {
             buffer_index++;
         }
     }
+    cr_std_arena_free(&temp_arena);
     return vector;
 }
 
@@ -981,15 +993,57 @@ int cr_std_string_to_title(String *string) {
     return 0;
 }
 
+int cr_std_string_replace_string_inplace(String *string, const char *from, const char *to) {
+    if (!string || !string->c_str || !from || !to) {
+        CR_LOG_ERROR("cr_std_string_replace_string_inplace -> NULL parameter");
+        return 0;
+    }
+
+    if (string->length == 0 || from[0] == '\0') {
+        return 0;
+    }
+
+    size_t from_len = strlen(from);
+    size_t to_len = strlen(to);
+
+    if (to_len > from_len) {
+        return 0;
+    }
+
+    int occurrences = 0;
+    const char *pos = string->c_str;
+    while ((pos = strstr(pos, from)) != NULL) {
+        occurrences++;
+        pos += from_len;
+    }
+
+    if (occurrences == 0) return 0;
+
+    char *src = string->c_str;
+    char *dest = string->c_str;
+    size_t len_diff = from_len - to_len;
+    size_t new_len = string->length - (len_diff * occurrences);
+
+    while (*src) {
+        if (strncmp(src, from, from_len) == 0) {
+            memcpy(dest, to, to_len);
+            dest += to_len;
+            src += from_len;
+        } else {
+            *dest++ = *src++;
+        }
+    }
+
+    *dest = '\0';
+    string->length = new_len;
+
+    return occurrences;
+}
+
 int cr_std_string_replace_string(Arena *arena, String *string, const char *from, const char *to) {
     if (!string) {
         cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR,
                           "cr_std_string_replace_string -> string pointer is NULL");
-        return 0;
-    }
-
-    if (!arena) {
-        CR_LOG_ERROR("cr_std_string_replace_string -> arena* was NULL");
         return 0;
     }
 
@@ -1000,6 +1054,15 @@ int cr_std_string_replace_string(Arena *arena, String *string, const char *from,
 
     int from_length = strlen(from);
     int to_length = strlen(to);
+
+    if (to_length <= from_length) {
+        return cr_std_string_replace_string_inplace(string, from, to);
+    }
+
+    if (!arena) {
+        CR_LOG_ERROR("cr_std_string_replace_string -> arena* was NULL");
+        return 0;
+    }
 
     int new_length = string->length + (to_length - from_length) * occurrences;
     char *new_string = cr_std_arena_alloc(arena, new_length + 1);
@@ -1040,85 +1103,60 @@ int cr_std_string_replace_string(Arena *arena, String *string, const char *from,
     return successfully_changed_words;
 }
 
-int cr_std_string_remove_non_numeric(Arena *arena, String *string) {
+int cr_std_string_remove_non_numeric(String *string) {
     if (!string || !string->c_str) {
-        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR,
-                          "cr_std_string_remove_non_numeric -> string pointer is NULL");
+        CR_LOG_ERROR("cr_std_string_remove_non_numeric -> NULL parameter");
         return 1;
     }
 
-    if (!arena) {
-        CR_LOG_ERROR("cr_std_string_remove_non_numeric -> arena* was NULL");
-        return 1;
+    if (string->length == 0) {
+        return 0;
     }
 
-    size_t digit_count = 0;
-    for (size_t i = 0; i < string->length; ++i) {
-        if (isdigit((unsigned char)string->c_str[i])) {
-            digit_count++;
+    char *src = string->c_str;
+    char *dest = string->c_str;
+    size_t new_len = 0;
+
+    while (*src) {
+        if (isdigit((unsigned char)*src)) {
+            *dest = *src;
+            dest++;
+            new_len++;
         }
+        src++;
     }
 
-    char *filtered_str = cr_std_arena_alloc(arena, digit_count + 1);
-    if (!filtered_str) {
-        cr_std_logger_out(
-        CR_STD_LOGGER_LOG_TYPE_ERROR,
-        "cr_std_string_remove_non_numeric -> arena allocation failed for filtered_str");
-        return 1;
-    }
+    *dest = '\0';
+    string->length = new_len;
 
-    size_t filtered_str_index = 0;
-    for (size_t i = 0; i < string->length; ++i) {
-        if (isdigit((unsigned char)string->c_str[i])) {
-            filtered_str[filtered_str_index] = string->c_str[i];
-            filtered_str_index++;
-        }
-    }
-    filtered_str[filtered_str_index] = '\0';
-
-    string->c_str = filtered_str;
-    string->length = digit_count;
     return 0;
 }
 
-int cr_std_string_remove_numeric(Arena *arena, String *string) {
+int cr_std_string_remove_numeric(String *string) {
     if (!string || !string->c_str) {
-        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR,
-                          "cr_std_string_remove_numeric -> string pointer is NULL");
+        CR_LOG_ERROR("cr_std_string_remove_numeric -> NULL parameter");
         return 1;
     }
 
-    if (!arena) {
-        CR_LOG_ERROR("cr_std_string_replace_string -> arena* was NULL");
-        return 1;
+    if (string->length == 0) {
+        return 0;
     }
 
-    size_t new_char_count = 0;
-    for (size_t i = 0; i < string->length; ++i) {
-        if (!isdigit((unsigned char)string->c_str[i])) {
-            new_char_count++;
+    char *write = string->c_str;
+    const char *read = string->c_str;
+    size_t new_len = 0;
+
+    while (*read) {
+        if (!isdigit((unsigned char)*read)) {
+            *write++ = *read;
+            new_len++;
         }
+        read++;
     }
 
-    char *filtered_str = cr_std_arena_alloc(arena, new_char_count + 1);
-    if (!filtered_str) {
-        cr_std_logger_out(
-        CR_STD_LOGGER_LOG_TYPE_ERROR,
-        "cr_std_string_remove_numeric -> arena allocation failed for filtered_str");
-        return 1;
-    }
+    *write = '\0';
+    string->length = new_len;
 
-    size_t filtered_str_index = 0;
-    for (size_t i = 0; i < string->length; ++i) {
-        if (!isdigit((unsigned char)string->c_str[i])) {
-            filtered_str[filtered_str_index] = string->c_str[i];
-            filtered_str_index++;
-        }
-    }
-    filtered_str[filtered_str_index] = '\0';
-
-    string->c_str = filtered_str;
-    string->length = new_char_count;
     return 0;
 }
 
@@ -1157,14 +1195,14 @@ String *cr_std_string_from_int(Arena *arena, int number) {
     if (result < 0 || result >= sizeof(str_buffer)) {
         cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR,
                           "cr_std_string_from_int -> snprintf failed");
-        return cr_std_string_new(arena, "");
+        return cr_std_string_new(arena, "0");
     }
 
     String *string = cr_std_string_new(arena, str_buffer);
     if (!string) {
         cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR,
                           "cr_std_string_from_int -> failed to create String");
-        return cr_std_string_new(arena, "");
+        return cr_std_string_new(arena, "0");
     }
     return string;
 }
@@ -1247,24 +1285,36 @@ cr_std_string_color_phrase(Arena *arena, String *string, const char *phrase, int
     }
 
     if (color_code < 30 || color_code >= 40) {
-        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_WARNING,
-                          "cr_std_string_color_phrase -> invalid color code");
         color_code = CR_STD_STRING_COLOR_NONE;
     }
 
-    String *str_copy = cr_std_string_make_copy(arena, string);
-    String *phrase_colored =
-    cr_std_string_newf(arena, CR_STD_STRING_ANSI_COLOR_ESCAPE_SEQ, color_code, phrase);
-    cr_std_string_replace_string(arena, str_copy, phrase, phrase_colored->c_str);
-    return str_copy;
+    size_t phrase_len = strlen(phrase);
+    size_t needed = phrase_len + 32;
+
+    if (needed < 256) {
+        char colored_phrase[256];
+        snprintf(colored_phrase, sizeof(colored_phrase), CR_STD_STRING_ANSI_COLOR_ESCAPE_SEQ,
+                 color_code, phrase);
+
+        String *str_copy = cr_std_string_make_copy(arena, string);
+        if (str_copy) {
+            cr_std_string_replace_string(arena, str_copy, phrase, colored_phrase);
+        }
+        return str_copy;
+    } else {
+        Arena *temp_arena = cr_std_arena_new(needed + 16);
+        char *colored_phrase = cr_std_arena_alloc(temp_arena, needed + 1);
+        snprintf(colored_phrase, needed + 1, CR_STD_STRING_ANSI_COLOR_ESCAPE_SEQ, color_code,
+                 phrase);
+
+        String *str_copy = cr_std_string_make_copy(arena, string);
+        cr_std_string_replace_string(arena, str_copy, phrase, colored_phrase);
+        cr_std_arena_free(&temp_arena);
+        return str_copy;
+    }
 }
 
-int cr_std_string_color_strip(Arena *arena, String *string) {
-    if (!arena) {
-        CR_LOG_ERROR("cr_std_string_color_strip -> arena* was NULL");
-        return 1;
-    }
-
+int cr_std_string_color_strip(String *string) {
     if (!string || !string->c_str) {
         cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR,
                           "cr_std_string_color_strip -> string is NULL");
@@ -1274,41 +1324,51 @@ int cr_std_string_color_strip(Arena *arena, String *string) {
     for (int i = 30; i < 40; i++) {
         char color_code[16];
         snprintf(color_code, sizeof(color_code), "\033[%dm", i);
-        cr_std_string_replace_string(arena, string, color_code, "");
+        cr_std_string_replace_string(NULL, string, color_code, "");
     }
 
-    cr_std_string_replace_string(arena, string, "\033[0m", "");
+    cr_std_string_replace_string(NULL, string, "\033[0m", "");
     return 0;
 }
 
 String *cr_std_string_repeat(Arena *arena, const char *string, size_t n) {
-    if (!arena) {
-        CR_LOG_ERROR("cr_std_string_repeat -> arena* was NULL");
+    if (!arena || !string) {
+        CR_LOG_ERROR("cr_std_string_repeat -> NULL parameter");
         return NULL;
     }
 
-    if (!string) {
-        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, "cr_std_string_repeat -> string is NULL");
-        return cr_std_string_new(arena, "");
-    }
-
-    if (n == 0) {
+    if (n <= 0 || string[0] == '\0') {
         return cr_std_string_new(arena, "");
     }
 
     size_t len = strlen(string);
+
     if (len > SIZE_MAX / n) {
-        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR,
-                          "cr_std_string_repeat -> string is too large (n might be negative)");
+        CR_LOG_ERROR_FMT("cr_std_string_repeat -> size overflow: %zu * %zu", len, n);
         return cr_std_string_new(arena, "");
     }
-    size_t total_length = len * n;
 
-    StringBuilder *sb = cr_std_string_builder_new(arena, "");
-    cr_std_string_builder_ensure_capacity(arena, sb, total_length);
-    for (size_t i = 0; i < n; i++) {
-        cr_std_string_builder_append_string(arena, sb, string);
+    size_t total_len = len * n;
+    char *buffer = cr_std_arena_alloc(arena, total_len + 1);
+    if (!buffer) {
+        CR_LOG_ERROR("cr_std_string_repeat -> allocation failed");
+        return cr_std_string_new(arena, "");
     }
 
-    return cr_std_string_builder_to_string(arena, sb);
+    char *pos = buffer;
+    for (size_t i = 0; i < n; i++) {
+        memcpy(pos, string, len);
+        pos += len;
+    }
+    *pos = '\0';
+
+    String *result = cr_std_arena_alloc(arena, sizeof(String));
+    if (!result) {
+        CR_LOG_ERROR("cr_std_string_repeat -> failed to allocate String struct");
+        return cr_std_string_new(arena, "");
+    }
+
+    result->c_str = buffer;
+    result->length = total_len;
+    return result;
 }

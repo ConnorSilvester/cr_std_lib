@@ -176,6 +176,27 @@ int cr_std_string_builder_append_null_terminated(Arena *arena, StringBuilder *st
 int cr_std_string_builder_reset(StringBuilder *string_builder);
 
 /**
+ * @brief Resets a string builders string, back to the mark.
+ *
+ * @param `string_builder` The `StringBuilder` struct to work on.
+ * @param `mark` The mark to set back too
+ *
+ * @return `0` on success.
+ * @return `1` on failure.
+ */
+int cr_std_string_builder_reset_to_mark(StringBuilder *string_builder, size_t mark);
+
+/**
+ * @brief Returns the current mark
+ *
+ * @param `string_builder` The `StringBuilder` struct to work on.
+ *
+ * @return `mark` on success.
+ * @return `0` on failure.
+ */
+size_t cr_std_string_builder_get_mark(StringBuilder *string_builder);
+
+/**
  * @brief Resets a string builders string, back to nothing.
  *
  * @param `arena` The arena to store the memory in
@@ -276,7 +297,6 @@ int cr_std_string_compare_c_str(String *arg, const char *arg1);
 /**
  * @brief Trims a string of white space in both directions of the string.
  *
- * @param `arena` The arena to store the memory in
  * @param `string` The string to trim.
  * @param `direction` Which dir you want to cut or both
  *
@@ -289,7 +309,7 @@ int cr_std_string_compare_c_str(String *arg, const char *arg1);
  * @return `0` if the string is trimmed successfully.
  * @return `1` if the string failed to be trimmed.
  */
-int cr_std_string_trim(Arena *arena, String *string, int direction);
+int cr_std_string_trim(String *string, int direction);
 
 /**
  * @brief Finds the first index of a character in a given string.
@@ -504,6 +524,8 @@ int cr_std_string_to_title(String *string);
 
 /**
  * @brief Replaces all occurrences of `from` with `to` in a given string.
+ * @note Operation will be done in-place if possible, if not new memory will be allocated in the
+ * arena
  *
  * @param `arena` The arena to store the memory in
  * @param `string` The string to work on.
@@ -518,24 +540,22 @@ int cr_std_string_replace_string(Arena *arena, String *string, const char *from,
 /**
  * @brief Removes all characters that are not numbers.
  *
- * @param `arena` The arena to store the memory in
  * @param `string` The `String` to work on.
  *
  * @return `0` on success.
  * @return `1` on failure.
  */
-int cr_std_string_remove_non_numeric(Arena *arena, String *string);
+int cr_std_string_remove_non_numeric(String *string);
 
 /**
  * @brief Removes all characters that are considered numbers.
  *
- * @param `arena` The arena to store the memory in
  * @param `string` The `String` to work on.
  *
  * @return `0` on success.
  * @return `1` on failure.
  */
-int cr_std_string_remove_numeric(Arena *arena, String *string);
+int cr_std_string_remove_numeric(String *string);
 
 /**
  * @brief Returns the numerical representation of a string
@@ -569,26 +589,6 @@ String *cr_std_string_from_int(Arena *arena, int number);
 String *cr_std_string_sub_string(Arena *arena, String *string, int start_index, int end_index);
 
 /**
- * @brief Returns the string representation of a `Vector` struct.
- *
- * @param `vector` The vector you want to join together, that contains pointers to `String` structs.
- * @param `delimiter` A string / phrase to separate the elements in the vector with.
- *
- * @return `String` A pointer to a `String` struct the joined vector.
- */
-// String *cr_std_string_from_string_ptr_vector(Vector *vector, const char *delimiter);
-
-/**
- * @brief Returns the string representation of a `Vector` struct.
- *
- * @param `vector` The vector you want to join together, that contains char pointers.
- * @param `delimiter` A string / phrase to separate the elements in the vector with.
- *
- * @return `String` A pointer to a `String` struct the joined vector.
- */
-// String *cr_std_string_from_char_ptr_vector(Vector *vector, const char *delimiter);
-
-/**
  * @brief Colors an entire string to one color
  *
  * @param `arena` The arena to store the memory in
@@ -617,13 +617,12 @@ cr_std_string_color_phrase(Arena *arena, String *string, const char *phrase, int
 /**
  * @brief Strips the colors from a string
  *
- * @param `arena` The arena to store the memory in
  * @param `string` The `String` to work from.
  *
  * @return `0` on success
  * @return `1` on failure
  */
-int cr_std_string_color_strip(Arena *arena, String *string);
+int cr_std_string_color_strip(String *string);
 
 /**
  * @brief Repeats a string n times.
