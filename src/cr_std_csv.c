@@ -43,7 +43,8 @@ CSVRow *cr_std_csv_row_new(Arena *arena) {
 CSVFile *cr_std_csv_parse_file(Arena *arena, const char *file_path) {
     CSVFile *csv = cr_std_csv_new(arena);
 
-    String *file_contents = cr_std_filesystem_read_file_as_string(arena, file_path);
+    Arena *temp_arena = cr_std_arena_new(CR_STD_FILE_MAX_SIZE);
+    String *file_contents = cr_std_filesystem_read_file_as_string(temp_arena, file_path);
     if (!file_contents) {
         cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_WARNING,
                           "cr_std_csv_parse_file -> returned empty CSVFile");
@@ -53,7 +54,7 @@ CSVFile *cr_std_csv_parse_file(Arena *arena, const char *file_path) {
 
     bool in_quotes = false;
     bool is_first_row = true;
-    StringBuilder *sb = cr_std_string_builder_new(arena, "");
+    StringBuilder *sb = cr_std_string_builder_newc(temp_arena, "", temp_arena->capacity / 4);
 
     CSVRow *row = cr_std_csv_row_new(arena);
 
@@ -71,7 +72,7 @@ CSVFile *cr_std_csv_parse_file(Arena *arena, const char *file_path) {
             in_quotes = true;
         } else if (c == '"' && in_quotes) {
             if (src[index + 1] == '"') {
-                cr_std_string_builder_append_string(arena, sb, "\"");
+                cr_std_string_builder_append_string(temp_arena, sb, "\"");
                 index++;
             } else {
                 in_quotes = false;
@@ -96,7 +97,7 @@ CSVFile *cr_std_csv_parse_file(Arena *arena, const char *file_path) {
             cr_std_string_builder_reset(sb);
         } else {
             if (c != '\r') {
-                cr_std_string_builder_append_char(arena, sb, c);
+                cr_std_string_builder_append_char(temp_arena, sb, c);
             }
         }
     }
@@ -108,6 +109,7 @@ CSVFile *cr_std_csv_parse_file(Arena *arena, const char *file_path) {
         }
         cr_std_vector_push_back(arena, csv->rows, row);
     }
+    cr_std_arena_free(&temp_arena);
     return csv;
 }
 
