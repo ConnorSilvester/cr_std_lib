@@ -13,42 +13,44 @@
 #define CR_STD_STRING_ANSI_COLOR_ESCAPE_SEQ "\033[%dm%s\033[0m"
 
 StringBuilder *cr_std_string_builder_new(Arena *arena, const char *string) {
+    cr_std_string_builder_newc(arena, string, 0);
+}
+
+StringBuilder *
+cr_std_string_builder_newc(Arena *arena, const char *string, size_t initial_capacity) {
     if (!arena) {
-        CR_LOG_ERROR("cr_std_string_builder_new -> arena* was NULL");
+        CR_LOG_ERROR("cr_std_string_builder_newc -> arena* was NULL");
         return NULL;
     }
 
     if (!string) {
-        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR,
-                          "cr_std_string_builder_new -> char* input was NULL");
+        CR_LOG_ERROR("cr_std_string_builder_newc -> string was NULL");
         return NULL;
     }
 
     StringBuilder *string_builder = cr_std_arena_alloc(arena, sizeof(*string_builder));
-
     if (!string_builder) {
-        cr_std_logger_out(
-        CR_STD_LOGGER_LOG_TYPE_ERROR,
-        "cr_std_string_builder_new -> failed to allocate memory for new StringBuilder struct");
+        CR_LOG_ERROR("cr_std_string_builder_newc -> failed to allocate StringBuilder");
         return NULL;
     }
 
-    string_builder->size = strlen(string);
-    if (string_builder->size == 0) {
-        string_builder->capacity = CR_STD_STRING_BUILDER_DEFAULT_CAP;
+    size_t len = strlen(string);
+    string_builder->size = len;
+
+    if (initial_capacity > 0) {
+        string_builder->capacity = (initial_capacity > len + 1) ? initial_capacity : len + 1;
     } else {
-        string_builder->capacity = string_builder->size * 2;
+        string_builder->capacity = (len == 0) ? CR_STD_STRING_BUILDER_DEFAULT_CAP : len * 2;
     }
 
     char *c_str = cr_std_arena_alloc(arena, string_builder->capacity + 1);
     if (!c_str) {
-        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR,
-                          "cr_std_string_builder_new -> failed to allocate memory for buffer");
+        CR_LOG_ERROR("cr_std_string_builder_new_with_capacity -> failed to allocate buffer");
         return NULL;
     }
 
-    memcpy(c_str, string, string_builder->size);
-    c_str[string_builder->size] = '\0';
+    memcpy(c_str, string, len);
+    c_str[len] = '\0';
     string_builder->c_str = c_str;
 
     return string_builder;

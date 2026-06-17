@@ -59,6 +59,17 @@ void *cr_std_arena_alloc(Arena *arena, size_t size);
 int cr_std_arena_reset(Arena *arena);
 
 /**
+ * @brief Used to reset a Arena struct, does not free memory
+ *
+ * @param `arena` A pointer to the Arena struct
+ * @param `mark` The pos to reset too
+ *
+ * @return `0` on success.
+ * @return `1` on error.
+ */
+int cr_std_arena_reset_to_mark(Arena *arena, size_t mark);
+
+/**
  * @brief Used to free an Arena struct
  *
  * @param `arena` A pointer to the Arena struct
