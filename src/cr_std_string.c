@@ -705,6 +705,10 @@ int cr_std_string_contains_string(String *string, const char *phrase) {
         return 0;
     }
 
+    if (string->length == 0) {
+        return 0;
+    }
+
     if (!phrase || phrase[0] == '\0') {
         return 0;
     }
@@ -712,6 +716,10 @@ int cr_std_string_contains_string(String *string, const char *phrase) {
     int occurrences = 0;
     const char *pos = string->c_str;
     size_t phrase_len = strlen(phrase);
+
+    if (phrase_len > string->length) {
+        return 0;
+    }
 
     while ((pos = strstr(pos, phrase)) != NULL) {
         occurrences++;
@@ -728,12 +736,18 @@ int cr_std_string_contains_char(String *string, char ch) {
         return 0;
     }
 
-    int occurrences = 0;
-    for (int i = 0; i <= string->length; i++) {
-        if (string->c_str[i] == ch) {
-            occurrences++;
-        }
+    if (string->length == 0) {
+        return 0;
     }
+
+    int occurrences = 0;
+    const char *pos = string->c_str;
+
+    while ((pos = strchr(pos, ch)) != NULL) {
+        occurrences++;
+        pos++;
+    }
+
     return occurrences;
 }
 
