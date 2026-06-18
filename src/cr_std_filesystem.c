@@ -37,24 +37,25 @@ int cr_std_filesystem_copy_file(const char *src, const char *dest) {
 
     FILE *src_file = fopen(src, "rb");
     if (!src_file) {
-        cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR,
-                           "cr_std_filesystem_copy_file -> file can't be opened -> %s", src);
+        CR_LOG_ERROR_FMT("cr_std_filesystem_copy_file -> file can't be opened -> %s", src);
         return 1;
     }
 
     FILE *dest_file = fopen(dest, "wb");
     if (!dest_file) {
         fclose(src_file);
-        cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR,
-                           "cr_std_filesystem_copy_file -> file can't be opened -> %s", dest);
+        CR_LOG_ERROR_FMT("cr_std_filesystem_copy_file -> file can't be opened -> %s", dest);
         return 1;
     }
 
-    int ch;
-    while ((ch = fgetc(src_file)) != EOF) {
-        if (fputc(ch, dest_file) == EOF) {
-            cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR,
-                               "cr_std_filesystem_copy_file -> error writing to file -> %s", dest);
+    setvbuf(src_file, NULL, _IOFBF, 64 * CR_STD_KB);
+    setvbuf(dest_file, NULL, _IOFBF, 64 * CR_STD_KB);
+
+    char buffer[64 * CR_STD_KB];
+    size_t bytes;
+    while ((bytes = fread(buffer, 1, sizeof(buffer), src_file)) > 0) {
+        if (fwrite(buffer, 1, bytes, dest_file) != bytes) {
+            CR_LOG_ERROR_FMT("cr_std_filesystem_copy_file -> error writing to file -> %s", dest);
             fclose(src_file);
             fclose(dest_file);
             return 1;
@@ -62,8 +63,7 @@ int cr_std_filesystem_copy_file(const char *src, const char *dest) {
     }
 
     if (ferror(src_file)) {
-        cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR,
-                           "cr_std_filesystem_copy_file -> error reading from file -> %s", src);
+        CR_LOG_ERROR_FMT("cr_std_filesystem_copy_file -> error reading from file -> %s", src);
         fclose(src_file);
         fclose(dest_file);
         return 1;
@@ -195,7 +195,7 @@ Vector *cr_std_filesystem_read_file_as_vector(Arena *arena, const char *file_pat
         return NULL;
     }
 
-    Vector* result = cr_std_string_split_hard(arena, file_contents, '\n');
+    Vector *result = cr_std_string_split_hard(arena, file_contents, '\n');
     cr_std_arena_free(&temp_arena);
     return result;
 }
