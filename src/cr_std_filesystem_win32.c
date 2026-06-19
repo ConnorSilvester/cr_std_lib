@@ -90,7 +90,12 @@ Vector *cr_std_filesystem_get_entries(Arena *arena,
 
     String *current_dir = cr_std_string_new(temp_arena, ".");
     String *parent_dir = cr_std_string_new(temp_arena, "..");
-    size_t current_mark = cr_std_arena_get_mark(temp_arena);
+    size_t current_mark;
+    if (cr_std_arena_get_mark(temp_arena, &current_mark) != CR_STD_OK) {
+        cr_std_arena_free(&temp_arena);
+        FindClose(hFind);
+        return vector;
+    }
 
     do {
         cr_std_arena_reset_to_mark(temp_arena, current_mark);

@@ -1,3 +1,4 @@
+#include <dirent.h>
 #if defined(__linux__) || defined(__APPLE__)
 
 #include "cr_std_arena.h"
@@ -82,7 +83,12 @@ Vector *cr_std_filesystem_get_entries(Arena *arena,
 
     String *current_dir = cr_std_string_new(temp_arena, ".");
     String *parent_dir = cr_std_string_new(temp_arena, "..");
-    size_t current_mark = cr_std_arena_get_mark(temp_arena);
+    size_t current_mark;
+    if (cr_std_arena_get_mark(temp_arena, &current_mark) != CR_STD_OK) {
+        cr_std_arena_free(&temp_arena);
+        closedir(dir);
+        return vector;
+    }
 
     struct dirent *entry;
     while ((entry = readdir(dir)) != NULL) {

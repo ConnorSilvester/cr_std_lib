@@ -27,21 +27,21 @@ Arena *cr_std_arena_new(size_t capacity) {
     return arena;
 }
 
-int cr_std_arena_init(Arena *arena, void *memory, size_t capacity) {
+b8 cr_std_arena_init(Arena *arena, void *memory, size_t capacity) {
     if (!arena) {
         CR_LOG_ERROR("cr_std_arena_init -> arena* is NULL");
-        return 1;
+        return CR_STD_FAIL;
     }
 
     if (!memory) {
         CR_LOG_ERROR("cr_std_arena_init -> memory* is NULL");
-        return 1;
+        return CR_STD_FAIL;
     }
 
     arena->memory = (unsigned char *)memory;
     arena->capacity = capacity;
     arena->used = 0;
-    return 0;
+    return CR_STD_OK;
 }
 
 void *cr_std_arena_alloc(Arena *arena, size_t size) {
@@ -58,8 +58,10 @@ void *cr_std_arena_alloc(Arena *arena, size_t size) {
     size_t aligned = (size + 7) & ~7;
 
     if (arena->used + aligned > arena->capacity) {
+        size_t remaining;
+        cr_std_arena_remaining(arena, &remaining);
         CR_LOG_ERROR_FMT("cr_std_arena_alloc -> memory overflow, requested %zu : available %zu",
-                         size, cr_std_arena_remaining(arena));
+                         size, remaining);
         return NULL; // Overflow
     }
 
@@ -68,32 +70,32 @@ void *cr_std_arena_alloc(Arena *arena, size_t size) {
     return ptr;
 }
 
-int cr_std_arena_reset(Arena *arena) {
+b8 cr_std_arena_reset(Arena *arena) {
     if (!arena) {
         CR_LOG_ERROR("cr_std_arena_reset -> arena* is NULL");
-        return 1;
+        return CR_STD_FAIL;
     }
     arena->used = 0;
-    return 0;
+    return CR_STD_OK;
 }
 
-int cr_std_arena_reset_to_mark(Arena *arena, size_t mark) {
+b8 cr_std_arena_reset_to_mark(Arena *arena, size_t mark) {
     if (!arena) {
         CR_LOG_ERROR("cr_std_arena_reset_to_mark -> arena is NULL");
-        return 1;
+        return CR_STD_FAIL;
     }
 
     if (mark > arena->used) {
         CR_LOG_ERROR_FMT("cr_std_arena_reset_to_mark -> mark %zu > current used %zu", mark,
                          arena->used);
-        return 1;
+        return CR_STD_FAIL;
     }
 
     arena->used = mark;
-    return 0;
+    return CR_STD_OK;
 }
 
-int cr_std_arena_free(Arena **arena_ptr) {
+b8 cr_std_arena_free(Arena **arena_ptr) {
     if (arena_ptr && *arena_ptr) {
         if ((*arena_ptr)->memory) {
             free((*arena_ptr)->memory);
@@ -102,27 +104,39 @@ int cr_std_arena_free(Arena **arena_ptr) {
 
         free(*arena_ptr);
         *arena_ptr = NULL;
-        return 0;
+        return CR_STD_OK;
     }
 
     CR_LOG_ERROR("cr_std_arena_free -> tried to free a NULL Arena*");
-    return 1;
+    return CR_STD_FAIL;
 }
 
-size_t cr_std_arena_remaining(Arena *arena) {
+b8 cr_std_arena_remaining(Arena *arena, size_t *remaining) {
     if (!arena) {
         CR_LOG_ERROR("cr_std_arena_remaining -> arena* is NULL");
-        return 0;
+        return CR_STD_FAIL;
     }
 
-    return arena->capacity - arena->used;
+    if (!remaining) {
+        CR_LOG_ERROR("cr_std_arena_remaining -> remaining* is NULL");
+        return CR_STD_FAIL;
+    }
+
+    *remaining = arena->capacity - arena->used;
+    return CR_STD_OK;
 }
 
-size_t cr_std_arena_get_mark(Arena *arena) {
+b8 cr_std_arena_get_mark(Arena *arena, size_t *mark) {
     if (!arena) {
         CR_LOG_ERROR("cr_std_arena_get_mark -> arena is NULL");
-        return 0;
+        return CR_STD_FAIL;
     }
 
-    return arena->used;
+    if (!mark) {
+        CR_LOG_ERROR("cr_std_arena_get_mark -> mark is NULL");
+        return CR_STD_FAIL;
+    }
+
+    *mark = arena->used;
+    return CR_STD_OK;
 }
