@@ -11,14 +11,11 @@ typedef struct Arena Arena;
 
 /**
  * @brief Represents an entire CSV file in memory.
+ * @note `cr_std_arena` is used for memory management
  *
  * The CSVFile struct stores the contents of a CSV file, including the column headers
  * (titles) and all rows of data. Each row contains a vector of fields.
  *
- * Memory ownership:
- * - The CSVFile owns both the titles vector and the rows vector.
- * - Each CSVRow in the rows vector owns its fields.
- * - Freeing a CSVFile will free all nested CSVRow and String objects.
  */
 typedef struct CSVFile {
     Vector *titles; // Vector <String>
@@ -27,12 +24,10 @@ typedef struct CSVFile {
 
 /**
  * @brief Represents a single row in a CSV file.
+ * @note `cr_std_arena` is used for memory management
  *
  * Each CSVRow contains a vector of fields corresponding to the columns in the CSV file.
  *
- * Memory ownership:
- * - The CSVRow owns the fields vector.
- * - Freeing a CSVRow will free all nested String objects.
  */
 typedef struct CSVRow {
     Vector *fields; // Vector <String>

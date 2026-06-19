@@ -11,10 +11,8 @@ typedef struct Arena Arena;
 
 /**
  * @brief Represents an Argument
+ * @note `cr_std_arena` is used for memory management
  *
- * Memory ownership:
- * - The struct owns the flag, help_text and parameters vector.
- * - Freeing the struct using 'cr_std_cli_free_argument_definition()' will free all memory.
  */
 typedef struct ArgumentDefinition {
     String *flag;       // Keyword

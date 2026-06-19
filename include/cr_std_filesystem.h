@@ -81,29 +81,16 @@ int cr_std_filesystem_copy_file(const char *src, const char *dest);
  */
 int cr_std_filesystem_move_file(const char *src, const char *dest);
 
-#ifdef _WIN32
 /**
  * @brief Makes a directory
  *
  * @param `dir_path` The directory path to create
- *
- * @return `0` on success.
- * @return `1` on failure.
- */
-int cr_std_filesystem_make_dir(const char *dir_path);
-#else
-
-/**
- * @brief Makes a directory
- *
- * @param `dir_path` The directory path to create
- * @param `permissions` The permissions of the dir
+ * @param `permissions` The permissions of the dir (only used on UNIX)
  *
  * @return `0` on success.
  * @return `1` on failure.
  */
 int cr_std_filesystem_make_dir(const char *dir_path, mode_t permissions);
-#endif // _WIN32
 
 /**
  * @brief Gets the current working directory
@@ -253,6 +240,16 @@ Vector *cr_std_filesystem_get_dirs_files_matching(Arena *arena,
 Vector *cr_std_filesystem_get_dirs_files_matching_r(Arena *arena,
                                                     const char *file_path,
                                                     const char *extension);
+
+/**
+ * @brief Checks if a file exists
+ *
+ * @param `file_path` A raw string of the file path.
+ *
+ * @return `true` if it does exist
+ * @return `false` if it does not exist
+ */
+bool cr_std_filesystem_exists(const char *file_path);
 
 #ifdef __cplusplus
 }

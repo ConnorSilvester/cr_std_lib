@@ -1,6 +1,6 @@
-#include "cr_std_arena.h"
 #if defined(__linux__) || defined(__APPLE__)
 
+#include "cr_std_arena.h"
 #include "cr_std_filesystem.h"
 #include "cr_std_logger.h"
 #include "cr_std_string.h"
@@ -156,5 +156,13 @@ Vector *cr_std_filesystem_get_entries(Arena *arena,
     closedir(dir);
     cr_std_arena_free(&temp_arena);
     return vector;
+}
+
+bool cr_std_filesystem_exists(const char *file_path) {
+    if (!file_path) {
+        return false;
+    }
+
+    return access(file_path, F_OK) == 0;
 }
 #endif // __linux__ __APPLE__

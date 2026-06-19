@@ -1,4 +1,5 @@
 #ifdef _WIN32
+#include "cr_std_arena.h"
 #include "cr_std_filesystem.h"
 #include "cr_std_logger.h"
 #include "cr_std_string.h"
@@ -30,7 +31,7 @@ String *cr_std_filesystem_get_cwd(Arena *arena) {
     return cr_std_string_new(arena, cwd);
 }
 
-int cr_std_filesystem_make_dir(const char *dir_path) {
+int cr_std_filesystem_make_dir(const char *dir_path, mode_t permissions) {
     if (CreateDirectory(dir_path, NULL) != 0) {
         cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_INFO,
                            "cr_std_filesystem_make_dir -> Directory created '%s'", dir_path);
