@@ -13,6 +13,7 @@
 
 // Windows Specific Functions
 #include <direct.h>
+#include <io.h>
 #include <windows.h>
 
 String *cr_std_filesystem_get_cwd(Arena *arena) {
@@ -154,5 +155,13 @@ Vector *cr_std_filesystem_get_entries(Arena *arena,
     FindClose(hFind);
     cr_std_arena_free(&temp_arena);
     return vector;
+}
+
+bool cr_std_filesystem_exists(const char *file_path) {
+    if (!file_path) {
+        return false;
+    }
+
+    return _access(file_path, 0) == 0;
 }
 #endif // _WIN32
