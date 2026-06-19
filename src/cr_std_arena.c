@@ -117,3 +117,12 @@ size_t cr_std_arena_remaining(Arena *arena) {
 
     return arena->capacity - arena->used;
 }
+
+size_t cr_std_arena_get_mark(Arena *arena) {
+    if (!arena) {
+        CR_LOG_ERROR("cr_std_arena_get_mark -> arena is NULL");
+        return 0;
+    }
+
+    return arena->used;
+}

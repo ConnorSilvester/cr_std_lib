@@ -339,7 +339,7 @@ int cr_std_string_test_trim_left() {
     String *string = cr_std_string_new(g_string_testing_arena, "     Hello World   ");
     String *string_expected = cr_std_string_new(g_string_testing_arena, "Hello World   ");
     int function_result =
-    cr_std_string_trim(g_string_testing_arena, string, CR_STD_STRING_TRIM_LEFT);
+    cr_std_string_trim(string, CR_STD_STRING_TRIM_LEFT);
     int compare_result = cr_std_string_compare(string, string_expected);
     int expected = 1;
     int result =
@@ -351,7 +351,7 @@ int cr_std_string_test_trim_right() {
     String *string = cr_std_string_new(g_string_testing_arena, "   Hello World     ");
     String *string_expected = cr_std_string_new(g_string_testing_arena, "   Hello World");
     int function_result =
-    cr_std_string_trim(g_string_testing_arena, string, CR_STD_STRING_TRIM_RIGHT);
+    cr_std_string_trim(string, CR_STD_STRING_TRIM_RIGHT);
     int compare_result = cr_std_string_compare(string, string_expected);
     int expected = 1;
     int result =
@@ -363,7 +363,7 @@ int cr_std_string_test_trim_both() {
     String *string = cr_std_string_new(g_string_testing_arena, "   Hello World     ");
     String *string_expected = cr_std_string_new(g_string_testing_arena, "Hello World");
     int function_result =
-    cr_std_string_trim(g_string_testing_arena, string, CR_STD_STRING_TRIM_BOTH);
+    cr_std_string_trim(string, CR_STD_STRING_TRIM_BOTH);
     int compare_result = cr_std_string_compare(string, string_expected);
     int expected = 1;
     int result =
@@ -375,7 +375,7 @@ int cr_std_string_test_trim_both_with_special() {
     String *string = cr_std_string_new(g_string_testing_arena, " \n\r  Hello World   \n\n\r  ");
     String *string_expected = cr_std_string_new(g_string_testing_arena, "Hello World");
     int function_result =
-    cr_std_string_trim(g_string_testing_arena, string, CR_STD_STRING_TRIM_BOTH);
+    cr_std_string_trim(string, CR_STD_STRING_TRIM_BOTH);
     int compare_result = cr_std_string_compare(string, string_expected);
     int expected = 1;
     int result =
@@ -388,7 +388,7 @@ int cr_std_string_test_trim_both_word_gaps() {
     cr_std_string_new(g_string_testing_arena, " \n\r  Hello \n\n World   \n\n\r  ");
     String *string_expected = cr_std_string_new(g_string_testing_arena, "Hello \n\n World");
     int function_result =
-    cr_std_string_trim(g_string_testing_arena, string, CR_STD_STRING_TRIM_BOTH);
+    cr_std_string_trim(string, CR_STD_STRING_TRIM_BOTH);
     int compare_result = cr_std_string_compare(string, string_expected);
     int expected = 1;
     int result =
@@ -930,7 +930,7 @@ int cr_std_string_test_replace_string_empty() {
 int cr_std_string_test_remove_non_numeric() {
     String *string = cr_std_string_new(g_string_testing_arena, "Hello667788, Hello World");
     String *string_expected = cr_std_string_new(g_string_testing_arena, "667788");
-    int function_result = cr_std_string_remove_non_numeric(g_string_testing_arena, string);
+    int function_result = cr_std_string_remove_non_numeric(string);
     int compare_result = cr_std_string_compare(string, string_expected);
     int expected_function_result = 0;
     int expected_compare_result = 1;
@@ -943,7 +943,7 @@ int cr_std_string_test_remove_non_numeric() {
 int cr_std_string_test_remove_non_numeric_empty() {
     String *string = cr_std_string_new(g_string_testing_arena, "");
     String *string_expected = cr_std_string_new(g_string_testing_arena, "");
-    int function_result = cr_std_string_remove_non_numeric(g_string_testing_arena, string);
+    int function_result = cr_std_string_remove_non_numeric(string);
     int compare_result = cr_std_string_compare(string, string_expected);
     int expected_function_result = 0;
     int expected_compare_result = 1;
@@ -955,14 +955,14 @@ int cr_std_string_test_remove_non_numeric_empty() {
 
 int cr_std_string_test_remove_non_numeric_null() {
     String *string = NULL;
-    int function_result = cr_std_string_remove_non_numeric(g_string_testing_arena, string);
+    int function_result = cr_std_string_remove_non_numeric(string);
     return function_result != 0;
 }
 
 int cr_std_string_test_remove_numeric() {
     String *string = cr_std_string_new(g_string_testing_arena, "Hello667788, Hello World");
     String *string_expected = cr_std_string_new(g_string_testing_arena, "Hello, Hello World");
-    int function_result = cr_std_string_remove_numeric(g_string_testing_arena, string);
+    int function_result = cr_std_string_remove_numeric(string);
     int compare_result = cr_std_string_compare(string, string_expected);
     int expected_function_result = 0;
     int expected_compare_result = 1;
@@ -975,7 +975,7 @@ int cr_std_string_test_remove_numeric() {
 int cr_std_string_test_remove_numeric_empty() {
     String *string = cr_std_string_new(g_string_testing_arena, "");
     String *string_expected = cr_std_string_new(g_string_testing_arena, "");
-    int function_result = cr_std_string_remove_numeric(g_string_testing_arena, string);
+    int function_result = cr_std_string_remove_numeric(string);
     int compare_result = cr_std_string_compare(string, string_expected);
     int expected_function_result = 0;
     int expected_compare_result = 1;
@@ -987,7 +987,7 @@ int cr_std_string_test_remove_numeric_empty() {
 
 int cr_std_string_test_remove_numeric_null() {
     String *string = NULL;
-    int function_result = cr_std_string_remove_numeric(g_string_testing_arena, string);
+    int function_result = cr_std_string_remove_numeric(string);
     return function_result != 0;
 }
 

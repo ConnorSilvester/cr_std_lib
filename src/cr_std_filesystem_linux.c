@@ -73,19 +73,28 @@ Vector *cr_std_filesystem_get_entries(Arena *arena,
 
     Vector *vector = cr_std_vector_new(arena);
 
-    String *current_dir = cr_std_string_new(arena, ".");
-    String *parent_dir = cr_std_string_new(arena, "..");
+    Arena *temp_arena = cr_std_arena_new(16 * CR_STD_KB);
+    if (!temp_arena) {
+        CR_LOG_ERROR("cr_std_filesystem_get_entries -> failed to create temp arena");
+        closedir(dir);
+        return vector;
+    }
+
+    String *current_dir = cr_std_string_new(temp_arena, ".");
+    String *parent_dir = cr_std_string_new(temp_arena, "..");
+    size_t current_mark = cr_std_arena_get_mark(temp_arena);
 
     struct dirent *entry;
     while ((entry = readdir(dir)) != NULL) {
-        String *file_name = cr_std_string_new(arena, entry->d_name);
+        cr_std_arena_reset_to_mark(temp_arena, current_mark);
+        String *file_name = cr_std_string_new(temp_arena, entry->d_name);
         // Skip current and parent directory entries
         if (cr_std_string_compare(file_name, current_dir) == 1 ||
             cr_std_string_compare(file_name, parent_dir) == 1) {
             continue;
         }
 
-        String *full_path = cr_std_string_newf(arena, "%s/%s", file_path, file_name->c_str);
+        String *full_path = cr_std_string_newf(temp_arena, "%s/%s", file_path, file_name->c_str);
         if (!full_path) {
             cr_std_logger_outf(
             CR_STD_LOGGER_LOG_TYPE_ERROR,
@@ -102,7 +111,7 @@ Vector *cr_std_filesystem_get_entries(Arena *arena,
             continue;
         }
 
-        custom_entry->d_name = file_name;
+        custom_entry->d_name = cr_std_string_make_copy(arena, file_name);
         custom_entry->d_path = cr_std_string_make_copy(arena, full_path);
         custom_entry->d_type = entry->d_type;
         custom_entry->d_hidden = (file_name->c_str[0] == '.') ? 1 : 0;
@@ -110,8 +119,10 @@ Vector *cr_std_filesystem_get_entries(Arena *arena,
         struct stat file_stat;
         if (stat(full_path->c_str, &file_stat) == 0) {
             if (!S_ISDIR(file_stat.st_mode) && cr_std_string_find_char_last(file_name, '.') != -1) {
-                custom_entry->d_ext = cr_std_string_sub_string(
-                arena, file_name, cr_std_string_find_char_last(file_name, '.'), file_name->length);
+                String *temp_ext = cr_std_string_sub_string(
+                temp_arena, file_name, cr_std_string_find_char_last(file_name, '.'),
+                file_name->length);
+                custom_entry->d_ext = cr_std_string_make_copy(arena, temp_ext);
             } else {
                 custom_entry->d_ext = cr_std_string_new(arena, "N/A");
             }
@@ -143,6 +154,7 @@ Vector *cr_std_filesystem_get_entries(Arena *arena,
     }
 
     closedir(dir);
+    cr_std_arena_free(&temp_arena);
     return vector;
 }
 #endif // __linux__ __APPLE__

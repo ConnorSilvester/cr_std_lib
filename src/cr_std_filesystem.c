@@ -2,6 +2,7 @@
 #include "cr_std_arena.h"
 #include "cr_std_logger.h"
 #include "cr_std_string.h"
+#include "cr_std_utils.h"
 #include "cr_std_vector.h"
 #include <errno.h>
 #include <stdio.h>
@@ -36,24 +37,25 @@ int cr_std_filesystem_copy_file(const char *src, const char *dest) {
 
     FILE *src_file = fopen(src, "rb");
     if (!src_file) {
-        cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR,
-                           "cr_std_filesystem_copy_file -> file can't be opened -> %s", src);
+        CR_LOG_ERROR_FMT("cr_std_filesystem_copy_file -> file can't be opened -> %s", src);
         return 1;
     }
 
     FILE *dest_file = fopen(dest, "wb");
     if (!dest_file) {
         fclose(src_file);
-        cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR,
-                           "cr_std_filesystem_copy_file -> file can't be opened -> %s", dest);
+        CR_LOG_ERROR_FMT("cr_std_filesystem_copy_file -> file can't be opened -> %s", dest);
         return 1;
     }
 
-    int ch;
-    while ((ch = fgetc(src_file)) != EOF) {
-        if (fputc(ch, dest_file) == EOF) {
-            cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR,
-                               "cr_std_filesystem_copy_file -> error writing to file -> %s", dest);
+    setvbuf(src_file, NULL, _IOFBF, 64 * CR_STD_KB);
+    setvbuf(dest_file, NULL, _IOFBF, 64 * CR_STD_KB);
+
+    char buffer[64 * CR_STD_KB];
+    size_t bytes;
+    while ((bytes = fread(buffer, 1, sizeof(buffer), src_file)) > 0) {
+        if (fwrite(buffer, 1, bytes, dest_file) != bytes) {
+            CR_LOG_ERROR_FMT("cr_std_filesystem_copy_file -> error writing to file -> %s", dest);
             fclose(src_file);
             fclose(dest_file);
             return 1;
@@ -61,8 +63,7 @@ int cr_std_filesystem_copy_file(const char *src, const char *dest) {
     }
 
     if (ferror(src_file)) {
-        cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR,
-                           "cr_std_filesystem_copy_file -> error reading from file -> %s", src);
+        CR_LOG_ERROR_FMT("cr_std_filesystem_copy_file -> error reading from file -> %s", src);
         fclose(src_file);
         fclose(dest_file);
         return 1;
@@ -164,12 +165,14 @@ String *cr_std_filesystem_read_file_as_string(Arena *arena, const char *file_pat
     long file_size = ftell(file);
     fseek(file, 0, SEEK_SET);
 
-    char *buffer = cr_std_arena_alloc(arena, file_size + 1);
+    Arena *temp_arena = cr_std_arena_new(CR_STD_FILE_MAX_SIZE);
+    char *buffer = cr_std_arena_alloc(temp_arena, file_size + 1);
     if (!buffer) {
         cr_std_logger_out(
         CR_STD_LOGGER_LOG_TYPE_ERROR,
         "cr_std_filesystem_read_file_as_string -> failed to allocate memory for buffer");
         fclose(file);
+        cr_std_arena_free(&temp_arena);
         return NULL;
     }
 
@@ -177,11 +180,14 @@ String *cr_std_filesystem_read_file_as_string(Arena *arena, const char *file_pat
     buffer[file_size] = '\0';
 
     fclose(file);
-    return cr_std_string_new(arena, buffer);
+    String *result = cr_std_string_new(arena, buffer);
+    cr_std_arena_free(&temp_arena);
+    return result;
 }
 
 Vector *cr_std_filesystem_read_file_as_vector(Arena *arena, const char *file_path) {
-    String *file_contents = cr_std_filesystem_read_file_as_string(arena, file_path);
+    Arena *temp_arena = cr_std_arena_new(CR_STD_FILE_MAX_SIZE);
+    String *file_contents = cr_std_filesystem_read_file_as_string(temp_arena, file_path);
     if (!file_contents) {
         cr_std_logger_outf(
         CR_STD_LOGGER_LOG_TYPE_ERROR,
@@ -189,7 +195,9 @@ Vector *cr_std_filesystem_read_file_as_vector(Arena *arena, const char *file_pat
         return NULL;
     }
 
-    return cr_std_string_split_hard(arena, file_contents, '\n');
+    Vector *result = cr_std_string_split_hard(arena, file_contents, '\n');
+    cr_std_arena_free(&temp_arena);
+    return result;
 }
 
 Vector *cr_std_filesystem_get_dirs(Arena *arena, const char *file_path) {
