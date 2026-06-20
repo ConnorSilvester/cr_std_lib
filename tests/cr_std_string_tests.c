@@ -202,25 +202,25 @@ void cr_std_string_test_all() {
     cr_std_arena_free(&g_string_testing_arena);
 }
 
-int cr_std_string_test_new_string_normal() {
+b8 cr_std_string_test_new_string_normal() {
     String *string = cr_std_string_new(g_string_testing_arena, "Hello World");
     int result = string != NULL;
     return result;
 }
 
-int cr_std_string_test_new_string_empty() {
+b8 cr_std_string_test_new_string_empty() {
     String *string = cr_std_string_new(g_string_testing_arena, "");
     int result = string != NULL;
     return result;
 }
 
-int cr_std_string_test_new_string_formatted() {
+b8 cr_std_string_test_new_string_formatted() {
     String *string = cr_std_string_newf(g_string_testing_arena, "Hello %s", "World");
     int result = string != NULL;
     return result;
 }
 
-int cr_std_string_test_copy_string() {
+b8 cr_std_string_test_copy_string() {
     String *string = cr_std_string_new(g_string_testing_arena, "Hello World");
     String *string_copy = cr_std_string_make_copy(g_string_testing_arena, string);
     int compare_result = cr_std_string_compare(string, string_copy);
@@ -229,7 +229,7 @@ int cr_std_string_test_copy_string() {
     return result;
 }
 
-int cr_std_string_test_copy_string_empty() {
+b8 cr_std_string_test_copy_string_empty() {
     String *string = cr_std_string_new(g_string_testing_arena, "");
     String *string_copy = cr_std_string_make_copy(g_string_testing_arena, string);
     int compare_result = cr_std_string_compare(string, string_copy);
@@ -238,7 +238,7 @@ int cr_std_string_test_copy_string_empty() {
     return result;
 }
 
-int cr_std_string_test_concat_string() {
+b8 cr_std_string_test_concat_string() {
     String *string = cr_std_string_new(g_string_testing_arena, "Hello World");
     String *string_expected =
     cr_std_string_new(g_string_testing_arena, "Hello World, My Name Is John");
@@ -250,7 +250,7 @@ int cr_std_string_test_concat_string() {
     return result;
 }
 
-int cr_std_string_test_concat_string_multi() {
+b8 cr_std_string_test_concat_string_multi() {
     String *string = cr_std_string_new(g_string_testing_arena, "Hello World");
     String *string_expected =
     cr_std_string_new(g_string_testing_arena, "Hello World, My Name Is John");
@@ -263,7 +263,7 @@ int cr_std_string_test_concat_string_multi() {
     return result;
 }
 
-int cr_std_string_test_concat_string_empty() {
+b8 cr_std_string_test_concat_string_empty() {
     String *string = cr_std_string_new(g_string_testing_arena, "");
     String *string_expected = cr_std_string_new(g_string_testing_arena, "Hello World");
     int function_result = cr_std_string_concat(g_string_testing_arena, string, "Hello World");
@@ -274,7 +274,7 @@ int cr_std_string_test_concat_string_empty() {
     return result;
 }
 
-int cr_std_string_test_compare_length_left() {
+b8 cr_std_string_test_compare_length_left() {
     String *string = cr_std_string_new(g_string_testing_arena, "Hello World");
     String *string2 = cr_std_string_new(g_string_testing_arena, "Test");
     int compare_result = cr_std_string_compare(string, string2);
@@ -283,7 +283,7 @@ int cr_std_string_test_compare_length_left() {
     return result;
 }
 
-int cr_std_string_test_compare_length_right() {
+b8 cr_std_string_test_compare_length_right() {
     String *string = cr_std_string_new(g_string_testing_arena, "Test");
     String *string2 = cr_std_string_new(g_string_testing_arena, "Hello World");
     int compare_result = cr_std_string_compare(string, string2);
@@ -292,7 +292,7 @@ int cr_std_string_test_compare_length_right() {
     return result;
 }
 
-int cr_std_string_test_compare_partial_equal() {
+b8 cr_std_string_test_compare_partial_equal() {
     String *string = cr_std_string_new(g_string_testing_arena, "hello world");
     String *string2 = cr_std_string_new(g_string_testing_arena, "Hello World");
     int compare_result = cr_std_string_compare(string, string2);
@@ -301,7 +301,7 @@ int cr_std_string_test_compare_partial_equal() {
     return result;
 }
 
-int cr_std_string_test_compare_fully_equal() {
+b8 cr_std_string_test_compare_fully_equal() {
     String *string = cr_std_string_new(g_string_testing_arena, "Hello World");
     String *string2 = cr_std_string_new(g_string_testing_arena, "Hello World");
     int compare_result = cr_std_string_compare(string, string2);
@@ -310,7 +310,7 @@ int cr_std_string_test_compare_fully_equal() {
     return result;
 }
 
-int cr_std_string_test_compare_empty_string() {
+b8 cr_std_string_test_compare_empty_string() {
     String *string = cr_std_string_new(g_string_testing_arena, "");
     String *string2 = cr_std_string_new(g_string_testing_arena, "");
     int compare_result = cr_std_string_compare(string, string2);
@@ -319,7 +319,7 @@ int cr_std_string_test_compare_empty_string() {
     return result;
 }
 
-int cr_std_string_test_compare_c_str_fully_equal() {
+b8 cr_std_string_test_compare_c_str_fully_equal() {
     String *string = cr_std_string_new(g_string_testing_arena, "Hello World");
     int compare_result = cr_std_string_compare_c_str(string, "Hello World");
     int expected = 1;
@@ -327,7 +327,7 @@ int cr_std_string_test_compare_c_str_fully_equal() {
     return result;
 }
 
-int cr_std_string_test_compare_c_str_empty_string() {
+b8 cr_std_string_test_compare_c_str_empty_string() {
     String *string = cr_std_string_new(g_string_testing_arena, "");
     int compare_result = cr_std_string_compare_c_str(string, "");
     int expected = 1;
@@ -335,7 +335,7 @@ int cr_std_string_test_compare_c_str_empty_string() {
     return result;
 }
 
-int cr_std_string_test_trim_left() {
+b8 cr_std_string_test_trim_left() {
     String *string = cr_std_string_new(g_string_testing_arena, "     Hello World   ");
     String *string_expected = cr_std_string_new(g_string_testing_arena, "Hello World   ");
     int function_result = cr_std_string_trim(string, CR_STD_STRING_TRIM_LEFT);
@@ -346,7 +346,7 @@ int cr_std_string_test_trim_left() {
     return result;
 }
 
-int cr_std_string_test_trim_right() {
+b8 cr_std_string_test_trim_right() {
     String *string = cr_std_string_new(g_string_testing_arena, "   Hello World     ");
     String *string_expected = cr_std_string_new(g_string_testing_arena, "   Hello World");
     int function_result = cr_std_string_trim(string, CR_STD_STRING_TRIM_RIGHT);
@@ -357,7 +357,7 @@ int cr_std_string_test_trim_right() {
     return result;
 }
 
-int cr_std_string_test_trim_both() {
+b8 cr_std_string_test_trim_both() {
     String *string = cr_std_string_new(g_string_testing_arena, "   Hello World     ");
     String *string_expected = cr_std_string_new(g_string_testing_arena, "Hello World");
     int function_result = cr_std_string_trim(string, CR_STD_STRING_TRIM_BOTH);
@@ -368,7 +368,7 @@ int cr_std_string_test_trim_both() {
     return result;
 }
 
-int cr_std_string_test_trim_both_with_special() {
+b8 cr_std_string_test_trim_both_with_special() {
     String *string = cr_std_string_new(g_string_testing_arena, " \n\r  Hello World   \n\n\r  ");
     String *string_expected = cr_std_string_new(g_string_testing_arena, "Hello World");
     int function_result = cr_std_string_trim(string, CR_STD_STRING_TRIM_BOTH);
@@ -379,7 +379,7 @@ int cr_std_string_test_trim_both_with_special() {
     return result;
 }
 
-int cr_std_string_test_trim_both_word_gaps() {
+b8 cr_std_string_test_trim_both_word_gaps() {
     String *string =
     cr_std_string_new(g_string_testing_arena, " \n\r  Hello \n\n World   \n\n\r  ");
     String *string_expected = cr_std_string_new(g_string_testing_arena, "Hello \n\n World");
@@ -391,7 +391,7 @@ int cr_std_string_test_trim_both_word_gaps() {
     return result;
 }
 
-int cr_std_string_test_find_char_valid() {
+b8 cr_std_string_test_find_char_valid() {
     String *string = cr_std_string_new(g_string_testing_arena, "Hello World");
     int function_result = cr_std_string_find_char(string, 'W');
     int expected = 6;
@@ -399,7 +399,7 @@ int cr_std_string_test_find_char_valid() {
     return result;
 }
 
-int cr_std_string_test_find_char_invalid() {
+b8 cr_std_string_test_find_char_invalid() {
     String *string = cr_std_string_new(g_string_testing_arena, "Hello World");
     int function_result = cr_std_string_find_char(string, 'x');
     int expected = -1;
@@ -407,7 +407,7 @@ int cr_std_string_test_find_char_invalid() {
     return result;
 }
 
-int cr_std_string_test_find_char_n_valid() {
+b8 cr_std_string_test_find_char_n_valid() {
     String *string = cr_std_string_new(g_string_testing_arena, "Hello World");
     int function_result = cr_std_string_find_char_n(string, 'l', 2);
     int expected = 3;
@@ -415,7 +415,7 @@ int cr_std_string_test_find_char_n_valid() {
     return result;
 }
 
-int cr_std_string_test_find_char_n_invalid() {
+b8 cr_std_string_test_find_char_n_invalid() {
     String *string = cr_std_string_new(g_string_testing_arena, "Hello World");
     int function_result = cr_std_string_find_char_n(string, 'x', 2);
     int expected = -1;
@@ -423,7 +423,7 @@ int cr_std_string_test_find_char_n_invalid() {
     return result;
 }
 
-int cr_std_string_test_find_char_n_negative() {
+b8 cr_std_string_test_find_char_n_negative() {
     String *string = cr_std_string_new(g_string_testing_arena, "Hello World");
     int function_result = cr_std_string_find_char_n(string, 'l', -2);
     int expected = 2;
@@ -431,7 +431,7 @@ int cr_std_string_test_find_char_n_negative() {
     return result;
 }
 
-int cr_std_string_test_find_last_char_valid() {
+b8 cr_std_string_test_find_last_char_valid() {
     String *string = cr_std_string_new(g_string_testing_arena, "Hello Hello");
     int function_result = cr_std_string_find_char_last(string, 'H');
     int expected = 6;
@@ -439,7 +439,7 @@ int cr_std_string_test_find_last_char_valid() {
     return result;
 }
 
-int cr_std_string_test_find_last_char_invalid() {
+b8 cr_std_string_test_find_last_char_invalid() {
     String *string = cr_std_string_new(g_string_testing_arena, "Hello World");
     int function_result = cr_std_string_find_char_last(string, 'x');
     int expected = -1;
@@ -447,7 +447,7 @@ int cr_std_string_test_find_last_char_invalid() {
     return result;
 }
 
-int cr_std_string_test_find_string_valid() {
+b8 cr_std_string_test_find_string_valid() {
     String *string = cr_std_string_new(g_string_testing_arena, "Hello World");
     int function_result = cr_std_string_find_string(string, "World");
     int expected = 6;
@@ -455,7 +455,7 @@ int cr_std_string_test_find_string_valid() {
     return result;
 }
 
-int cr_std_string_test_find_string_invalid() {
+b8 cr_std_string_test_find_string_invalid() {
     String *string = cr_std_string_new(g_string_testing_arena, "Hello World");
     int function_result = cr_std_string_find_string(string, "Bench");
     int expected = -1;
@@ -463,7 +463,7 @@ int cr_std_string_test_find_string_invalid() {
     return result;
 }
 
-int cr_std_string_test_find_last_string_valid() {
+b8 cr_std_string_test_find_last_string_valid() {
     String *string = cr_std_string_new(g_string_testing_arena, "Hello Hello Hello Hello");
     int function_result = cr_std_string_find_string_last(string, "Hello");
     int expected = 18;
@@ -471,7 +471,7 @@ int cr_std_string_test_find_last_string_valid() {
     return result;
 }
 
-int cr_std_string_test_find_last_string_invalid() {
+b8 cr_std_string_test_find_last_string_invalid() {
     String *string = cr_std_string_new(g_string_testing_arena, "Hello World");
     int function_result = cr_std_string_find_string_last(string, "Bench");
     int expected = -1;
@@ -479,7 +479,7 @@ int cr_std_string_test_find_last_string_invalid() {
     return result;
 }
 
-int cr_std_string_test_find_string_n_valid() {
+b8 cr_std_string_test_find_string_n_valid() {
     String *string = cr_std_string_new(g_string_testing_arena, "Hello World World");
     int function_result = cr_std_string_find_string_n(string, "World", 2);
     int expected = 12;
@@ -487,7 +487,7 @@ int cr_std_string_test_find_string_n_valid() {
     return result;
 }
 
-int cr_std_string_test_find_string_n_invalid() {
+b8 cr_std_string_test_find_string_n_invalid() {
     String *string = cr_std_string_new(g_string_testing_arena, "Hello World");
     int function_result = cr_std_string_find_string_n(string, "Bench", 1);
     int expected = -1;
@@ -495,7 +495,7 @@ int cr_std_string_test_find_string_n_invalid() {
     return result;
 }
 
-int cr_std_string_test_find_string_n_negative() {
+b8 cr_std_string_test_find_string_n_negative() {
     String *string = cr_std_string_new(g_string_testing_arena, "World World World");
     int function_result = cr_std_string_find_string_n(string, "World", -2);
     int expected = 0;
@@ -503,7 +503,7 @@ int cr_std_string_test_find_string_n_negative() {
     return result;
 }
 
-int cr_std_string_test_starts_with_string() {
+b8 cr_std_string_test_starts_with_string() {
     String *string = cr_std_string_new(g_string_testing_arena, "Hello World");
     char *phrase = "Hello";
     int function_result = cr_std_string_starts_with_string(string, phrase);
@@ -512,7 +512,7 @@ int cr_std_string_test_starts_with_string() {
     return result;
 }
 
-int cr_std_string_test_starts_with_string_invalid() {
+b8 cr_std_string_test_starts_with_string_invalid() {
     String *string = cr_std_string_new(g_string_testing_arena, "Hello World");
     char *phrase = "Helo";
     int function_result = cr_std_string_starts_with_string(string, phrase);
@@ -521,7 +521,7 @@ int cr_std_string_test_starts_with_string_invalid() {
     return result;
 }
 
-int cr_std_string_test_starts_with_string_null() {
+b8 cr_std_string_test_starts_with_string_null() {
     String *string = NULL;
     char *phrase = "Hello";
     int function_result = cr_std_string_starts_with_string(string, phrase);
@@ -530,7 +530,7 @@ int cr_std_string_test_starts_with_string_null() {
     return result;
 }
 
-int cr_std_string_test_ends_with_string() {
+b8 cr_std_string_test_ends_with_string() {
     String *string = cr_std_string_new(g_string_testing_arena, "Hello World");
     char *phrase = "World";
     int function_result = cr_std_string_ends_with_string(string, phrase);
@@ -539,7 +539,7 @@ int cr_std_string_test_ends_with_string() {
     return result;
 }
 
-int cr_std_string_test_ends_with_string_invalid() {
+b8 cr_std_string_test_ends_with_string_invalid() {
     String *string = cr_std_string_new(g_string_testing_arena, "Hello World");
     char *phrase = "Hello";
     int function_result = cr_std_string_ends_with_string(string, phrase);
@@ -548,7 +548,7 @@ int cr_std_string_test_ends_with_string_invalid() {
     return result;
 }
 
-int cr_std_string_test_ends_with_string_null() {
+b8 cr_std_string_test_ends_with_string_null() {
     String *string = NULL;
     char *phrase = "Hello";
     int function_result = cr_std_string_ends_with_string(string, phrase);
@@ -557,7 +557,7 @@ int cr_std_string_test_ends_with_string_null() {
     return result;
 }
 
-int cr_std_string_test_starts_with_char() {
+b8 cr_std_string_test_starts_with_char() {
     String *string = cr_std_string_new(g_string_testing_arena, "Hello World");
     int function_result = cr_std_string_starts_with_char(string, 'H');
     int expected = 1;
@@ -565,7 +565,7 @@ int cr_std_string_test_starts_with_char() {
     return result;
 }
 
-int cr_std_string_test_starts_with_char_invalid() {
+b8 cr_std_string_test_starts_with_char_invalid() {
     String *string = cr_std_string_new(g_string_testing_arena, "Hello World");
     int function_result = cr_std_string_starts_with_char(string, 'x');
     int expected = 0;
@@ -573,7 +573,7 @@ int cr_std_string_test_starts_with_char_invalid() {
     return result;
 }
 
-int cr_std_string_test_starts_with_char_null() {
+b8 cr_std_string_test_starts_with_char_null() {
     String *string = NULL;
     int function_result = cr_std_string_starts_with_char(string, 'H');
     int expected = 0;
@@ -581,7 +581,7 @@ int cr_std_string_test_starts_with_char_null() {
     return result;
 }
 
-int cr_std_string_test_ends_with_char() {
+b8 cr_std_string_test_ends_with_char() {
     String *string = cr_std_string_new(g_string_testing_arena, "Hello World");
     int function_result = cr_std_string_ends_with_char(string, 'd');
     int expected = 1;
@@ -589,7 +589,7 @@ int cr_std_string_test_ends_with_char() {
     return result;
 }
 
-int cr_std_string_test_ends_with_char_invalid() {
+b8 cr_std_string_test_ends_with_char_invalid() {
     String *string = cr_std_string_new(g_string_testing_arena, "Hello World");
     int function_result = cr_std_string_ends_with_char(string, 'x');
     int expected = 0;
@@ -597,7 +597,7 @@ int cr_std_string_test_ends_with_char_invalid() {
     return result;
 }
 
-int cr_std_string_test_ends_with_char_null() {
+b8 cr_std_string_test_ends_with_char_null() {
     String *string = NULL;
     int function_result = cr_std_string_ends_with_char(string, 'H');
     int expected = 0;
@@ -605,7 +605,7 @@ int cr_std_string_test_ends_with_char_null() {
     return result;
 }
 
-int cr_std_string_test_char_at() {
+b8 cr_std_string_test_char_at() {
     String *string = cr_std_string_new(g_string_testing_arena, "Hello World");
     char function_result = cr_std_string_char_at(string, 1);
     char expected = 'e';
@@ -613,7 +613,7 @@ int cr_std_string_test_char_at() {
     return result;
 }
 
-int cr_std_string_test_char_at_invalid_index_low() {
+b8 cr_std_string_test_char_at_invalid_index_low() {
     String *string = cr_std_string_new(g_string_testing_arena, "Hello World");
     char function_result = cr_std_string_char_at(string, -1);
     char expected = 'H';
@@ -621,7 +621,7 @@ int cr_std_string_test_char_at_invalid_index_low() {
     return result;
 }
 
-int cr_std_string_test_char_at_invalid_index_high() {
+b8 cr_std_string_test_char_at_invalid_index_high() {
     String *string = cr_std_string_new(g_string_testing_arena, "Hello World");
     char function_result = cr_std_string_char_at(string, 111);
     char expected = 'd';
@@ -629,7 +629,7 @@ int cr_std_string_test_char_at_invalid_index_high() {
     return result;
 }
 
-int cr_std_string_test_char_at_null() {
+b8 cr_std_string_test_char_at_null() {
     String *string = NULL;
     char function_result = cr_std_string_char_at(string, 1);
     char expected = ' ';
@@ -637,7 +637,7 @@ int cr_std_string_test_char_at_null() {
     return result;
 }
 
-int cr_std_string_test_contains_string() {
+b8 cr_std_string_test_contains_string() {
     String *string = cr_std_string_new(g_string_testing_arena, "Hello World");
     char *phrase = "Hello";
     int function_result = cr_std_string_contains_string(string, phrase);
@@ -646,7 +646,7 @@ int cr_std_string_test_contains_string() {
     return result;
 }
 
-int cr_std_string_test_contains_string_multi() {
+b8 cr_std_string_test_contains_string_multi() {
     String *string = cr_std_string_new(g_string_testing_arena, "Hello World Hello");
     char *phrase = "Hello";
     int function_result = cr_std_string_contains_string(string, phrase);
@@ -655,7 +655,7 @@ int cr_std_string_test_contains_string_multi() {
     return result;
 }
 
-int cr_std_string_test_contains_string_invalid() {
+b8 cr_std_string_test_contains_string_invalid() {
     String *string = cr_std_string_new(g_string_testing_arena, "Hello World");
     char *phrase = "John";
     int function_result = cr_std_string_contains_string(string, phrase);
@@ -664,7 +664,7 @@ int cr_std_string_test_contains_string_invalid() {
     return result;
 }
 
-int cr_std_string_test_contains_string_empty() {
+b8 cr_std_string_test_contains_string_empty() {
     String *string = cr_std_string_new(g_string_testing_arena, "Hello World");
     char *phrase = "";
     int function_result = cr_std_string_contains_string(string, phrase);
@@ -673,7 +673,7 @@ int cr_std_string_test_contains_string_empty() {
     return result;
 }
 
-int cr_std_string_test_contains_char() {
+b8 cr_std_string_test_contains_char() {
     String *string = cr_std_string_new(g_string_testing_arena, "Hello World");
     char ch = 'H';
     int function_result = cr_std_string_contains_char(string, ch);
@@ -682,7 +682,7 @@ int cr_std_string_test_contains_char() {
     return result;
 }
 
-int cr_std_string_test_contains_char_multi() {
+b8 cr_std_string_test_contains_char_multi() {
     String *string = cr_std_string_new(g_string_testing_arena, "Hello World");
     char ch = 'o';
     int function_result = cr_std_string_contains_char(string, ch);
@@ -691,7 +691,7 @@ int cr_std_string_test_contains_char_multi() {
     return result;
 }
 
-int cr_std_string_test_contains_char_invalid() {
+b8 cr_std_string_test_contains_char_invalid() {
     String *string = cr_std_string_new(g_string_testing_arena, "Hello World");
     char ch = 'x';
     int function_result = cr_std_string_contains_char(string, ch);
@@ -700,7 +700,7 @@ int cr_std_string_test_contains_char_invalid() {
     return result;
 }
 
-int cr_std_string_test_hash_code() {
+b8 cr_std_string_test_hash_code() {
     String *string = cr_std_string_new(g_string_testing_arena, "Hello World");
     String *test_case = cr_std_string_new(g_string_testing_arena, "Hello World");
     u64 function_one_result;
@@ -711,7 +711,7 @@ int cr_std_string_test_hash_code() {
     return result;
 }
 
-int cr_std_string_test_hash_code_different() {
+b8 cr_std_string_test_hash_code_different() {
     String *string = cr_std_string_new(g_string_testing_arena, "Hello World");
     String *test_case = cr_std_string_new(g_string_testing_arena, " Hello World");
     u64 function_one_result;
@@ -722,7 +722,7 @@ int cr_std_string_test_hash_code_different() {
     return result;
 }
 
-int cr_std_string_test_hash_code_invalid() {
+b8 cr_std_string_test_hash_code_invalid() {
     String *string = NULL;
     u8 function_result = cr_std_string_hash_code(string, NULL);
     u8 expected = CR_STD_FAIL;
@@ -730,7 +730,7 @@ int cr_std_string_test_hash_code_invalid() {
     return result;
 }
 
-int cr_std_string_test_split() {
+b8 cr_std_string_test_split() {
     String *string = cr_std_string_new(g_string_testing_arena, "Hello World");
     Vector *vector = cr_std_string_split(g_string_testing_arena, string, ' ');
     int actual_size = vector->size;
@@ -739,7 +739,7 @@ int cr_std_string_test_split() {
     return result;
 }
 
-int cr_std_string_test_split_invalid() {
+b8 cr_std_string_test_split_invalid() {
     String *string = cr_std_string_new(g_string_testing_arena, "Hello World");
     Vector *vector = cr_std_string_split(g_string_testing_arena, string, 'x');
     int actual_size = vector->size;
@@ -748,14 +748,14 @@ int cr_std_string_test_split_invalid() {
     return result;
 }
 
-int cr_std_string_test_split_null_value() {
+b8 cr_std_string_test_split_null_value() {
     String *string = NULL;
     Vector *vector = cr_std_string_split(g_string_testing_arena, string, 'x');
     int result = vector == NULL;
     return result;
 }
 
-int cr_std_string_test_split_empty() {
+b8 cr_std_string_test_split_empty() {
     String *string = cr_std_string_new(g_string_testing_arena, "");
     Vector *vector = cr_std_string_split(g_string_testing_arena, string, 'x');
     int actual_size = vector->size;
@@ -764,7 +764,7 @@ int cr_std_string_test_split_empty() {
     return result;
 }
 
-int cr_std_string_test_split_empty_split() {
+b8 cr_std_string_test_split_empty_split() {
     String *string = cr_std_string_new(g_string_testing_arena, "Hello World   ");
     Vector *vector = cr_std_string_split(g_string_testing_arena, string, ' ');
     int actual_size = vector->size;
@@ -773,7 +773,7 @@ int cr_std_string_test_split_empty_split() {
     return result;
 }
 
-int cr_std_string_test_split_hard_empty_split() {
+b8 cr_std_string_test_split_hard_empty_split() {
     String *string = cr_std_string_new(g_string_testing_arena, "Hello World   ");
     Vector *vector = cr_std_string_split_hard(g_string_testing_arena, string, ' ');
     int actual_size = vector->size;
@@ -782,7 +782,7 @@ int cr_std_string_test_split_hard_empty_split() {
     return result;
 }
 
-int cr_std_string_test_to_upper() {
+b8 cr_std_string_test_to_upper() {
     String *string = cr_std_string_new(g_string_testing_arena, "Hello World");
     String *string_expected = cr_std_string_new(g_string_testing_arena, "HELLO WORLD");
     int function_result = cr_std_string_to_upper(string);
@@ -793,7 +793,7 @@ int cr_std_string_test_to_upper() {
     return result;
 }
 
-int cr_std_string_test_to_upper_empty() {
+b8 cr_std_string_test_to_upper_empty() {
     String *string = cr_std_string_new(g_string_testing_arena, "");
     String *string_expected = cr_std_string_new(g_string_testing_arena, "");
     int function_result = cr_std_string_to_upper(string);
@@ -804,13 +804,13 @@ int cr_std_string_test_to_upper_empty() {
     return result;
 }
 
-int cr_std_string_test_to_upper_invalid() {
+b8 cr_std_string_test_to_upper_invalid() {
     String *string = NULL;
     int function_result = cr_std_string_to_upper(string);
     return function_result != 0;
 }
 
-int cr_std_string_test_to_lower() {
+b8 cr_std_string_test_to_lower() {
     String *string = cr_std_string_new(g_string_testing_arena, "HELLO WORLD");
     String *string_expected = cr_std_string_new(g_string_testing_arena, "hello world");
     int function_result = cr_std_string_to_lower(string);
@@ -821,7 +821,7 @@ int cr_std_string_test_to_lower() {
     return result;
 }
 
-int cr_std_string_test_to_lower_empty() {
+b8 cr_std_string_test_to_lower_empty() {
     String *string = cr_std_string_new(g_string_testing_arena, "");
     String *string_expected = cr_std_string_new(g_string_testing_arena, "");
     int function_result = cr_std_string_to_lower(string);
@@ -832,13 +832,13 @@ int cr_std_string_test_to_lower_empty() {
     return result;
 }
 
-int cr_std_string_test_to_lower_invalid() {
+b8 cr_std_string_test_to_lower_invalid() {
     String *string = NULL;
     int function_result = cr_std_string_to_lower(string);
     return function_result != 0;
 }
 
-int cr_std_string_test_to_title() {
+b8 cr_std_string_test_to_title() {
     String *string = cr_std_string_new(g_string_testing_arena, "HELLO WORLD");
     String *string_expected = cr_std_string_new(g_string_testing_arena, "Hello World");
     int function_result = cr_std_string_to_title(string);
@@ -849,7 +849,7 @@ int cr_std_string_test_to_title() {
     return result;
 }
 
-int cr_std_string_test_to_title_empty() {
+b8 cr_std_string_test_to_title_empty() {
     String *string = cr_std_string_new(g_string_testing_arena, "");
     String *string_expected = cr_std_string_new(g_string_testing_arena, "");
     int function_result = cr_std_string_to_upper(string);
@@ -860,13 +860,13 @@ int cr_std_string_test_to_title_empty() {
     return result;
 }
 
-int cr_std_string_test_to_title_invalid() {
+b8 cr_std_string_test_to_title_invalid() {
     String *string = NULL;
     int function_result = cr_std_string_to_title(string);
     return function_result != 0;
 }
 
-int cr_std_string_test_replace_string() {
+b8 cr_std_string_test_replace_string() {
     String *string = cr_std_string_new(g_string_testing_arena, "Hello World");
     String *string_expected = cr_std_string_new(g_string_testing_arena, "Test World");
     int function_result =
@@ -878,7 +878,7 @@ int cr_std_string_test_replace_string() {
     return result;
 }
 
-int cr_std_string_test_replace_string_multi() {
+b8 cr_std_string_test_replace_string_multi() {
     String *string = cr_std_string_new(g_string_testing_arena, "Hello, Hello World");
     String *string_expected = cr_std_string_new(g_string_testing_arena, "Test, Test World");
     int function_result =
@@ -892,7 +892,7 @@ int cr_std_string_test_replace_string_multi() {
     return result;
 }
 
-int cr_std_string_test_replace_string_invalid() {
+b8 cr_std_string_test_replace_string_invalid() {
     String *string = cr_std_string_new(g_string_testing_arena, "Hello World");
     String *string_expected = cr_std_string_new(g_string_testing_arena, "Hello World");
     int function_result = cr_std_string_replace_string(g_string_testing_arena, string, "x", "Test");
@@ -905,7 +905,7 @@ int cr_std_string_test_replace_string_invalid() {
     return result;
 }
 
-int cr_std_string_test_replace_string_null_value() {
+b8 cr_std_string_test_replace_string_null_value() {
     String *string = NULL;
     int function_result =
     cr_std_string_replace_string(g_string_testing_arena, string, "Hello", "Test");
@@ -913,7 +913,7 @@ int cr_std_string_test_replace_string_null_value() {
     return function_result == expected;
 }
 
-int cr_std_string_test_replace_string_empty() {
+b8 cr_std_string_test_replace_string_empty() {
     String *string = cr_std_string_new(g_string_testing_arena, "");
     String *string_expected = cr_std_string_new(g_string_testing_arena, "");
     int function_result = cr_std_string_replace_string(g_string_testing_arena, string, "x", "Test");
@@ -926,7 +926,7 @@ int cr_std_string_test_replace_string_empty() {
     return result;
 }
 
-int cr_std_string_test_remove_non_numeric() {
+b8 cr_std_string_test_remove_non_numeric() {
     String *string = cr_std_string_new(g_string_testing_arena, "Hello667788, Hello World");
     String *string_expected = cr_std_string_new(g_string_testing_arena, "667788");
     int function_result = cr_std_string_remove_non_numeric(string);
@@ -939,7 +939,7 @@ int cr_std_string_test_remove_non_numeric() {
     return result;
 }
 
-int cr_std_string_test_remove_non_numeric_empty() {
+b8 cr_std_string_test_remove_non_numeric_empty() {
     String *string = cr_std_string_new(g_string_testing_arena, "");
     String *string_expected = cr_std_string_new(g_string_testing_arena, "");
     int function_result = cr_std_string_remove_non_numeric(string);
@@ -952,13 +952,13 @@ int cr_std_string_test_remove_non_numeric_empty() {
     return result;
 }
 
-int cr_std_string_test_remove_non_numeric_null() {
+b8 cr_std_string_test_remove_non_numeric_null() {
     String *string = NULL;
     int function_result = cr_std_string_remove_non_numeric(string);
     return function_result != 0;
 }
 
-int cr_std_string_test_remove_numeric() {
+b8 cr_std_string_test_remove_numeric() {
     String *string = cr_std_string_new(g_string_testing_arena, "Hello667788, Hello World");
     String *string_expected = cr_std_string_new(g_string_testing_arena, "Hello, Hello World");
     int function_result = cr_std_string_remove_numeric(string);
@@ -971,7 +971,7 @@ int cr_std_string_test_remove_numeric() {
     return result;
 }
 
-int cr_std_string_test_remove_numeric_empty() {
+b8 cr_std_string_test_remove_numeric_empty() {
     String *string = cr_std_string_new(g_string_testing_arena, "");
     String *string_expected = cr_std_string_new(g_string_testing_arena, "");
     int function_result = cr_std_string_remove_numeric(string);
@@ -984,13 +984,13 @@ int cr_std_string_test_remove_numeric_empty() {
     return result;
 }
 
-int cr_std_string_test_remove_numeric_null() {
+b8 cr_std_string_test_remove_numeric_null() {
     String *string = NULL;
     int function_result = cr_std_string_remove_numeric(string);
     return function_result != 0;
 }
 
-int cr_std_string_test_to_int() {
+b8 cr_std_string_test_to_int() {
     String *string = cr_std_string_new(g_string_testing_arena, "555666");
     int function_result;
     cr_std_string_to_int(string, &function_result);
@@ -999,7 +999,7 @@ int cr_std_string_test_to_int() {
     return result;
 }
 
-int cr_std_string_test_to_int_mixed_string() {
+b8 cr_std_string_test_to_int_mixed_string() {
     String *string = cr_std_string_new(g_string_testing_arena, "Hello555, Hello 666World");
     int function_result;
     cr_std_string_to_int(string, &function_result);
@@ -1008,7 +1008,7 @@ int cr_std_string_test_to_int_mixed_string() {
     return result;
 }
 
-int cr_std_string_test_to_int_empty() {
+b8 cr_std_string_test_to_int_empty() {
     String *string = cr_std_string_new(g_string_testing_arena, "");
     int function_result;
     cr_std_string_to_int(string, &function_result);
@@ -1017,7 +1017,7 @@ int cr_std_string_test_to_int_empty() {
     return result;
 }
 
-int cr_std_string_test_to_int_null() {
+b8 cr_std_string_test_to_int_null() {
     String *string = NULL;
     int function_result;
     cr_std_string_to_int(string, &function_result);
@@ -1026,7 +1026,7 @@ int cr_std_string_test_to_int_null() {
     return result;
 }
 
-int cr_std_string_test_from_int() {
+b8 cr_std_string_test_from_int() {
     String *string = cr_std_string_from_int(g_string_testing_arena, 12345);
     String *string_expected = cr_std_string_new(g_string_testing_arena, "12345");
     int compare_result = cr_std_string_compare(string, string_expected);
@@ -1036,7 +1036,7 @@ int cr_std_string_test_from_int() {
     return result;
 }
 
-int cr_std_string_test_from_int_negative() {
+b8 cr_std_string_test_from_int_negative() {
     String *string = cr_std_string_from_int(g_string_testing_arena, -12345);
     String *string_expected = cr_std_string_new(g_string_testing_arena, "-12345");
     int compare_result = cr_std_string_compare(string, string_expected);
@@ -1046,7 +1046,7 @@ int cr_std_string_test_from_int_negative() {
     return result;
 }
 
-int cr_std_string_test_sub_string() {
+b8 cr_std_string_test_sub_string() {
     String *string =
     cr_std_string_new(g_string_testing_arena, "This is a Test String which i want to use!");
     String *string_expected = cr_std_string_new(g_string_testing_arena, "Test String");
@@ -1060,7 +1060,7 @@ int cr_std_string_test_sub_string() {
     return result;
 }
 
-int cr_std_string_test_sub_string_index_too_low() {
+b8 cr_std_string_test_sub_string_index_too_low() {
     String *string =
     cr_std_string_new(g_string_testing_arena, "This is a Test String which i want to use!");
     String *string_expected = cr_std_string_new(g_string_testing_arena, "This is a Test String");
@@ -1074,7 +1074,7 @@ int cr_std_string_test_sub_string_index_too_low() {
     return result;
 }
 
-int cr_std_string_test_sub_string_index_too_high() {
+b8 cr_std_string_test_sub_string_index_too_high() {
     String *string =
     cr_std_string_new(g_string_testing_arena, "This is a Test String which i want to use!");
     String *string_expected =
@@ -1089,7 +1089,7 @@ int cr_std_string_test_sub_string_index_too_high() {
     return result;
 }
 
-int cr_std_string_test_sub_string_index_invalid() {
+b8 cr_std_string_test_sub_string_index_invalid() {
     String *string =
     cr_std_string_new(g_string_testing_arena, "This is a Test String which i want to use!");
     String *string_expected = cr_std_string_new(g_string_testing_arena, "");
@@ -1103,7 +1103,7 @@ int cr_std_string_test_sub_string_index_invalid() {
     return result;
 }
 
-int cr_std_string_test_sub_string_null() {
+b8 cr_std_string_test_sub_string_null() {
     String *string = NULL;
     String *string_expected = cr_std_string_new(g_string_testing_arena, "");
     String *result_string = cr_std_string_sub_string(g_string_testing_arena, string, 10, 20);
@@ -1116,7 +1116,7 @@ int cr_std_string_test_sub_string_null() {
     return result;
 }
 
-int cr_std_string_test_repeat() {
+b8 cr_std_string_test_repeat() {
     String *string = cr_std_string_repeat(g_string_testing_arena, "Test", 2);
     String *string_expected = cr_std_string_new(g_string_testing_arena, "TestTest");
 
@@ -1128,7 +1128,7 @@ int cr_std_string_test_repeat() {
     return result;
 }
 
-int cr_std_string_test_repeat_0() {
+b8 cr_std_string_test_repeat_0() {
     String *string = cr_std_string_repeat(g_string_testing_arena, "Test", 0);
     String *string_expected = cr_std_string_new(g_string_testing_arena, "");
 
@@ -1140,7 +1140,7 @@ int cr_std_string_test_repeat_0() {
     return result;
 }
 
-int cr_std_string_test_repeat_negative() {
+b8 cr_std_string_test_repeat_negative() {
     String *string = cr_std_string_repeat(g_string_testing_arena, "Test", -1);
     String *string_expected = cr_std_string_new(g_string_testing_arena, "");
 
@@ -1156,25 +1156,25 @@ int cr_std_string_test_repeat_negative() {
  * String Builder Tests Below
  */
 
-int cr_std_string_builder_test_new_normal() {
+b8 cr_std_string_builder_test_new_normal() {
     StringBuilder *sb = cr_std_string_builder_new(g_string_testing_arena, "Hello World");
     int result = sb != NULL;
     return result;
 }
 
-int cr_std_string_builder_test_new_empty() {
+b8 cr_std_string_builder_test_new_empty() {
     StringBuilder *sb = cr_std_string_builder_new(g_string_testing_arena, "");
     int result = sb != NULL;
     return result;
 }
 
-int cr_std_string_builder_test_new_formatted() {
+b8 cr_std_string_builder_test_new_formatted() {
     StringBuilder *sb = cr_std_string_builder_newf(g_string_testing_arena, "Hello %s", "World");
     int result = sb != NULL;
     return result;
 }
 
-int cr_std_string_builder_test_ensure_capacity() {
+b8 cr_std_string_builder_test_ensure_capacity() {
     StringBuilder *sb = cr_std_string_builder_new(g_string_testing_arena, "");
     size_t initial_capacity = sb->capacity;
     size_t desired_add = 1024;
@@ -1187,7 +1187,7 @@ int cr_std_string_builder_test_ensure_capacity() {
     return result;
 }
 
-int cr_std_string_builder_test_ensure_capacity_low() {
+b8 cr_std_string_builder_test_ensure_capacity_low() {
     StringBuilder *sb = cr_std_string_builder_new(g_string_testing_arena, "");
     int desired_add = 16;
     cr_std_string_builder_ensure_capacity(g_string_testing_arena, sb, desired_add);
@@ -1195,7 +1195,7 @@ int cr_std_string_builder_test_ensure_capacity_low() {
     return result;
 }
 
-int cr_std_string_builder_test_ensure_capacity_null() {
+b8 cr_std_string_builder_test_ensure_capacity_null() {
     StringBuilder *sb = NULL;
     int desired_add = 16;
     int function_result =
@@ -1204,7 +1204,7 @@ int cr_std_string_builder_test_ensure_capacity_null() {
     return result;
 }
 
-int cr_std_string_builder_test_append() {
+b8 cr_std_string_builder_test_append() {
     StringBuilder *sb = cr_std_string_builder_new(g_string_testing_arena, "Hello World");
     int expected_size = 11 + 15 + 7;
     int function_result =
@@ -1213,7 +1213,7 @@ int cr_std_string_builder_test_append() {
     return result;
 }
 
-int cr_std_string_builder_test_appendf() {
+b8 cr_std_string_builder_test_appendf() {
     StringBuilder *sb = cr_std_string_builder_new(g_string_testing_arena, "Hello World");
     int expected_size = 11 + 15 + 7;
     int function_result =
@@ -1222,7 +1222,7 @@ int cr_std_string_builder_test_appendf() {
     return result;
 }
 
-int cr_std_string_builder_test_append_string() {
+b8 cr_std_string_builder_test_append_string() {
     StringBuilder *sb = cr_std_string_builder_new(g_string_testing_arena, "Hello World");
     int expected_size = 11 + 15;
     int function_result =
@@ -1231,7 +1231,7 @@ int cr_std_string_builder_test_append_string() {
     return result;
 }
 
-int cr_std_string_builder_test_append_char() {
+b8 cr_std_string_builder_test_append_char() {
     StringBuilder *sb = cr_std_string_builder_new(g_string_testing_arena, "Hello World");
     int expected_size = 11 + 1;
     int function_result = cr_std_string_builder_append_char(g_string_testing_arena, sb, '!');
@@ -1239,7 +1239,7 @@ int cr_std_string_builder_test_append_char() {
     return result;
 }
 
-int cr_std_string_builder_test_append_empty() {
+b8 cr_std_string_builder_test_append_empty() {
     StringBuilder *sb = cr_std_string_builder_new(g_string_testing_arena, "Hello World");
     int expected_size = 11;
     int function_result = cr_std_string_builder_append(g_string_testing_arena, sb, "");
@@ -1247,7 +1247,7 @@ int cr_std_string_builder_test_append_empty() {
     return result;
 }
 
-int cr_std_string_builder_test_append_null_value() {
+b8 cr_std_string_builder_test_append_null_value() {
     StringBuilder *sb = cr_std_string_builder_new(g_string_testing_arena, "Hello World");
     int expected_size = 11;
     int function_result = cr_std_string_builder_append(g_string_testing_arena, sb, NULL);
@@ -1255,7 +1255,7 @@ int cr_std_string_builder_test_append_null_value() {
     return result;
 }
 
-int cr_std_string_builder_test_reset() {
+b8 cr_std_string_builder_test_reset() {
     StringBuilder *sb = cr_std_string_builder_new(g_string_testing_arena, "Hello World");
     int expected_size = 0;
     int function_result = cr_std_string_builder_reset(sb);
@@ -1263,14 +1263,14 @@ int cr_std_string_builder_test_reset() {
     return result;
 }
 
-int cr_std_string_builder_test_reset_null_value() {
+b8 cr_std_string_builder_test_reset_null_value() {
     StringBuilder *sb = NULL;
     int function_result = cr_std_string_builder_reset(sb);
     int result = sb == NULL && function_result != 0;
     return result;
 }
 
-int cr_std_string_builder_test_to_string() {
+b8 cr_std_string_builder_test_to_string() {
     StringBuilder *sb = cr_std_string_builder_new(g_string_testing_arena, "Hello World");
     int expected_size = 11;
     String *string = cr_std_string_builder_to_string(g_string_testing_arena, sb);
@@ -1279,7 +1279,7 @@ int cr_std_string_builder_test_to_string() {
     return result;
 }
 
-int cr_std_string_builder_test_to_string_null_value() {
+b8 cr_std_string_builder_test_to_string_null_value() {
     StringBuilder *sb = NULL;
     String *string = cr_std_string_builder_to_string(g_string_testing_arena, sb);
     int result = sb == NULL && string == NULL;

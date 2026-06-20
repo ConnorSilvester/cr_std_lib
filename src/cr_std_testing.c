@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-TestCase *cr_std_testing_new_test(Arena *arena, const char *name, int (*test_function)(void)) {
+TestCase *cr_std_testing_new_test(Arena *arena, const char *name, b8 (*test_function)(void)) {
     TestCase *new_test = cr_std_arena_alloc(arena, sizeof(*new_test));
     if (!new_test) {
         cr_std_logger_out(

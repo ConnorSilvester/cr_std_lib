@@ -15,6 +15,12 @@ Arena *cr_std_arena_new(size_t capacity) {
                            CR_STD_ARENA_DEFAULT_CAPACITY);
     }
 
+    // Overflow
+    if (capacity > SIZE_MAX / 2) {
+        CR_LOG_ERROR_FMT("cr_std_arena_new -> capacity too large: %zu", capacity);
+        capacity = CR_STD_ARENA_DEFAULT_CAPACITY;
+    }
+
     arena->memory = malloc(capacity);
     if (!arena->memory) {
         free(arena);
@@ -38,6 +44,12 @@ b8 cr_std_arena_init(Arena *arena, void *memory, size_t capacity) {
         return CR_STD_FAIL;
     }
 
+    // Overflow
+    if (capacity > SIZE_MAX / 2) {
+        CR_LOG_ERROR_FMT("cr_std_arena_init -> capacity too large: %zu", capacity);
+        return CR_STD_FAIL;
+    }
+
     arena->memory = (unsigned char *)memory;
     arena->capacity = capacity;
     arena->used = 0;
@@ -52,6 +64,11 @@ void *cr_std_arena_alloc(Arena *arena, size_t size) {
 
     if (size == 0) {
         CR_LOG_WARNING("cr_std_arena_alloc -> requested 0 bytes");
+        return NULL;
+    }
+
+    if (size > SIZE_MAX / 2) {
+        CR_LOG_ERROR_FMT("cr_std_arena_alloc -> size too large: %zu", size);
         return NULL;
     }
 

@@ -12,7 +12,7 @@ typedef struct Arena {
     size_t used;
 } Arena;
 
-#define CR_STD_ARENA_DEFAULT_CAPACITY (1 * CR_STD_MB)
+#define CR_STD_ARENA_DEFAULT_CAPACITY (64 * CR_STD_KB)
 
 /**
  * @brief Allocates a new Arena struct on the heap

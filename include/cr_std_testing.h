@@ -1,11 +1,10 @@
 #ifndef CR_STD_TESTING_H
 #define CR_STD_TESTING_H
 
+#include "cr_std_utils.h"
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-#include <stdio.h>
 
 #define TEST_PASSED "\033[32mPASSED\033[0m"
 #define TEST_FAILED "\033[31mFAILED\033[0m"
@@ -23,7 +22,7 @@ typedef struct Arena Arena;
  */
 typedef struct TestCase {
     const char *name;
-    int (*test_function)(void); // Function that returns 1 for pass, 0 for fail
+    b8 (*test_function)(void); // Function that returns 1 for pass, 0 for fail
 } TestCase;
 
 /**
@@ -31,12 +30,13 @@ typedef struct TestCase {
  *
  * @param `arena` The arena to store the memory in
  * @param `name` The name of the test.
- * @param `test_function` The custom test function to be called when running the test.
+ * @param `test_function` The custom test function to be called when running the test. (should
+ * result in true or false)
  *
  * @return A pointer to the new `TestCase` struct.
  * @return `NULL` if allocation fails.
  */
-TestCase *cr_std_testing_new_test(Arena *arena, const char *name, int (*test_function)(void));
+TestCase *cr_std_testing_new_test(Arena *arena, const char *name, b8 (*test_function)(void));
 
 /**
  * @brief Runs the list of tests passed in.
