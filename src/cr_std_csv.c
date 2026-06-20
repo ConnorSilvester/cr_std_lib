@@ -52,8 +52,8 @@ CSVFile *cr_std_csv_parse_file(Arena *arena, const char *file_path) {
     }
     const char *src = file_contents->c_str;
 
-    bool in_quotes = false;
-    bool is_first_row = true;
+    b8 in_quotes = false;
+    b8 is_first_row = true;
     StringBuilder *sb = cr_std_string_builder_newc(temp_arena, "", temp_arena->capacity / 4);
 
     CSVRow *row = cr_std_csv_row_new(arena);
