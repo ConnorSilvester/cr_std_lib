@@ -35,26 +35,6 @@ typedef struct CSVRow {
 } CSVRow;
 
 /**
- * @brief Creates a new `CSVFile` struct
- *
- * @param `arena` The arena to store the memory in
- *
- * @return A pointer to the new `CSVFile` struct.
- * @return `NULL` if allocation fails.
- */
-CSVFile *cr_std_csv_new(Arena *arena);
-
-/**
- * @brief Creates a new `CSVRow` struct
- *
- * @param `arena` The arena to store the memory in
- *
- * @return A pointer to the new `CSVRow` struct.
- * @return `NULL` if allocation fails.
- */
-CSVRow *cr_std_csv_row_new(Arena *arena);
-
-/**
  * @brief Parse a csv file into a CSVFile struct.
  *
  * @param `arena` The arena to store the memory in
