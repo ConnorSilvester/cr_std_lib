@@ -3,7 +3,7 @@
 #include <stdlib.h>
 
 Arena *cr_std_arena_new(size_t capacity) {
-    Arena *arena = malloc(sizeof(Arena));
+    Arena *arena = malloc(sizeof(*arena));
     if (!arena) {
         CR_LOG_ERROR("cr_std_arena_new -> malloc call for arena failed");
         return NULL;
