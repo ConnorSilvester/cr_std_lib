@@ -1,6 +1,7 @@
 #ifndef CR_STD_CLI
 #define CR_STD_CLI
 
+#include "cr_std_utils.h"
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -18,9 +19,9 @@ typedef struct ArgumentDefinition {
     String *flag;       // Keyword
     String *help_text;  // Help text (displayed when the wrong parameters are provided)
     Vector *parameters; // Vector <String>
-    int expected_param_count;
-    int found;
-    int error;
+    size_t expected_param_count;
+    b8 found;
+    b8 error;
 } ArgumentDefinition;
 
 /**
@@ -34,7 +35,7 @@ typedef struct ArgumentDefinition {
  * @return `NULL` if allocation fails.
  */
 ArgumentDefinition *
-cr_std_cli_new_argument_definition(Arena *arena, const char *flag, int expected_param_count);
+cr_std_cli_new_argument_definition(Arena *arena, const char *flag, size_t expected_param_count);
 
 /**
  * @brief Parses the argv into the structs provided.
@@ -43,10 +44,10 @@ cr_std_cli_new_argument_definition(Arena *arena, const char *flag, int expected_
  * @param `argc` int of how many argument count
  * @param `argv` char** of the arguments
  *
- * @return `0` on success.
- * @return `1` on error.
+ * @return `CR_STD_OK` on success.
+ * @return `CR_STD_FAIL` on error.
  */
-int cr_std_cli_parse_args(Vector *argument_definitions, int argc, char **argv);
+b8 cr_std_cli_parse_args(Vector *argument_definitions, int argc, char **argv);
 
 #ifdef __cplusplus
 }

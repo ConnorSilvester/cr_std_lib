@@ -4,6 +4,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+#include <stddef.h>
 #include <stdint.h>
 
 #define CR_STD_KB (1024ULL)
@@ -31,6 +32,14 @@ typedef float f32;
 typedef double f64;
 
 typedef i8 b8;
+
+#ifndef true
+#define true 1
+#endif
+
+#ifndef false
+#define false 0
+#endif
 
 #ifdef __cplusplus
 }

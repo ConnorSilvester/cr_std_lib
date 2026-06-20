@@ -2,6 +2,7 @@
 #ifndef CR_STD_CSV
 #define CR_STD_CSV
 
+#include "cr_std_utils.h"
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -69,10 +70,10 @@ CSVFile *cr_std_csv_parse_file(Arena *arena, const char *file_path);
  *
  * @param `csv` The CSVFile struct to print.
  *
- * @return `0` on success.
- * @return `1` on failure.
+ * @return `CR_STD_OK` on success.
+ * @return `CR_STD_FAIL` on failure.
  */
-int cr_std_csv_print_contents(CSVFile *csv);
+b8 cr_std_csv_print_contents(CSVFile *csv);
 
 #ifdef __cplusplus
 }

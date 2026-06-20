@@ -2,7 +2,6 @@
 #define CR_STD_ARENA
 
 #include "cr_std_utils.h"
-#include <stdio.h>
 #ifdef __cplusplus
 extern "C" {
 #endif

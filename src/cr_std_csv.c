@@ -113,11 +113,11 @@ CSVFile *cr_std_csv_parse_file(Arena *arena, const char *file_path) {
     return csv;
 }
 
-int cr_std_csv_print_contents(CSVFile *csv) {
+b8 cr_std_csv_print_contents(CSVFile *csv) {
     if (!csv) {
         cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR,
                           "cr_std_csv_print_contents -> CSVFile struct is NULL");
-        return 1;
+        return CR_STD_FAIL;
     }
 
     // Header
@@ -141,5 +141,5 @@ int cr_std_csv_print_contents(CSVFile *csv) {
         }
     }
 
-    return 0;
+    return CR_STD_OK;
 }
