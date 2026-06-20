@@ -1,13 +1,10 @@
 #ifndef CR_STD_FILESYSTEM
 #define CR_STD_FILESYSTEM
 
+#include "cr_std_utils.h"
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-#include <stdbool.h>
-#include <stdint.h>
-#include <sys/types.h>
 
 #ifdef _WIN32
 #define DT_UNKNOWN 0
@@ -21,6 +18,7 @@ extern "C" {
 #define DT_WHT 14
 #else
 #include <dirent.h>
+#include <sys/types.h>
 #include <unistd.h>
 #endif
 
@@ -38,14 +36,14 @@ typedef struct Arena Arena;
  * - Freeing a Dirent struct will also free all String objects.
  */
 typedef struct Dirent {
-    String *d_name;         // Entry name
-    String *d_path;         // Entry full path
-    String *d_ext;          // Entry extension
-    int64_t d_size;         // Entry size in bytes
-    uint64_t d_inode;       // Entry inode number
-    uint64_t d_permissions; // Entry permissions
-    unsigned char d_type;   // Entry type
-    bool d_hidden;          // 1 = hidden, 0 = not hidden
+    String *d_name;    // Entry name
+    String *d_path;    // Entry full path
+    String *d_ext;     // Entry extension
+    i64 d_size;        // Entry size in bytes
+    u64 d_inode;       // Entry inode number
+    u64 d_permissions; // Entry permissions
+    u8 d_type;         // Entry type
+    b8 d_hidden;       // true = hidden, false = not hidden
 } Dirent;
 
 /**
@@ -65,10 +63,10 @@ String *cr_std_filesystem_get_current_time_date(Arena *arena, const char *time_d
  * @param `src` The source file to copy from
  * @param `dest` The destination file to copy to
  *
- * @return `0` on success.
- * @return `1` on failure.
+ * @return `CR_STD_OK` on success.
+ * @return `CR_STD_FAIL` on failure.
  */
-int cr_std_filesystem_copy_file(const char *src, const char *dest);
+b8 cr_std_filesystem_copy_file(const char *src, const char *dest);
 
 /**
  * @brief Move a file from src to dest
@@ -76,10 +74,10 @@ int cr_std_filesystem_copy_file(const char *src, const char *dest);
  * @param `src` The source file to move
  * @param `dest` The destination file path
  *
- * @return `0` on success.
- * @return `1` on failure.
+ * @return `CR_STD_OK` on success.
+ * @return `CR_STD_FAIL` on failure.
  */
-int cr_std_filesystem_move_file(const char *src, const char *dest);
+b8 cr_std_filesystem_move_file(const char *src, const char *dest);
 
 /**
  * @brief Makes a directory
@@ -87,10 +85,10 @@ int cr_std_filesystem_move_file(const char *src, const char *dest);
  * @param `dir_path` The directory path to create
  * @param `permissions` The permissions of the dir (only used on UNIX)
  *
- * @return `0` on success.
- * @return `1` on failure.
+ * @return `CR_STD_OK` on success.
+ * @return `CR_STD_FAIL` on failure.
  */
-int cr_std_filesystem_make_dir(const char *dir_path, mode_t permissions);
+b8 cr_std_filesystem_make_dir(const char *dir_path, mode_t permissions);
 
 /**
  * @brief Gets the current working directory
@@ -108,10 +106,10 @@ String *cr_std_filesystem_get_cwd(Arena *arean);
  * @param `file_path` A raw string of the file path.
  * @param `data` A raw string containing the data to write.
  *
- * @return `0` on success.
- * @return `1` on failure.
+ * @return `CR_STD_OK` on success.
+ * @return `CR_STD_FAIL` on failure.
  */
-int cr_std_filesystem_write_to_file(const char *file_path, const char *data);
+b8 cr_std_filesystem_write_to_file(const char *file_path, const char *data);
 
 /**
  * @brief Appends the contents of `data` into the file at `file_path`
@@ -119,10 +117,10 @@ int cr_std_filesystem_write_to_file(const char *file_path, const char *data);
  * @param `file_path` A raw string of the file path.
  * @param `data` A raw string containing the data to append to the file.
  *
- * @return `0` on success.
- * @return `1` on failure.
+ * @return `CR_STD_OK` on success.
+ * @return `CR_STD_FAIL` on failure.
  */
-int cr_std_filesystem_append_to_file(const char *file_path, const char *data);
+b8 cr_std_filesystem_append_to_file(const char *file_path, const char *data);
 
 /**
  * @brief Reads file contents into a `String` struct.
@@ -160,9 +158,9 @@ Vector *cr_std_filesystem_read_file_as_vector(Arena *arena, const char *file_pat
  */
 Vector *cr_std_filesystem_get_entries(Arena *arena,
                                       const char *file_path,
-                                      bool include_files,
-                                      bool include_dirs,
-                                      bool recursive);
+                                      b8 include_files,
+                                      b8 include_dirs,
+                                      b8 recursive);
 
 /**
  * @brief Reads the contents of a file dir
@@ -249,7 +247,7 @@ Vector *cr_std_filesystem_get_dirs_files_matching_r(Arena *arena,
  * @return `true` if it does exist
  * @return `false` if it does not exist
  */
-bool cr_std_filesystem_exists(const char *file_path);
+b8 cr_std_filesystem_exists(const char *file_path);
 
 #ifdef __cplusplus
 }

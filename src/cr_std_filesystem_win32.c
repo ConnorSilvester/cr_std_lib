@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/stat.h>
+#include <sys/types.h>
 #include <time.h>
 
 // Windows Specific Functions
@@ -32,11 +33,11 @@ String *cr_std_filesystem_get_cwd(Arena *arena) {
     return cr_std_string_new(arena, cwd);
 }
 
-int cr_std_filesystem_make_dir(const char *dir_path, mode_t permissions) {
+b8 cr_std_filesystem_make_dir(const char *dir_path, mode_t permissions) {
     if (CreateDirectory(dir_path, NULL) != 0) {
         cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_INFO,
                            "cr_std_filesystem_make_dir -> Directory created '%s'", dir_path);
-        return 0;
+        return CR_STD_OK;
     } else {
         DWORD error = GetLastError();
         if (error == ERROR_ALREADY_EXISTS) {
@@ -57,15 +58,15 @@ int cr_std_filesystem_make_dir(const char *dir_path, mode_t permissions) {
             cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR,
                                "cr_std_filesystem_make_dir -> Failed to create directory");
         }
-        return 1;
+        return CR_STD_FAIL;
     }
 }
 
 Vector *cr_std_filesystem_get_entries(Arena *arena,
                                       const char *file_path,
-                                      bool include_files,
-                                      bool include_dirs,
-                                      bool recursive) {
+                                      b8 include_files,
+                                      b8 include_dirs,
+                                      b8 recursive) {
     char search_path[MAX_PATH];
     snprintf(search_path, MAX_PATH, "%s\\*", file_path);
 
@@ -122,7 +123,7 @@ Vector *cr_std_filesystem_get_entries(Arena *arena,
         custom_entry->d_path = cr_std_string_make_copy(arena, full_path);
         custom_entry->d_type =
         (findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) ? DT_DIR : DT_REG;
-        custom_entry->d_hidden = (findData.dwFileAttributes & FILE_ATTRIBUTE_HIDDEN) ? 1 : 0;
+        custom_entry->d_hidden = (findData.dwFileAttributes & FILE_ATTRIBUTE_HIDDEN) ? true : false;
 
         if (!(findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) &&
             cr_std_string_find_char_last(file_name, '.') != -1) {
@@ -162,7 +163,7 @@ Vector *cr_std_filesystem_get_entries(Arena *arena,
     return vector;
 }
 
-bool cr_std_filesystem_exists(const char *file_path) {
+b8 cr_std_filesystem_exists(const char *file_path) {
     if (!file_path) {
         return false;
     }
