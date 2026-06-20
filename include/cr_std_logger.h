@@ -1,6 +1,7 @@
 #ifndef CR_STD_LOGGER_H
 #define CR_STD_LOGGER_H
 
+#include "cr_std_utils.h"
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -22,11 +23,14 @@ extern "C" {
 #define CR_LOG_INFO(msg) cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_INFO, msg)
 #define CR_LOG_INFO_FMT(fmt, ...) cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_INFO, fmt, __VA_ARGS__)
 #define CR_LOG_CUSTOM(type, color_code, msg) cr_std_logger_outc(type, color_code, msg)
-#define CR_LOG_CUSTOM_FMT(type, color_code, fmt, ...) cr_std_logger_outfc(type, color_code, fmt, __VA_ARGS__)
+#define CR_LOG_CUSTOM_FMT(type, color_code, fmt, ...) \
+    cr_std_logger_outfc(type, color_code, fmt, __VA_ARGS__)
 #define CR_LOG_WARNING(msg) cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_WARNING, msg)
-#define CR_LOG_WARNING_FMT(fmt, ...) cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_WARNING, fmt, __VA_ARGS__)
+#define CR_LOG_WARNING_FMT(fmt, ...) \
+    cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_WARNING, fmt, __VA_ARGS__)
 #define CR_LOG_ERROR(msg) cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR, msg)
-#define CR_LOG_ERROR_FMT(fmt, ...) cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR, fmt, __VA_ARGS__)
+#define CR_LOG_ERROR_FMT(fmt, ...) \
+    cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR, fmt, __VA_ARGS__)
 
 typedef struct Vector Vector;
 
@@ -71,10 +75,10 @@ void cr_std_logger_outfc(const char *type, int color_code, const char *formatted
  *
  * @param `log_level` the log_level you want to set
  *
- * @return `0` on success.
- * @return `1` if level is not valid and was changed to max allowed value.
+ * @return `CR_STD_OK` on success.
+ * @return `CR_STD_FAIL` on failure.
  */
-int cr_std_logger_set_log_level(int log_level);
+b8 cr_std_logger_set_log_level(int log_level);
 
 /**
  * @brief Used to set the flag to record logs.
@@ -110,10 +114,10 @@ void cr_std_logger_clear_history();
  *
  * @param `filepath` the filepath for the output file.
  *
- * @return `0` on success.
- * @return `1` on failure.
+ * @return `CR_STD_OK` on success.
+ * @return `CR_STD_FAIL` on failure.
  */
-int cr_std_logger_write_history_to_file(const char *filepath);
+b8 cr_std_logger_write_history_to_file(const char *filepath);
 
 #ifdef __cplusplus
 }
