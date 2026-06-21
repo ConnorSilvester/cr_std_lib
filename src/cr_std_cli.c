@@ -48,6 +48,10 @@ cr_std_cli_new_argument_definition(Arena *arena, const char *flag, size_t expect
         return NULL;
     }
 
+    if (expected_param_count > SIZE_MAX / 2) {
+        expected_param_count = 0;
+    }
+
     arg->help_text = NULL;
     arg->expected_param_count = expected_param_count;
     arg->found = false;
@@ -56,13 +60,23 @@ cr_std_cli_new_argument_definition(Arena *arena, const char *flag, size_t expect
     return arg;
 }
 
-b8 cr_std_cli_parse_args(Vector *argument_definitions, int argc, char **argv) {
+b8 cr_std_cli_parse_args(Arena *arena, Vector *argument_definitions, int argc, char **argv) {
+    if (!arena) {
+        CR_LOG_ERROR("cr_std_cli_parse_args -> arena* was NULL");
+        return CR_STD_FAIL;
+    }
+
     if (!argument_definitions) {
         CR_LOG_ERROR("cr_std_cli_parse_args -> argument_definitions is NULL");
         return CR_STD_FAIL;
     }
 
-    if (argc <= 0) {
+    if (!argv) {
+        CR_LOG_ERROR("cr_std_cli_parse_args -> argv is NULL");
+        return CR_STD_FAIL;
+    }
+
+    if (argc <= 1) {
         CR_LOG_WARNING("cr_std_cli_parse_args -> Nothing to parse");
         return CR_STD_OK;
     }
@@ -94,6 +108,16 @@ b8 cr_std_cli_parse_args(Vector *argument_definitions, int argc, char **argv) {
                     }
                     CR_LOG_INFO_FMT("Found param for flag %s : '%s'", current_arg->flag->c_str,
                                     argv[sub_index]);
+                    String *sub_param = cr_std_string_new(arena, argv[sub_index]);
+                    if (!sub_param) {
+                        current_arg->error = true;
+                        return_value = CR_STD_FAIL;
+                    }
+                    if (cr_std_vector_push_back(arena, args[arg_index]->parameters, sub_param) !=
+                        CR_STD_OK) {
+                        current_arg->error = true;
+                        return_value = CR_STD_FAIL;
+                    }
                     dealt_with[sub_index] = true;
                     sub_index++;
                 }
