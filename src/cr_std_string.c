@@ -64,16 +64,14 @@ StringBuilder *cr_std_string_builder_newf(Arena *arena, const char *format, ...)
     }
 
     if (!format) {
-        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR,
-                          "cr_std_string_builder_newf -> char* input was NULL");
+        CR_LOG_ERROR("cr_std_string_builder_newf -> char* input was NULL");
         return NULL;
     }
 
     StringBuilder *string_builder = cr_std_arena_alloc(arena, sizeof(*string_builder));
 
     if (!string_builder) {
-        cr_std_logger_out(
-        CR_STD_LOGGER_LOG_TYPE_ERROR,
+        CR_LOG_ERROR(
         "cr_std_string_builder_newf -> failed to allocate memory for new StringBuilder struct");
         return NULL;
     }
@@ -90,16 +88,13 @@ StringBuilder *cr_std_string_builder_newf(Arena *arena, const char *format, ...)
     va_end(args);
 
     if (string_builder->size < 0) {
-        cr_std_logger_out(
-        CR_STD_LOGGER_LOG_TYPE_ERROR,
-        "cr_std_string_builder_newf -> vsnprintf failed during length calculation");
+        CR_LOG_ERROR("cr_std_string_builder_newf -> vsnprintf failed during length calculation");
         return NULL;
     }
 
     char *c_str = cr_std_arena_alloc(arena, string_builder->capacity + 1);
     if (!c_str) {
-        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR,
-                          "cr_std_string_builder_newf -> failed to allocate memory for buffer");
+        CR_LOG_ERROR("cr_std_string_builder_newf -> failed to allocate memory for buffer");
         return NULL;
     }
 
@@ -137,8 +132,7 @@ b8 cr_std_string_builder_ensure_capacity(Arena *arena,
 
     char *new_str = cr_std_arena_alloc(arena, new_capacity);
     if (!new_str) {
-        cr_std_logger_out(
-        CR_STD_LOGGER_LOG_TYPE_ERROR,
+        CR_LOG_ERROR(
         "cr_std_string_builder_ensure_capacity -> failed to allocate memory for new buffer");
         return CR_STD_FAIL;
     }
@@ -255,8 +249,7 @@ b8 cr_std_string_builder_append_null_terminated(Arena *arena, StringBuilder *str
     }
 
     if (!string_builder) {
-        cr_std_logger_out(
-        CR_STD_LOGGER_LOG_TYPE_ERROR,
+        CR_LOG_ERROR(
         "cr_std_string_builder_append_null_terminated -> string builder pointer is NULL");
         return CR_STD_FAIL;
     }
@@ -278,8 +271,7 @@ b8 cr_std_string_builder_append_null_terminated(Arena *arena, StringBuilder *str
 
 b8 cr_std_string_builder_reset(StringBuilder *string_builder) {
     if (!string_builder) {
-        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR,
-                          "cr_std_string_builder_reset -> given string builder is NULL");
+        CR_LOG_ERROR("cr_std_string_builder_reset -> given string builder is NULL");
         return CR_STD_FAIL;
     }
 
@@ -334,8 +326,7 @@ String *cr_std_string_builder_to_string(Arena *arena, StringBuilder *string_buil
     }
 
     if (!string_builder) {
-        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR,
-                          "cr_std_string_builder_to_string -> given string builder is NULL");
+        CR_LOG_ERROR("cr_std_string_builder_to_string -> given string builder is NULL");
         return NULL;
     }
     return cr_std_string_new(arena, string_builder->c_str);
@@ -483,10 +474,9 @@ b8 cr_std_string_concat_null_terminated(Arena *arena, String *string, ...) {
     return CR_STD_OK;
 }
 
-i32 cr_std_string_compare(String *arg, String *arg1) {
+StringCompareResult cr_std_string_compare(String *arg, String *arg1) {
     if (!arg || !arg1) {
-        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR,
-                          "cr_std_string_compare -> string pointer is NULL");
+        CR_LOG_ERROR("cr_std_string_compare -> string pointer is NULL");
         return CR_STD_STRING_COMPARE_ERROR;
     }
 
@@ -498,7 +488,7 @@ i32 cr_std_string_compare(String *arg, String *arg1) {
     if (arg->length < arg1->length) {
         return CR_STD_STRING_ARG1_LONGER;
     }
-    for (int i = 0; i < arg->length; i++) {
+    for (size_t i = 0; i < arg->length; i++) {
         if (arg->c_str[i] != arg1->c_str[i]) {
             // Partial equality ( length is equal but not chars )
             return CR_STD_STRING_DIFFERENT;
@@ -508,10 +498,9 @@ i32 cr_std_string_compare(String *arg, String *arg1) {
     return CR_STD_STRING_EQUAL;
 }
 
-i32 cr_std_string_compare_c_str(String *arg, const char *arg1) {
+StringCompareResult cr_std_string_compare_c_str(String *arg, const char *arg1) {
     if (!arg || !arg1) {
-        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR,
-                          "cr_std_string_compare_c_str -> pointer is NULL");
+        CR_LOG_ERROR("cr_std_string_compare_c_str -> pointer is NULL");
         return CR_STD_STRING_COMPARE_ERROR;
     }
 
@@ -524,7 +513,7 @@ i32 cr_std_string_compare_c_str(String *arg, const char *arg1) {
     if (arg->length < arg1_length) {
         return CR_STD_STRING_ARG1_LONGER;
     }
-    for (int i = 0; i < arg->length; i++) {
+    for (size_t i = 0; i < arg->length; i++) {
         if (arg->c_str[i] != arg1[i]) {
             // Partial equality ( length is equal but not chars )
             return CR_STD_STRING_DIFFERENT;
@@ -534,7 +523,7 @@ i32 cr_std_string_compare_c_str(String *arg, const char *arg1) {
     return CR_STD_STRING_EQUAL;
 }
 
-b8 cr_std_string_trim(String *string, int direction) {
+b8 cr_std_string_trim(String *string, TrimDirection direction) {
     if (!string || !string->c_str || string->length == 0) {
         CR_LOG_ERROR("cr_std_string_trim -> invalid string");
         return CR_STD_FAIL;
@@ -570,11 +559,10 @@ b8 cr_std_string_trim(String *string, int direction) {
 
 i32 cr_std_string_find_char(String *string, char ch) {
     if (!string) {
-        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR,
-                          "cr_std_string_find_char -> string pointer is NULL");
+        CR_LOG_ERROR("cr_std_string_find_char -> string pointer is NULL");
         return -1;
     }
-    for (int i = 0; i <= string->length; i++) {
+    for (size_t i = 0; i <= string->length; i++) {
         if (string->c_str[i] == ch) {
             return i;
         }
@@ -582,21 +570,20 @@ i32 cr_std_string_find_char(String *string, char ch) {
     return -1;
 }
 
-i32 cr_std_string_find_char_n(String *string, char ch, int n) {
+i32 cr_std_string_find_char_n(String *string, char ch, size_t n) {
     if (!string) {
-        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR,
-                          "cr_std_string_find_char_n -> string pointer is NULL");
+        CR_LOG_ERROR("cr_std_string_find_char_n -> string pointer is NULL");
         return -1;
     }
-    if (n <= 0) {
+    if (n > SIZE_MAX / 2) {
         n = 1;
     }
 
-    int current_n = 0;
-    int last_char_index = -1;
-    for (int i = 0; i <= string->length; i++) {
+    size_t current_n = 0;
+    i32 last_char_index = -1;
+    for (size_t i = 0; i <= string->length; i++) {
         if (string->c_str[i] == ch) {
-            last_char_index = i;
+            last_char_index = (i32)i;
             current_n++;
         }
 
@@ -609,11 +596,10 @@ i32 cr_std_string_find_char_n(String *string, char ch, int n) {
 
 i32 cr_std_string_find_char_last(String *string, char ch) {
     if (!string) {
-        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR,
-                          "cr_std_string_find_char_last -> string pointer is NULL");
+        CR_LOG_ERROR("cr_std_string_find_char_last -> string pointer is NULL");
         return -1;
     }
-    for (int i = string->length; i >= 0; i--) {
+    for (i32 i = string->length; i >= 0; i--) {
         if (string->c_str[i] == ch) {
             return i;
         }
@@ -623,21 +609,20 @@ i32 cr_std_string_find_char_last(String *string, char ch) {
 
 i32 cr_std_string_find_string(String *string, const char *phrase) {
     if (!string) {
-        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR,
-                          "cr_std_string_find_string -> string pointer is NULL");
-        return 0;
+        CR_LOG_ERROR("cr_std_string_find_string -> string pointer is NULL");
+        return -1;
     }
 
-    int phrase_length = strlen(phrase);
+    size_t phrase_length = strlen(phrase);
     if (phrase_length > string->length || phrase_length < 1) {
-        return 0;
+        return -1;
     }
 
-    for (int string_index = 0; string_index <= string->length - phrase_length; string_index++) {
-        int found = 1;
-        for (int phrase_index = 0; phrase_index < phrase_length; phrase_index++) {
+    for (size_t string_index = 0; string_index <= string->length - phrase_length; string_index++) {
+        b8 found = true;
+        for (size_t phrase_index = 0; phrase_index < phrase_length; phrase_index++) {
             if (string->c_str[string_index + phrase_index] != phrase[phrase_index]) {
-                found = 0;
+                found = false;
                 break;
             }
         }
@@ -648,33 +633,37 @@ i32 cr_std_string_find_string(String *string, const char *phrase) {
     return -1;
 }
 
-i32 cr_std_string_find_string_n(String *string, const char *phrase, int n) {
+i32 cr_std_string_find_string_n(String *string, const char *phrase, size_t n) {
     if (!string) {
-        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR,
-                          "cr_std_string_find_string_n -> string pointer is NULL");
-        return 0;
+        CR_LOG_ERROR("cr_std_string_find_string_n -> string pointer is NULL");
+        return -1;
     }
-    if (n <= 0) {
+    if (!phrase) {
+        CR_LOG_ERROR("cr_std_string_find_string_n -> phrase pointer is NULL");
+        return -1;
+    }
+
+    if (n > SIZE_MAX / 2) {
         n = 1;
     }
 
-    int phrase_length = strlen(phrase);
+    size_t phrase_length = strlen(phrase);
     if (phrase_length > string->length || phrase_length < 1) {
-        return 0;
+        return -1;
     }
 
-    int current_n = 0;
-    int last_string_index = -1;
-    for (int string_index = 0; string_index <= string->length - phrase_length; string_index++) {
-        int found = 1;
-        for (int phrase_index = 0; phrase_index < phrase_length; phrase_index++) {
+    size_t current_n = 0;
+    i32 last_string_index = -1;
+    for (size_t string_index = 0; string_index <= string->length - phrase_length; string_index++) {
+        b8 found = true;
+        for (size_t phrase_index = 0; phrase_index < phrase_length; phrase_index++) {
             if (string->c_str[string_index + phrase_index] != phrase[phrase_index]) {
-                found = 0;
+                found = false;
                 break;
             }
         }
         if (found) {
-            last_string_index = string_index;
+            last_string_index = (i32)string_index;
             current_n++;
         }
         if (current_n == n) {
@@ -686,27 +675,30 @@ i32 cr_std_string_find_string_n(String *string, const char *phrase, int n) {
 
 i32 cr_std_string_find_string_last(String *string, const char *phrase) {
     if (!string) {
-        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR,
-                          "cr_std_string_find_string_last -> string pointer is NULL");
-        return 0;
+        CR_LOG_ERROR("cr_std_string_find_string_last -> string pointer is NULL");
+        return -1;
+    }
+    if (!phrase) {
+        CR_LOG_ERROR("cr_std_string_find_string_last -> phrase pointer is NULL");
+        return -1;
     }
 
-    int phrase_length = strlen(phrase);
+    size_t phrase_length = strlen(phrase);
     if (phrase_length > string->length || phrase_length < 1) {
-        return 0;
+        return -1;
     }
 
-    int last_string_index = -1;
-    for (int string_index = 0; string_index <= string->length - phrase_length; string_index++) {
-        int found = 1;
-        for (int phrase_index = 0; phrase_index < phrase_length; phrase_index++) {
+    i32 last_string_index = -1;
+    for (size_t string_index = 0; string_index <= string->length - phrase_length; string_index++) {
+        b8 found = true;
+        for (size_t phrase_index = 0; phrase_index < phrase_length; phrase_index++) {
             if (string->c_str[string_index + phrase_index] != phrase[phrase_index]) {
-                found = 0;
+                found = false;
                 break;
             }
         }
         if (found) {
-            last_string_index = string_index;
+            last_string_index = (i32)string_index;
         }
     }
     return last_string_index;
@@ -714,8 +706,7 @@ i32 cr_std_string_find_string_last(String *string, const char *phrase) {
 
 i32 cr_std_string_contains_string(String *string, const char *phrase) {
     if (!string) {
-        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR,
-                          "cr_std_string_contains_string -> string pointer is NULL");
+        CR_LOG_ERROR("cr_std_string_contains_string -> string pointer is NULL");
         return 0;
     }
 
@@ -727,7 +718,7 @@ i32 cr_std_string_contains_string(String *string, const char *phrase) {
         return 0;
     }
 
-    int occurrences = 0;
+    size_t occurrences = 0;
     const char *pos = string->c_str;
     size_t phrase_len = strlen(phrase);
 
@@ -745,8 +736,7 @@ i32 cr_std_string_contains_string(String *string, const char *phrase) {
 
 i32 cr_std_string_contains_char(String *string, char ch) {
     if (!string) {
-        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR,
-                          "cr_std_string_contains_char -> string pointer is NULL");
+        CR_LOG_ERROR("cr_std_string_contains_char -> string pointer is NULL");
         return 0;
     }
 
@@ -754,7 +744,7 @@ i32 cr_std_string_contains_char(String *string, char ch) {
         return 0;
     }
 
-    int occurrences = 0;
+    size_t occurrences = 0;
     const char *pos = string->c_str;
 
     while ((pos = strchr(pos, ch)) != NULL) {
@@ -767,17 +757,16 @@ i32 cr_std_string_contains_char(String *string, char ch) {
 
 b8 cr_std_string_starts_with_string(String *string, const char *prefix) {
     if (!string) {
-        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR,
-                          "cr_std_string_starts_with_string -> string pointer is NULL");
+        CR_LOG_ERROR("cr_std_string_starts_with_string -> string pointer is NULL");
         return false;
     }
 
-    int prefix_length = strlen(prefix);
+    size_t prefix_length = strlen(prefix);
     if (prefix_length > string->length || prefix_length < 1) {
         return false;
     }
 
-    for (int i = 0; i < prefix_length; i++) {
+    for (size_t i = 0; i < prefix_length; i++) {
         if (string->c_str[i] != prefix[i]) {
             return false;
         }
@@ -788,19 +777,18 @@ b8 cr_std_string_starts_with_string(String *string, const char *prefix) {
 
 b8 cr_std_string_ends_with_string(String *string, const char *suffix) {
     if (!string) {
-        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR,
-                          "cr_std_string_ends_with_string -> string pointer is NULL");
+        CR_LOG_ERROR("cr_std_string_ends_with_string -> string pointer is NULL");
         return false;
     }
 
-    int suffix_length = strlen(suffix);
+    size_t suffix_length = strlen(suffix);
     if (suffix_length > string->length || suffix_length < 1) {
         return false;
     }
 
-    int start_index = string->length - suffix_length;
+    size_t start_index = string->length - suffix_length;
 
-    for (int i = 0; i < suffix_length; i++) {
+    for (size_t i = 0; i < suffix_length; i++) {
         if (string->c_str[start_index + i] != suffix[i]) {
             return false;
         }
@@ -811,8 +799,7 @@ b8 cr_std_string_ends_with_string(String *string, const char *suffix) {
 
 b8 cr_std_string_starts_with_char(String *string, char prefix) {
     if (!string) {
-        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR,
-                          "cr_std_string_starts_with_char -> string pointer is NULL");
+        CR_LOG_ERROR("cr_std_string_starts_with_char -> string pointer is NULL");
         return false;
     }
 
@@ -825,8 +812,7 @@ b8 cr_std_string_starts_with_char(String *string, char prefix) {
 
 b8 cr_std_string_ends_with_char(String *string, char suffix) {
     if (!string) {
-        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR,
-                          "cr_std_string_ends_with_char -> string pointer is NULL");
+        CR_LOG_ERROR("cr_std_string_ends_with_char -> string pointer is NULL");
         return false;
     }
 
@@ -837,19 +823,17 @@ b8 cr_std_string_ends_with_char(String *string, char suffix) {
     return (string->c_str[string->length - 1] == suffix) ? true : false;
 }
 
-char cr_std_string_char_at(String *string, int index) {
+char cr_std_string_char_at(String *string, size_t index) {
     if (!string) {
-        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR,
-                          "cr_std_string_char_at -> string pointer is NULL");
+        CR_LOG_ERROR("cr_std_string_char_at -> string pointer is NULL");
         return ' ';
     }
     if (!string->c_str) {
-        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR,
-                          "cr_std_string_char_at -> string->c_str pointer is NULL");
+        CR_LOG_ERROR("cr_std_string_char_at -> string->c_str pointer is NULL");
         return ' ';
     }
 
-    if (index < 0) {
+    if (index > SIZE_MAX / 2) {
         index = 0;
     }
 
@@ -890,12 +874,12 @@ Vector *cr_std_string_split(Arena *arena, String *string, char delimiter) {
     Arena *temp_arena = cr_std_arena_new(string->length + 128);
     char *buffer = cr_std_arena_alloc(temp_arena, string->length + 1);
     if (!buffer) {
-        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR,
-                          "cr_std_string_split -> memory allocation failed");
+        CR_LOG_ERROR("cr_std_string_split -> memory allocation failed");
+        cr_std_arena_free(&temp_arena);
         return NULL;
     }
 
-    int buffer_index = 0;
+    size_t buffer_index = 0;
     for (size_t i = 0; i < string->length; i++) {
         if (string->c_str[i] == delimiter || i == string->length - 1) {
             if (string->c_str[i] != delimiter) {
@@ -939,10 +923,11 @@ Vector *cr_std_string_split_hard(Arena *arena, String *string, char delimiter) {
     if (!buffer) {
         cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR,
                           "cr_std_string_split_hard -> memory allocation failed");
+        cr_std_arena_free(&temp_arena);
         return NULL;
     }
 
-    int buffer_index = 0;
+    size_t buffer_index = 0;
     for (size_t i = 0; i < string->length; i++) {
         if (string->c_str[i] == delimiter || i == string->length - 1) {
             if (string->c_str[i] != delimiter) {
@@ -967,11 +952,10 @@ Vector *cr_std_string_split_hard(Arena *arena, String *string, char delimiter) {
 
 b8 cr_std_string_to_upper(String *string) {
     if (!string) {
-        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR,
-                          "cr_std_string_to_upper -> string pointer is NULL");
+        CR_LOG_ERROR("cr_std_string_to_upper -> string pointer is NULL");
         return CR_STD_FAIL;
     }
-    for (int i = 0; i < string->length; i++) {
+    for (size_t i = 0; i < string->length; i++) {
         string->c_str[i] = toupper(string->c_str[i]);
     }
     return CR_STD_OK;
@@ -979,11 +963,10 @@ b8 cr_std_string_to_upper(String *string) {
 
 b8 cr_std_string_to_lower(String *string) {
     if (!string) {
-        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR,
-                          "cr_std_string_to_lower -> string pointer is NULL");
+        CR_LOG_ERROR("cr_std_string_to_lower -> string pointer is NULL");
         return CR_STD_FAIL;
     }
-    for (int i = 0; i < string->length; i++) {
+    for (size_t i = 0; i < string->length; i++) {
         string->c_str[i] = tolower(string->c_str[i]);
     }
     return CR_STD_OK;
@@ -991,8 +974,7 @@ b8 cr_std_string_to_lower(String *string) {
 
 b8 cr_std_string_to_title(String *string) {
     if (!string) {
-        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR,
-                          "cr_std_string_to_title -> string pointer is NULL");
+        CR_LOG_ERROR("cr_std_string_to_title -> string pointer is NULL");
         return CR_STD_FAIL;
     }
     if (string->length < 1) {
@@ -1064,18 +1046,17 @@ i32 cr_std_string_replace_string_inplace(String *string, const char *from, const
 
 i32 cr_std_string_replace_string(Arena *arena, String *string, const char *from, const char *to) {
     if (!string) {
-        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR,
-                          "cr_std_string_replace_string -> string pointer is NULL");
+        CR_LOG_ERROR("cr_std_string_replace_string -> string pointer is NULL");
         return 0;
     }
 
-    int occurrences = cr_std_string_contains_string(string, from);
+    i32 occurrences = cr_std_string_contains_string(string, from);
     if (occurrences == 0) {
         return 0;
     }
 
-    int from_length = strlen(from);
-    int to_length = strlen(to);
+    size_t from_length = strlen(from);
+    size_t to_length = strlen(to);
 
     if (to_length <= from_length) {
         return cr_std_string_replace_string_inplace(string, from, to);
@@ -1086,7 +1067,7 @@ i32 cr_std_string_replace_string(Arena *arena, String *string, const char *from,
         return 0;
     }
 
-    int new_length = string->length + (to_length - from_length) * occurrences;
+    size_t new_length = string->length + (to_length - from_length) * occurrences;
     char *new_string = cr_std_arena_alloc(arena, new_length + 1);
     if (!new_string) {
         cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR,
@@ -1099,10 +1080,10 @@ i32 cr_std_string_replace_string(Arena *arena, String *string, const char *from,
     char *dest = new_string;
     char *current_pos_in_string = strstr(src, from);
 
-    int successfully_changed_words = 0;
+    i32 successfully_changed_words = 0;
     while (current_pos_in_string != NULL) {
         // Copy everything before the from match
-        int bytes_before_match = current_pos_in_string - src;
+        size_t bytes_before_match = current_pos_in_string - src;
         memcpy(dest, src, bytes_before_match);
         dest += bytes_before_match;
 
@@ -1215,7 +1196,7 @@ b8 cr_std_string_to_int(String *string, i32 *number) {
     return CR_STD_OK;
 }
 
-String *cr_std_string_from_int(Arena *arena, int number) {
+String *cr_std_string_from_int(Arena *arena, i32 number) {
     if (!arena) {
         CR_LOG_ERROR("cr_std_string_from_int -> arena* was NULL");
         return NULL;
@@ -1225,39 +1206,36 @@ String *cr_std_string_from_int(Arena *arena, int number) {
     int result = snprintf(str_buffer, sizeof(str_buffer), "%d", number);
 
     if (result < 0 || result >= sizeof(str_buffer)) {
-        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR,
-                          "cr_std_string_from_int -> snprintf failed");
+        CR_LOG_ERROR("cr_std_string_from_int -> snprintf failed");
         return cr_std_string_new(arena, "0");
     }
 
     String *string = cr_std_string_new(arena, str_buffer);
     if (!string) {
-        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR,
-                          "cr_std_string_from_int -> failed to create String");
+        CR_LOG_ERROR("cr_std_string_from_int -> failed to create String");
         return cr_std_string_new(arena, "0");
     }
     return string;
 }
 
-String *cr_std_string_sub_string(Arena *arena, String *string, int start_index, int end_index) {
+String *
+cr_std_string_sub_string(Arena *arena, String *string, size_t start_index, size_t end_index) {
     if (!arena) {
         CR_LOG_ERROR("cr_std_string_sub_string -> arena* was NULL");
         return NULL;
     }
 
     if (!string) {
-        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_WARNING,
-                          "cr_std_string_sub_string -> given string is NULL");
+        CR_LOG_WARNING("cr_std_string_sub_string -> given string is NULL");
         return cr_std_string_new(arena, "");
     }
 
     if (string->length == 0) {
-        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_WARNING,
-                          "cr_std_string_sub_string -> given string is empty");
+        CR_LOG_WARNING("cr_std_string_sub_string -> given string is empty");
         return cr_std_string_new(arena, "");
     }
 
-    if (start_index < 0) {
+    if (start_index > SIZE_MAX / 2) {
         start_index = 0;
     }
 
@@ -1273,8 +1251,7 @@ String *cr_std_string_sub_string(Arena *arena, String *string, int start_index, 
 
     char *sub_data = cr_std_arena_alloc(arena, sub_length + 1);
     if (!sub_data) {
-        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR,
-                          "cr_std_string_sub_string -> failed to allocate memory for substring");
+        CR_LOG_ERROR("cr_std_string_sub_string -> failed to allocate memory for substring");
         return cr_std_string_new(arena, "");
     }
 
@@ -1283,36 +1260,35 @@ String *cr_std_string_sub_string(Arena *arena, String *string, int start_index, 
     return cr_std_string_new(arena, sub_data);
 }
 
-String *cr_std_string_color_string(Arena *arena, String *string, int color_code) {
+String *cr_std_string_color_string(Arena *arena, String *string, StringColor color_code) {
     if (!arena) {
         CR_LOG_ERROR("cr_std_string_color_string -> arena* was NULL");
         return NULL;
     }
 
     if (!string || !string->c_str) {
-        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR,
-                          "cr_std_string_color_string -> string is NULL");
+        CR_LOG_ERROR("cr_std_string_color_string -> string is NULL");
         return NULL;
     }
     if (color_code < 30 || color_code >= 40) {
-        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_WARNING,
-                          "cr_std_string_color_string -> invalid color code");
+        CR_LOG_WARNING("cr_std_string_color_string -> invalid color code");
         color_code = CR_STD_STRING_COLOR_NONE;
     }
     return cr_std_string_newf(arena, CR_STD_STRING_ANSI_COLOR_ESCAPE_SEQ, color_code,
                               string->c_str);
 }
 
-String *
-cr_std_string_color_phrase(Arena *arena, String *string, const char *phrase, int color_code) {
+String *cr_std_string_color_phrase(Arena *arena,
+                                   String *string,
+                                   const char *phrase,
+                                   StringColor color_code) {
     if (!arena) {
         CR_LOG_ERROR("cr_std_string_color_phrase -> arena* was NULL");
         return NULL;
     }
 
     if (!string || !string->c_str) {
-        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR,
-                          "cr_std_string_color_phrase -> string is NULL");
+        CR_LOG_ERROR("cr_std_string_color_phrase -> string is NULL");
         return NULL;
     }
 
@@ -1348,12 +1324,11 @@ cr_std_string_color_phrase(Arena *arena, String *string, const char *phrase, int
 
 b8 cr_std_string_color_strip(String *string) {
     if (!string || !string->c_str) {
-        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR,
-                          "cr_std_string_color_strip -> string is NULL");
+        CR_LOG_ERROR("cr_std_string_color_strip -> string is NULL");
         return CR_STD_FAIL;
     }
 
-    for (int i = 30; i < 40; i++) {
+    for (i32 i = 30; i < 40; i++) {
         char color_code[16];
         snprintf(color_code, sizeof(color_code), "\033[%dm", i);
         cr_std_string_replace_string(NULL, string, color_code, "");
@@ -1372,7 +1347,11 @@ String *cr_std_string_repeat(Arena *arena, const char *string, size_t n) {
         return NULL;
     }
 
-    if (n <= 0 || string[0] == '\0') {
+    if (n > SIZE_MAX / 2) {
+        return cr_std_string_new(arena, "");
+    }
+
+    if (string[0] == '\0') {
         return cr_std_string_new(arena, "");
     }
 
