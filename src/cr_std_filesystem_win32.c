@@ -26,7 +26,7 @@ String *cr_std_filesystem_get_cwd(Arena *arena) {
     char cwd[CR_STD_PATH_MAX_SIZE];
 
     if (_getcwd(cwd, sizeof(cwd)) == NULL) {
-        CR_LOG_ERROR("Failed to get current working directory");
+        CR_LOG_ERROR("cr_std_filesystem_get_cws -> failed to get current working directory");
         return NULL;
     }
 
@@ -34,29 +34,26 @@ String *cr_std_filesystem_get_cwd(Arena *arena) {
 }
 
 b8 cr_std_filesystem_make_dir(const char *dir_path, mode_t permissions) {
+    if (!dir_path) {
+        CR_LOG_ERROR("cr_std_filesystem_make_dir -> dir_path* was NULL");
+        return CR_STD_FAIL;
+    }
+
     if (CreateDirectory(dir_path, NULL) != 0) {
-        cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_INFO,
-                           "cr_std_filesystem_make_dir -> Directory created '%s'", dir_path);
+        CR_LOG_INFO_FMT("cr_std_filesystem_make_dir -> Directory created '%s'", dir_path);
         return CR_STD_OK;
     } else {
         DWORD error = GetLastError();
-        if (error == ERROR_ALREADY_EXISTS) {
-            cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_WARNING,
-                               "cr_std_filesystem_make_dir -> Directory already exists '%s'",
-                               dir_path);
-        } else if (error == ERROR_ACCESS_DENIED) {
-            cr_std_logger_outf(
-            CR_STD_LOGGER_LOG_TYPE_ERROR,
+        if (error == ERROR_ACCESS_DENIED) {
+            CR_LOG_ERROR_FMT(
             "cr_std_filesystem_make_dir -> Permission denied could not create directory '%s'",
             dir_path);
         } else if (error == ERROR_FILE_NOT_FOUND) {
-            cr_std_logger_outf(
-            CR_STD_LOGGER_LOG_TYPE_ERROR,
+            CR_LOG_ERROR_FMT(
             "cr_std_filesystem_make_dir -> Part of the directory could not be found '%s'",
             dir_path);
         } else {
-            cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR,
-                               "cr_std_filesystem_make_dir -> Failed to create directory");
+            CR_LOG_ERROR("cr_std_filesystem_make_dir -> Failed to create directory");
         }
         return CR_STD_FAIL;
     }
@@ -67,6 +64,16 @@ Vector *cr_std_filesystem_get_entries(Arena *arena,
                                       b8 include_files,
                                       b8 include_dirs,
                                       b8 recursive) {
+    if (!arena) {
+        CR_LOG_ERROR("cr_std_filesystem_get_entries -> arena* was NULL");
+        return NULL;
+    }
+
+    if (!file_path) {
+        CR_LOG_ERROR("cr_std_filesystem_get_entries -> file_path* was NULL");
+        return NULL;
+    }
+
     char search_path[MAX_PATH];
     snprintf(search_path, MAX_PATH, "%s\\*", file_path);
 
@@ -74,12 +81,15 @@ Vector *cr_std_filesystem_get_entries(Arena *arena,
 
     HANDLE hFind = FindFirstFile(search_path, &findData);
     if (hFind == INVALID_HANDLE_VALUE) {
-        cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR,
-                           "cr_std_filesystem_get_entries -> failed to open dir -> %s", file_path);
+        CR_LOG_ERROR_FMT("cr_std_filesystem_get_entries -> failed to open dir -> %s", file_path);
         return NULL;
     }
 
     Vector *vector = cr_std_vector_new(arena);
+    if (!vector) {
+        CR_LOG_ERROR("cr_std_filesystem_get_entries -> failed to create vector");
+        return NULL;
+    }
 
     // Temp arena for temporary strings
     Arena *temp_arena = cr_std_arena_new(CR_STD_MB);
@@ -101,8 +111,8 @@ Vector *cr_std_filesystem_get_entries(Arena *arena,
     do {
         cr_std_arena_reset_to_mark(temp_arena, current_mark);
         String *file_name = cr_std_string_new(temp_arena, findData.cFileName);
-        if (cr_std_string_compare(file_name, current_dir) == 1 ||
-            cr_std_string_compare(file_name, parent_dir) == 1) {
+        if (cr_std_string_compare(file_name, current_dir) == CR_STD_STRING_EQUAL ||
+            cr_std_string_compare(file_name, parent_dir) == CR_STD_STRING_EQUAL) {
             continue;
         }
 

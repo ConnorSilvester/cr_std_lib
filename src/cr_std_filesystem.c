@@ -16,6 +16,11 @@ String *cr_std_filesystem_get_current_time_date(Arena *arena, const char *time_d
         return NULL;
     }
 
+    if (!time_date_format) {
+        CR_LOG_ERROR("cr_std_filesystem_get_current_time -> time_date_format* was NULL");
+        return NULL;
+    }
+
     time_t rawtime;
     struct tm *timeinfo;
     char time_str[256];
@@ -24,8 +29,7 @@ String *cr_std_filesystem_get_current_time_date(Arena *arena, const char *time_d
     timeinfo = localtime(&rawtime);
 
     if (strftime(time_str, sizeof(time_str), time_date_format, timeinfo) == 0) {
-        cr_std_logger_out(
-        CR_STD_LOGGER_LOG_TYPE_ERROR,
+        CR_LOG_ERROR(
         "cr_std_filesystem_get_current_time -> strftime failed to format the format string");
         return NULL;
     }
@@ -186,12 +190,22 @@ String *cr_std_filesystem_read_file_as_string(Arena *arena, const char *file_pat
 }
 
 Vector *cr_std_filesystem_read_file_as_vector(Arena *arena, const char *file_path) {
+    if (!arena) {
+        CR_LOG_ERROR("cr_std_filesystem_read_file_as_vector -> arena* was NULL");
+        return NULL;
+    }
+
+    if (!arena) {
+        CR_LOG_ERROR("cr_std_filesystem_read_file_as_vector -> file_path* was NULL");
+        return NULL;
+    }
+
     Arena *temp_arena = cr_std_arena_new(CR_STD_FILE_MAX_SIZE);
     String *file_contents = cr_std_filesystem_read_file_as_string(temp_arena, file_path);
     if (!file_contents) {
-        cr_std_logger_outf(
-        CR_STD_LOGGER_LOG_TYPE_ERROR,
+        CR_LOG_ERROR_FMT(
         "cr_std_filesystem_read_file_as_vector -> failed to read file contents -> %s", file_path);
+        cr_std_arena_free(&temp_arena);
         return NULL;
     }
 
@@ -219,11 +233,34 @@ Vector *cr_std_filesystem_get_dir_files_r(Arena *arena, const char *file_path) {
 Vector *cr_std_filesystem_get_dirs_files_matching(Arena *arena,
                                                   const char *file_path,
                                                   const char *extension) {
+    if (!arena) {
+        CR_LOG_ERROR("cr_std_filesystem_get_dirs_files_matching -> arena* was NULL");
+        return NULL;
+    }
+    if (!file_path) {
+        CR_LOG_ERROR("cr_std_filesystem_get_dirs_files_matching -> file_path* was NULL");
+        return NULL;
+    }
+    if (!extension) {
+        CR_LOG_ERROR("cr_std_filesystem_get_dirs_files_matching -> extension* was NULL");
+        return NULL;
+    }
+
     Vector *files = cr_std_filesystem_get_dir_files(arena, file_path);
-    for (int i = files->size - 1; i >= 0; i--) {
+    if (!files) {
+        CR_LOG_ERROR_FMT(
+        "cr_std_filesystem_get_dirs_files_matching -> failed to fetch files for dir '%s'",
+        file_path);
+        return NULL;
+    }
+
+    for (size_t i = files->size - 1; i >= 0; i--) {
         Dirent *file = cr_std_vector_get_at(files, Dirent, i);
-        if (cr_std_string_compare_c_str(file->d_ext, extension) != 1) {
-            cr_std_vector_remove_element(files, i);
+        if (cr_std_string_compare_c_str(file->d_ext, extension) != CR_STD_STRING_EQUAL) {
+            if (cr_std_vector_remove_element(files, i) != CR_STD_OK) {
+                CR_LOG_WARNING_FMT(
+                "cr_std_filesystem_get_dirs_files_matching -> failed to remove element [%zu]", i);
+            }
         }
     }
     return files;
@@ -232,11 +269,34 @@ Vector *cr_std_filesystem_get_dirs_files_matching(Arena *arena,
 Vector *cr_std_filesystem_get_dirs_files_matching_r(Arena *arena,
                                                     const char *file_path,
                                                     const char *extension) {
+    if (!arena) {
+        CR_LOG_ERROR("cr_std_filesystem_get_dirs_files_matching_r -> arena* was NULL");
+        return NULL;
+    }
+    if (!file_path) {
+        CR_LOG_ERROR("cr_std_filesystem_get_dirs_files_matching_r -> file_path* was NULL");
+        return NULL;
+    }
+    if (!extension) {
+        CR_LOG_ERROR("cr_std_filesystem_get_dirs_files_matching_r -> extension* was NULL");
+        return NULL;
+    }
+
     Vector *files = cr_std_filesystem_get_dir_files_r(arena, file_path);
-    for (int i = files->size - 1; i >= 0; i--) {
+    if (!files) {
+        CR_LOG_ERROR_FMT(
+        "cr_std_filesystem_get_dirs_files_matching_r -> failed to fetch files for dir '%s'",
+        file_path);
+        return NULL;
+    }
+
+    for (size_t i = files->size - 1; i >= 0; i--) {
         Dirent *file = cr_std_vector_get_at(files, Dirent, i);
         if (cr_std_string_compare_c_str(file->d_ext, extension) != 1) {
-            cr_std_vector_remove_element(files, i);
+            if (cr_std_vector_remove_element(files, i) != CR_STD_OK) {
+                CR_LOG_WARNING_FMT(
+                "cr_std_filesystem_get_dirs_files_matching_r -> failed to remove element [%zu]", i);
+            }
         }
     }
     return files;
