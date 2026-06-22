@@ -6,11 +6,19 @@
 #include <stdlib.h>
 
 TestCase *cr_std_testing_new_test(Arena *arena, const char *name, b8 (*test_function)(void)) {
+    if (!arena) {
+        CR_LOG_ERROR("cr_std_testing_new_test -> arena* is NULL");
+        return NULL;
+    }
+
+    if (!name) {
+        CR_LOG_ERROR("cr_std_testing_new_test -> name* is NULL");
+        return NULL;
+    }
+
     TestCase *new_test = cr_std_arena_alloc(arena, sizeof(*new_test));
     if (!new_test) {
-        cr_std_logger_out(
-        CR_STD_LOGGER_LOG_TYPE_ERROR,
-        "cr_std_testing_new_test -> failed to allocate memory for new TestCase struct");
+        CR_LOG_ERROR("cr_std_testing_new_test -> arena alloc for new TestCase struct");
         return NULL;
     }
 
@@ -20,10 +28,24 @@ TestCase *cr_std_testing_new_test(Arena *arena, const char *name, b8 (*test_func
     return new_test;
 }
 
-void cr_std_testing_run_tests(Arena *arena, Vector *tests) {
+b8 cr_std_testing_run_tests(Arena *arena, Vector *tests) {
+    if (!arena) {
+        CR_LOG_ERROR("cr_std_testing_run_tests -> arena* is NULL");
+        return CR_STD_FAIL;
+    }
+
+    if (!tests) {
+        CR_LOG_ERROR("cr_std_testing_run_tests -> tests* is NULL");
+        return CR_STD_FAIL;
+    }
+
     Vector *list_of_errors = cr_std_vector_new(arena);
+    if (!list_of_errors) {
+        return CR_STD_FAIL;
+    }
+
     printf("--------------------------------------------------------\n");
-    for (int i = 0; i < tests->size; i++) {
+    for (size_t i = 0; i < tests->size; i++) {
         TestCase *test = cr_std_vector_get_at(tests, TestCase, i);
 
         if (test) {
@@ -32,7 +54,7 @@ void cr_std_testing_run_tests(Arena *arena, Vector *tests) {
             } else {
                 printf("Running test (%d / %ld) : %s ", i + 1, tests->size, test->name);
             }
-            int result = test->test_function();
+            b8 result = test->test_function();
             if (result) {
                 printf("%s\n", TEST_PASSED);
             } else {
@@ -50,4 +72,5 @@ void cr_std_testing_run_tests(Arena *arena, Vector *tests) {
             printf("\033[31mFailed Test\033[0m : %s\n", test->name);
         }
     }
+    return CR_STD_OK;
 }

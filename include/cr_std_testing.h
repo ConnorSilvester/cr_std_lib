@@ -43,8 +43,11 @@ TestCase *cr_std_testing_new_test(Arena *arena, const char *name, b8 (*test_func
  *
  * @param `arena` The arena to store the memory in
  * @param `tests` A pointer to a `Vector` struct containing the list of `TestCase` structs
+ *
+ * @return `CR_STD_OK` on success
+ * @return `CR_STD_FAIL` on failure
  */
-void cr_std_testing_run_tests(Arena *arena, Vector *tests);
+b8 cr_std_testing_run_tests(Arena *arena, Vector *tests);
 
 #ifdef __cplusplus
 }
