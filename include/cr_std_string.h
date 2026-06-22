@@ -1,11 +1,10 @@
 #ifndef CR_STD_STRING
 #define CR_STD_STRING
 
+#include "cr_std_utils.h"
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-#include <stdio.h>
 
 typedef struct Vector Vector;
 typedef struct Arena Arena;
@@ -13,9 +12,8 @@ typedef struct Arena Arena;
 /**
  * @brief Represents a string.
  *
- * Memory ownership:
- * - This struct owns the char *.
- * - Freeing a String struct will also free the char *.
+ * @note Memory is allocated from an arena passed to functions.
+ *       Does NOT store the arena - user passes it when needed.
  */
 typedef struct String {
     char *c_str;
@@ -37,6 +35,13 @@ typedef struct StringBuilder {
 #define CR_STD_STRING_TRIM_LEFT -1
 #define CR_STD_STRING_TRIM_BOTH 0
 #define CR_STD_STRING_TRIM_RIGHT 1
+
+#define CR_STD_STRING_EQUAL 1
+#define CR_STD_STRING_DIFFERENT 0
+#define CR_STD_STRING_ARG_LONGER -1
+#define CR_STD_STRING_ARG1_LONGER -2
+#define CR_STD_STRING_COMPARE_ERROR -3
+
 #define CR_STD_STRING_BUILDER_DEFAULT_CAP 256
 
 #define CR_STD_STRING_COLOR_BLACK 30
@@ -93,12 +98,12 @@ StringBuilder *cr_std_string_builder_newf(Arena *arena, const char *format, ...)
  * @param `string_builder` The `StringBuilder` struct to work on.
  * @param `additional` The amount of extra space wanted.
  *
- * @return `0` on success.
- * @return `1` on failure.
+ * @return `CR_STD_OK` on success.
+ * @return `CR_STD_FAIL` on failure.
  */
-int cr_std_string_builder_ensure_capacity(Arena *arena,
-                                          StringBuilder *string_builder,
-                                          size_t additional);
+b8 cr_std_string_builder_ensure_capacity(Arena *arena,
+                                         StringBuilder *string_builder,
+                                         size_t additional);
 
 /**
  * @brief Adds a single string to the string builder.
@@ -107,12 +112,12 @@ int cr_std_string_builder_ensure_capacity(Arena *arena,
  * @param `string_builder` The `StringBuilder` struct to work on.
  * @param `string` The string to add.
  *
- * @return `0` on success.
- * @return `1` on failure.
+ * @return `CR_STD_OK` on success.
+ * @return `CR_STD_FAIL` on failure.
  */
-int cr_std_string_builder_append_string(Arena *arena,
-                                        StringBuilder *string_builder,
-                                        const char *string);
+b8 cr_std_string_builder_append_string(Arena *arena,
+                                       StringBuilder *string_builder,
+                                       const char *string);
 
 /**
  * @brief Adds a single char to the string builder.
@@ -121,10 +126,10 @@ int cr_std_string_builder_append_string(Arena *arena,
  * @param `string_builder` The `StringBuilder` struct to work on.
  * @param `ch` The char to add.
  *
- * @return `0` on success.
- * @return `1` on failure.
+ * @return `CR_STD_OK` on success.
+ * @return `CR_STD_FAIL` on failure.
  */
-int cr_std_string_builder_append_char(Arena *arena, StringBuilder *string_builder, char ch);
+b8 cr_std_string_builder_append_char(Arena *arena, StringBuilder *string_builder, char ch);
 
 /**
  * @brief Adds a string to the string builder.
@@ -134,13 +139,13 @@ int cr_std_string_builder_append_char(Arena *arena, StringBuilder *string_builde
  * @param `format` The format string used to format like `printf` (`%s`, `%d`, etc.).
  *                 Can also be a single string to add, e.g. "hello".
  *
- * @return `0` on success.
- * @return `1` on failure.
+ * @return `CR_STD_OK` on success.
+ * @return `CR_STD_FAIL` on failure.
  */
-int cr_std_string_builder_appendf(Arena *arena,
-                                  StringBuilder *string_builder,
-                                  const char *format,
-                                  ...);
+b8 cr_std_string_builder_appendf(Arena *arena,
+                                 StringBuilder *string_builder,
+                                 const char *format,
+                                 ...);
 
 /**
  * @brief Adds strings to the string builder.
@@ -149,10 +154,10 @@ int cr_std_string_builder_appendf(Arena *arena,
  * @param `string_builder` A pointer to the `StringBuilder` struct to be updated.
  * @param `...` The strings to append.
  *
- * @return `0` on success.
- * @return `1` on failure.
+ * @return `CR_STD_OK` on success.
+ * @return `CR_STD_FAIL` on failure.
  */
-int cr_std_string_builder_append_null_terminated(Arena *arena, StringBuilder *string_builder, ...);
+b8 cr_std_string_builder_append_null_terminated(Arena *arena, StringBuilder *string_builder, ...);
 
 /**
  * @brief Macro to avoid having to add `NULL` to the end of arguments when calling the concat
@@ -170,10 +175,10 @@ int cr_std_string_builder_append_null_terminated(Arena *arena, StringBuilder *st
  *
  * @param `string_builder` The `StringBuilder` struct to work on.
  *
- * @return `0` on success.
- * @return `1` on failure.
+ * @return `CR_STD_OK` on success.
+ * @return `CR_STD_FAIL` on failure.
  */
-int cr_std_string_builder_reset(StringBuilder *string_builder);
+b8 cr_std_string_builder_reset(StringBuilder *string_builder);
 
 /**
  * @brief Resets a string builders string, back to the mark.
@@ -181,20 +186,21 @@ int cr_std_string_builder_reset(StringBuilder *string_builder);
  * @param `string_builder` The `StringBuilder` struct to work on.
  * @param `mark` The mark to set back too
  *
- * @return `0` on success.
- * @return `1` on failure.
+ * @return `CR_STD_OK` on success.
+ * @return `CR_STD_FAIL` on failure.
  */
-int cr_std_string_builder_reset_to_mark(StringBuilder *string_builder, size_t mark);
+b8 cr_std_string_builder_reset_to_mark(StringBuilder *string_builder, size_t mark);
 
 /**
  * @brief Returns the current mark
  *
  * @param `string_builder` The `StringBuilder` struct to work on.
+ * @param `mark` output param for the mark
  *
- * @return `mark` on success.
- * @return `0` on failure.
+ * @return `CR_STD_OK` on success.
+ * @return `CR_STD_FAIL` on failure.
  */
-size_t cr_std_string_builder_get_mark(StringBuilder *string_builder);
+b8 cr_std_string_builder_get_mark(StringBuilder *string_builder, size_t *mark);
 
 /**
  * @brief Resets a string builders string, back to nothing.
@@ -250,10 +256,10 @@ String *cr_std_string_make_copy(Arena *arena, String *src_string);
  * @param `string` A pointer to the `String` struct to be updated.
  * @param `...` The strings to concatenate, terminated with a `NULL`.
  *
- * @return `0` on success.
- * @return `1` on failure.
+ * @return `CR_STD_OK` on success.
+ * @return `CR_STD_FAIL` on failure.
  */
-int cr_std_string_concat_null_terminated(Arena *arena, String *string, ...);
+b8 cr_std_string_concat_null_terminated(Arena *arena, String *string, ...);
 
 /**
  * @brief Macro to avoid having to add `NULL` to the end of arguments when calling the concat
@@ -272,14 +278,13 @@ int cr_std_string_concat_null_terminated(Arena *arena, String *string, ...);
  * @param `arg` The first string to compare.
  * @param `arg1` The second string to compare.
  *
- * @return `1` if full equality (same characters in the same order).
- * @return `0` if equal in length but different characters.
- * @return `-1` if the first string is longer.
- * @return `-2` if the second string is longer.
+ * @return `CR_STD_STRING_EQUAL` if full equality (same characters in the same order).
+ * @return `CR_STD_STRING_DIFFERENT` if equal in length but different characters.
+ * @return `CR_STD_STRING_ARG_LONGER` if the first string is longer.
+ * @return `CR_STD_STRING_ARG1_LONGER` if the second string is longer.
  * @return `CR_STD_STRING_COMPARE_ERROR` in case of errors.
  */
-int cr_std_string_compare(String *arg, String *arg1);
-#define CR_STD_STRING_COMPARE_ERROR 3
+i32 cr_std_string_compare(String *arg, String *arg1);
 
 /**
  * @brief Compares String and a c str.
@@ -287,12 +292,13 @@ int cr_std_string_compare(String *arg, String *arg1);
  * @param `arg` The first string to compare.
  * @param `arg1` The second raw string to compare.
  *
- * @return `1` if full equality (same characters in the same order).
- * @return `0` if equal in length but different characters.
- * @return `-1` if the first string is longer.
- * @return `-2` if the second string is longer.
+ * @return `CR_STD_STRING_EQUAL` if full equality (same characters in the same order).
+ * @return `CR_STD_STRING_DIFFERENT` if equal in length but different characters.
+ * @return `CR_STD_STRING_ARG_LONGER` if the first string is longer.
+ * @return `CR_STD_STRING_ARG1_LONGER` if the second string is longer.
+ * @return `CR_STD_STRING_COMPARE_ERROR` in case of errors.
  */
-int cr_std_string_compare_c_str(String *arg, const char *arg1);
+i32 cr_std_string_compare_c_str(String *arg, const char *arg1);
 
 /**
  * @brief Trims a string of white space in both directions of the string.
@@ -301,15 +307,13 @@ int cr_std_string_compare_c_str(String *arg, const char *arg1);
  * @param `direction` Which dir you want to cut or both
  *
  * Defined as `CR_STD_STRING_TRIM_LEFT`
- *
  * Defined as `CR_STD_STRING_TRIM_RIGHT`
- *
  * Defined as `CR_STD_STRING_TRIM_BOTH`
  *
- * @return `0` if the string is trimmed successfully.
- * @return `1` if the string failed to be trimmed.
+ * @return `CR_STD_OK` if the string is trimmed successfully.
+ * @return `CR_STD_FAIL` if the string failed to be trimmed.
  */
-int cr_std_string_trim(String *string, int direction);
+b8 cr_std_string_trim(String *string, int direction);
 
 /**
  * @brief Finds the first index of a character in a given string.
@@ -320,7 +324,7 @@ int cr_std_string_trim(String *string, int direction);
  * @return The index of the character in the string.
  * @return `-1` if the character is not found.
  */
-int cr_std_string_find_char(String *string, char ch);
+i32 cr_std_string_find_char(String *string, char ch);
 
 /**
  * @brief Finds the n index of a character in a given string.
@@ -332,7 +336,7 @@ int cr_std_string_find_char(String *string, char ch);
  * @return The index of the n character in the string.
  * @return `-1` if the character is not found.
  */
-int cr_std_string_find_char_n(String *string, char ch, int n);
+i32 cr_std_string_find_char_n(String *string, char ch, int n);
 
 /**
  * @brief Finds the last index of a character in a given string.
@@ -343,7 +347,7 @@ int cr_std_string_find_char_n(String *string, char ch, int n);
  * @return The index of the character in the string.
  * @return `-1` if the character is not found.
  */
-int cr_std_string_find_char_last(String *string, char ch);
+i32 cr_std_string_find_char_last(String *string, char ch);
 
 /**
  * @brief Finds the first index of a string in a given string.
@@ -354,7 +358,7 @@ int cr_std_string_find_char_last(String *string, char ch);
  * @return The index of the phrase in the string.
  * @return `-1` if the phrase is not found.
  */
-int cr_std_string_find_string(String *string, const char *phrase);
+i32 cr_std_string_find_string(String *string, const char *phrase);
 
 /**
  * @brief Finds the n index of a string in a given string.
@@ -366,7 +370,7 @@ int cr_std_string_find_string(String *string, const char *phrase);
  * @return The index of the n phrase in the string.
  * @return `-1` if the phrase is not found.
  */
-int cr_std_string_find_string_n(String *string, const char *phrase, int n);
+i32 cr_std_string_find_string_n(String *string, const char *phrase, int n);
 
 /**
  * @brief Finds the last index of a string in a given string.
@@ -377,7 +381,7 @@ int cr_std_string_find_string_n(String *string, const char *phrase, int n);
  * @return The index of the phrase in the string.
  * @return `-1` if the phrase is not found.
  */
-int cr_std_string_find_string_last(String *string, const char *phrase);
+i32 cr_std_string_find_string_last(String *string, const char *phrase);
 
 /**
  * @brief Check if a string contains a phrase.
@@ -388,7 +392,7 @@ int cr_std_string_find_string_last(String *string, const char *phrase);
  * @return `number of occurrences` if the string contains the phrase
  * @return `0` if the string does not contain the phrase
  */
-int cr_std_string_contains_string(String *string, const char *phrase);
+i32 cr_std_string_contains_string(String *string, const char *phrase);
 
 /**
  * @brief Check if a string contains a char.
@@ -399,7 +403,7 @@ int cr_std_string_contains_string(String *string, const char *phrase);
  * @return `number of occurrences` if the string contains the char.
  * @return `0` if the string does not contain the char.
  */
-int cr_std_string_contains_char(String *string, char ch);
+i32 cr_std_string_contains_char(String *string, char ch);
 
 /**
  * @brief Check if a string has a prefix
@@ -407,10 +411,10 @@ int cr_std_string_contains_char(String *string, char ch);
  * @param `string` The string to check.
  * @param `prefix` The prefix to check.
  *
- * @return `1` if the string has the prefix
- * @return `0` if the string does not have the prefix
+ * @return `true` if the string has the prefix
+ * @return `false` if the string does not have the prefix
  */
-int cr_std_string_starts_with_string(String *string, const char *prefix);
+b8 cr_std_string_starts_with_string(String *string, const char *prefix);
 
 /**
  * @brief Check if a string has a suffix
@@ -418,10 +422,10 @@ int cr_std_string_starts_with_string(String *string, const char *prefix);
  * @param `string` The string to check.
  * @param `suffix` The suffix to check.
  *
- * @return `1` if the string has the suffix
- * @return `0` if the string does not have the suffix
+ * @return `true` if the string has the suffix
+ * @return `false` if the string does not have the suffix
  */
-int cr_std_string_ends_with_string(String *string, const char *suffix);
+b8 cr_std_string_ends_with_string(String *string, const char *suffix);
 
 /**
  * @brief Check if a string has a prefix
@@ -429,10 +433,10 @@ int cr_std_string_ends_with_string(String *string, const char *suffix);
  * @param `string` The string to check.
  * @param `ch` The prefix to check.
  *
- * @return `1` if the string has the prefix
- * @return `0` if the string does not have the prefix
+ * @return `true` if the string has the prefix
+ * @return `false` if the string does not have the prefix
  */
-int cr_std_string_starts_with_char(String *string, char prefix);
+b8 cr_std_string_starts_with_char(String *string, char prefix);
 
 /**
  * @brief Check if a string has a suffix
@@ -440,10 +444,10 @@ int cr_std_string_starts_with_char(String *string, char prefix);
  * @param `string` The string to check.
  * @param `ch` The suffix to check.
  *
- * @return `1` if the string has the suffix
- * @return `0` if the string does not have the suffix
+ * @return `true` if the string has the suffix
+ * @return `false` if the string does not have the suffix
  */
-int cr_std_string_ends_with_char(String *string, char suffix);
+b8 cr_std_string_ends_with_char(String *string, char suffix);
 
 /**
  * @brief Fetch char at index
@@ -460,11 +464,12 @@ char cr_std_string_char_at(String *string, int index);
  * @brief Calculate the hash code of a string.
  *
  * @param `string` The string to calculate the hash code for.
+ * @param `hash` The output param to store the hash.
  *
- * @return `hash` code of the string.
- * @return `-1` if error.
+ * @return `CR_STD_OK` on success.
+ * @return `CR_STD_FAIL` on failure.
  */
-unsigned long cr_std_string_hash_code(String *string);
+b8 cr_std_string_hash_code(String *string, u64 *hash);
 
 /**
  * @brief Splits a string into a `Vector`.
@@ -497,30 +502,30 @@ Vector *cr_std_string_split_hard(Arena *arena, String *string, char delimiter);
  *
  * @param `string` The string to work on.
  *
- * @return `0` if the string is changed.
- * @return `1` if error.
+ * @return `CR_STD_OK` if the string is changed.
+ * @return `CR_STD_FAIL` if error.
  */
-int cr_std_string_to_upper(String *string);
+b8 cr_std_string_to_upper(String *string);
 
 /**
  * @Convert a string to lower case.
  *
  * @param `string` The string to work on.
  *
- * @return `0` if the string is changed.
- * @return `1` if error.
+ * @return `CR_STD_OK` if the string is changed.
+ * @return `CR_STD_FAIL` if error.
  */
-int cr_std_string_to_lower(String *string);
+b8 cr_std_string_to_lower(String *string);
 
 /**
  * @Convert a string to title case.
  *
  * @param `string` The string to work on.
  *
- * @return `0` if the string is changed.
- * @return `1` if error.
+ * @return `CR_STD_OK` if the string is changed.
+ * @return `CR_STD_FAIL` if error.
  */
-int cr_std_string_to_title(String *string);
+b8 cr_std_string_to_title(String *string);
 
 /**
  * @brief Replaces all occurrences of `from` with `to` in a given string.
@@ -535,36 +540,38 @@ int cr_std_string_to_title(String *string);
  * @return `number of replaced words`.
  * @return `0` if nothing is replaced.
  */
-int cr_std_string_replace_string(Arena *arena, String *string, const char *from, const char *to);
+i32 cr_std_string_replace_string(Arena *arena, String *string, const char *from, const char *to);
 
 /**
  * @brief Removes all characters that are not numbers.
  *
  * @param `string` The `String` to work on.
  *
- * @return `0` on success.
- * @return `1` on failure.
+ * @return `CR_STD_OK` on success.
+ * @return `CR_STD_FAIL` on failure.
  */
-int cr_std_string_remove_non_numeric(String *string);
+b8 cr_std_string_remove_non_numeric(String *string);
 
 /**
  * @brief Removes all characters that are considered numbers.
  *
  * @param `string` The `String` to work on.
  *
- * @return `0` on success.
- * @return `1` on failure.
+ * @return `CR_STD_OK` on success.
+ * @return `CR_STD_FAIL` on failure.
  */
-int cr_std_string_remove_numeric(String *string);
+b8 cr_std_string_remove_numeric(String *string);
 
 /**
  * @brief Returns the numerical representation of a string
  *
  * @param `string` The `String` to work on.
+ * @param `number` The result.
  *
- * @return `int` The numerical representation of the string
+ * @return `CR_STD_OK` on success.
+ * @return `CR_STD_FAIL` on failure.
  */
-int cr_std_string_to_int(String *string);
+b8 cr_std_string_to_int(String *string, i32 *number);
 
 /**
  * @brief Returns the string representation of a number.
@@ -619,10 +626,10 @@ cr_std_string_color_phrase(Arena *arena, String *string, const char *phrase, int
  *
  * @param `string` The `String` to work from.
  *
- * @return `0` on success
- * @return `1` on failure
+ * @return `CR_STD_OK` on success
+ * @return `CR_STD_FAIL` on failure
  */
-int cr_std_string_color_strip(String *string);
+b8 cr_std_string_color_strip(String *string);
 
 /**
  * @brief Repeats a string n times.

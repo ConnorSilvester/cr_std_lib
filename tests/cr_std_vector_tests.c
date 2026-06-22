@@ -48,13 +48,13 @@ void cr_std_vector_test_all() {
     cr_std_arena_free(&g_vec_testing_arena);
 }
 
-int cr_std_vector_test_new_vector_normal() {
+b8 cr_std_vector_test_new_vector_normal() {
     Vector *vector = cr_std_vector_new(g_vec_testing_arena);
     int result = vector != NULL;
     return result;
 }
 
-int cr_std_vector_test_push_back_primitive() {
+b8 cr_std_vector_test_push_back_primitive() {
     Vector *vector = cr_std_vector_new(g_vec_testing_arena);
     int expected_size = 5;
 
@@ -67,7 +67,7 @@ int cr_std_vector_test_push_back_primitive() {
     return result;
 }
 
-int cr_std_vector_test_push_back_custom() {
+b8 cr_std_vector_test_push_back_custom() {
     Vector *vector = cr_std_vector_new(g_vec_testing_arena);
 
     int expected_size = 4;
@@ -84,7 +84,7 @@ int cr_std_vector_test_push_back_custom() {
     return result;
 }
 
-int cr_std_vector_test_remove_element_primitive() {
+b8 cr_std_vector_test_remove_element_primitive() {
     Vector *vector = cr_std_vector_new(g_vec_testing_arena);
     int expected_size = 3;
     char *string_1 = "Hello";
@@ -105,7 +105,7 @@ int cr_std_vector_test_remove_element_primitive() {
     return result;
 }
 
-int cr_std_vector_test_remove_element_custom() {
+b8 cr_std_vector_test_remove_element_custom() {
     Vector *vector = cr_std_vector_new(g_vec_testing_arena);
 
     int expected_size = 2;
@@ -125,7 +125,7 @@ int cr_std_vector_test_remove_element_custom() {
     return result;
 }
 
-int cr_std_vector_test_remove_element_invalid_vector() {
+b8 cr_std_vector_test_remove_element_invalid_vector() {
     Vector *vector = NULL;
 
     int function_result = cr_std_vector_remove_element(vector, 0);
@@ -133,7 +133,7 @@ int cr_std_vector_test_remove_element_invalid_vector() {
     return result;
 }
 
-int cr_std_vector_test_remove_element_invalid_index() {
+b8 cr_std_vector_test_remove_element_invalid_index() {
     Vector *vector = cr_std_vector_new(g_vec_testing_arena);
 
     int expected_size = 4;
@@ -152,7 +152,7 @@ int cr_std_vector_test_remove_element_invalid_index() {
     return result;
 }
 
-int cr_std_vector_test_remove_element_invalid_index_negative() {
+b8 cr_std_vector_test_remove_element_invalid_index_negative() {
     Vector *vector = cr_std_vector_new(g_vec_testing_arena);
 
     int expected_size = 0;
@@ -161,7 +161,7 @@ int cr_std_vector_test_remove_element_invalid_index_negative() {
     return result;
 }
 
-int cr_std_vector_test_remove_element_empty_vector() {
+b8 cr_std_vector_test_remove_element_empty_vector() {
     Vector *vector = cr_std_vector_new(g_vec_testing_arena);
 
     int expected_size = 0;
@@ -170,7 +170,7 @@ int cr_std_vector_test_remove_element_empty_vector() {
     return result;
 }
 
-int cr_std_vector_test_get_element_primitive() {
+b8 cr_std_vector_test_get_element_primitive() {
     Vector *vector = cr_std_vector_new(g_vec_testing_arena);
     int expected_size = 5;
     int number_1 = 1;
@@ -196,7 +196,7 @@ int cr_std_vector_test_get_element_primitive() {
     return result;
 }
 
-int cr_std_vector_test_get_element_custom() {
+b8 cr_std_vector_test_get_element_custom() {
     Vector *vector = cr_std_vector_new(g_vec_testing_arena);
 
     int expected_size = 4;
@@ -218,14 +218,14 @@ int cr_std_vector_test_get_element_custom() {
     return result;
 }
 
-int cr_std_vector_test_get_element_invalid_vector() {
+b8 cr_std_vector_test_get_element_invalid_vector() {
     Vector *vector = NULL;
 
     int result = cr_std_vector_get_element(vector, 0) == NULL;
     return result;
 }
 
-int cr_std_vector_test_get_element_invalid_index() {
+b8 cr_std_vector_test_get_element_invalid_index() {
     Vector *vector = cr_std_vector_new(g_vec_testing_arena);
 
     int expected_size = 4;
@@ -244,7 +244,7 @@ int cr_std_vector_test_get_element_invalid_index() {
     return result;
 }
 
-int cr_std_vector_test_get_element_invalid_index_negative() {
+b8 cr_std_vector_test_get_element_invalid_index_negative() {
     Vector *vector = cr_std_vector_new(g_vec_testing_arena);
 
     int expected_size = 0;
@@ -253,7 +253,7 @@ int cr_std_vector_test_get_element_invalid_index_negative() {
     return result;
 }
 
-int cr_std_vector_test_get_element_empty_vector() {
+b8 cr_std_vector_test_get_element_empty_vector() {
     Vector *vector = cr_std_vector_new(g_vec_testing_arena);
 
     int expected_size = 0;
@@ -262,7 +262,7 @@ int cr_std_vector_test_get_element_empty_vector() {
     return result;
 }
 
-int cr_std_vector_test_extend_primitive() {
+b8 cr_std_vector_test_extend_primitive() {
     Vector *dest = cr_std_vector_new(g_vec_testing_arena);
     Vector *src = cr_std_vector_new(g_vec_testing_arena);
 
@@ -288,7 +288,7 @@ int cr_std_vector_test_extend_primitive() {
     return result;
 }
 
-int cr_std_vector_test_extend_custom() {
+b8 cr_std_vector_test_extend_custom() {
     Vector *dest = cr_std_vector_new(g_vec_testing_arena);
     Vector *src = cr_std_vector_new(g_vec_testing_arena);
 

@@ -33,19 +33,19 @@ String *cr_std_filesystem_get_current_time_date(Arena *arena, const char *time_d
     return cr_std_string_new(arena, time_str);
 }
 
-int cr_std_filesystem_copy_file(const char *src, const char *dest) {
+b8 cr_std_filesystem_copy_file(const char *src, const char *dest) {
 
     FILE *src_file = fopen(src, "rb");
     if (!src_file) {
         CR_LOG_ERROR_FMT("cr_std_filesystem_copy_file -> file can't be opened -> %s", src);
-        return 1;
+        return CR_STD_FAIL;
     }
 
     FILE *dest_file = fopen(dest, "wb");
     if (!dest_file) {
         fclose(src_file);
         CR_LOG_ERROR_FMT("cr_std_filesystem_copy_file -> file can't be opened -> %s", dest);
-        return 1;
+        return CR_STD_FAIL;
     }
 
     setvbuf(src_file, NULL, _IOFBF, 64 * CR_STD_KB);
@@ -58,7 +58,7 @@ int cr_std_filesystem_copy_file(const char *src, const char *dest) {
             CR_LOG_ERROR_FMT("cr_std_filesystem_copy_file -> error writing to file -> %s", dest);
             fclose(src_file);
             fclose(dest_file);
-            return 1;
+            return CR_STD_FAIL;
         }
     }
 
@@ -66,21 +66,21 @@ int cr_std_filesystem_copy_file(const char *src, const char *dest) {
         CR_LOG_ERROR_FMT("cr_std_filesystem_copy_file -> error reading from file -> %s", src);
         fclose(src_file);
         fclose(dest_file);
-        return 1;
+        return CR_STD_FAIL;
     }
 
     fclose(dest_file);
     fclose(src_file);
 
-    return 0;
+    return CR_STD_OK;
 }
 
-int cr_std_filesystem_move_file(const char *src, const char *dest) {
+b8 cr_std_filesystem_move_file(const char *src, const char *dest) {
     if (rename(src, dest) == 0) {
         cr_std_logger_outf(
         CR_STD_LOGGER_LOG_TYPE_INFO,
         "cr_std_filesystem_move_file -> File moved from '%s' to '%s' successfully", src, dest);
-        return 0;
+        return CR_STD_OK;
     } else {
         if (errno == ENOENT) {
             cr_std_logger_outf(
@@ -109,15 +109,15 @@ int cr_std_filesystem_move_file(const char *src, const char *dest) {
             cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR,
                               "cr_std_filesystem_move_file -> Failed to move file");
         }
-        return 1;
+        return CR_STD_FAIL;
     }
 }
 
-int cr_std_filesystem_write_file_operations(const char *file_path,
-                                            const char *data,
-                                            const char *mode) {
+b8 cr_std_filesystem_write_file_operations(const char *file_path,
+                                           const char *data,
+                                           const char *mode) {
     if (!data || !file_path || !mode) {
-        return 1;
+        return CR_STD_FAIL;
     }
 
     FILE *file = fopen(file_path, mode);
@@ -125,25 +125,25 @@ int cr_std_filesystem_write_file_operations(const char *file_path,
         cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR,
                            "cr_std_filesystem_write_file_operations -> file can't be opened -> %s",
                            file_path);
-        return 1;
+        return CR_STD_FAIL;
     }
 
     if (fputs(data, file) == EOF) {
         cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR,
                           "cr_std_filesystem_write_file_operations  -> failed to write data");
         fclose(file);
-        return 1;
+        return CR_STD_FAIL;
     }
 
     fclose(file);
-    return 0;
+    return CR_STD_OK;
 }
 
-int cr_std_filesystem_write_to_file(const char *file_path, const char *data) {
+b8 cr_std_filesystem_write_to_file(const char *file_path, const char *data) {
     return cr_std_filesystem_write_file_operations(file_path, data, "w");
 }
 
-int cr_std_filesystem_append_to_file(const char *file_path, const char *data) {
+b8 cr_std_filesystem_append_to_file(const char *file_path, const char *data) {
     return cr_std_filesystem_write_file_operations(file_path, data, "a");
 }
 

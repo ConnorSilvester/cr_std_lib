@@ -2,7 +2,6 @@
 #define CR_STD_ARENA
 
 #include "cr_std_utils.h"
-#include <stdio.h>
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -13,7 +12,7 @@ typedef struct Arena {
     size_t used;
 } Arena;
 
-#define CR_STD_ARENA_DEFAULT_CAPACITY (1 * CR_STD_MB)
+#define CR_STD_ARENA_DEFAULT_CAPACITY (64 * CR_STD_KB)
 
 /**
  * @brief Allocates a new Arena struct on the heap
@@ -32,10 +31,10 @@ Arena *cr_std_arena_new(size_t capacity);
  * @param `memory` A pointer to the user specified memory location
  * @param `capacity` number of bytes the user has allocated allocated
  *
- * @return `0` on success.
- * @return `1` on error.
+ * @return `CR_STD_OK` on success.
+ * @return `CR_STD_FAIL` on error.
  */
-int cr_std_arena_init(Arena *arena, void *memory, size_t capacity);
+b8 cr_std_arena_init(Arena *arena, void *memory, size_t capacity);
 
 /**
  * @brief Used to allocate memory to a given arena
@@ -53,10 +52,10 @@ void *cr_std_arena_alloc(Arena *arena, size_t size);
  *
  * @param `arena` A pointer to the Arena struct
  *
- * @return `0` on success.
- * @return `1` on error.
+ * @return `CR_STD_OK` on success.
+ * @return `CR_STD_FAIL` on error.
  */
-int cr_std_arena_reset(Arena *arena);
+b8 cr_std_arena_reset(Arena *arena);
 
 /**
  * @brief Used to reset a Arena struct, does not free memory
@@ -64,10 +63,10 @@ int cr_std_arena_reset(Arena *arena);
  * @param `arena` A pointer to the Arena struct
  * @param `mark` The pos to reset too
  *
- * @return `0` on success.
- * @return `1` on error.
+ * @return `CR_STD_OK` on success.
+ * @return `CR_STD_FAIL` on error.
  */
-int cr_std_arena_reset_to_mark(Arena *arena, size_t mark);
+b8 cr_std_arena_reset_to_mark(Arena *arena, size_t mark);
 
 /**
  * @brief Used to free an Arena struct
@@ -77,31 +76,32 @@ int cr_std_arena_reset_to_mark(Arena *arena, size_t mark);
  * @warning Do `NOT` call this on arenas initialized with `cr_std_arena_init()`
  *          Stack/static arenas are freed automatically when they go out of scope
  *
- * @return `0` on success.
- * @return `1` on error.
+ * @return `CR_STD_OK` on success.
+ * @return `CR_STD_FAIL` on error.
  */
-int cr_std_arena_free(Arena **arena_ptr);
-#define cr_std_arena_free_ptr ((int (*)(void **))cr_std_arena_free)
+b8 cr_std_arena_free(Arena **arena_ptr);
 
 /**
  * @brief Used to query the remaining bytes of the Arena struct
  *
  * @param `arena` A pointer to the Arena struct
+ * @param `remaining` Output parameter for remaining bytes
  *
- * @return `size_t` number of remaining bytes available.
- * @return `0` on error.
+ * @return `CR_STD_OK` on success.
+ * @return `CR_STD_FAIL` on error.
  */
-size_t cr_std_arena_remaining(Arena *arena);
+b8 cr_std_arena_remaining(Arena *arena, size_t *remaining);
 
 /**
  * @brief Used to query the current mark in the arena
  *
  * @param `arena` A pointer to the Arena struct
+ * @param `mark` Output parameter for the mark position
  *
- * @return `size_t` the current pos of the marker
- * @return `0` on error.
+ * @return `CR_STD_OK` on success.
+ * @return `CR_STD_FAIL` on error.
  */
-size_t cr_std_arena_get_mark(Arena *arena);
+b8 cr_std_arena_get_mark(Arena *arena, size_t *mark);
 
 #ifdef __cplusplus
 }

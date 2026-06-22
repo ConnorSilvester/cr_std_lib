@@ -1,11 +1,11 @@
 #ifndef CR_STD_VECTOR
 #define CR_STD_VECTOR
 
+#include "cr_std_utils.h"
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#include <stdbool.h>
 #include <stdio.h>
 
 typedef struct Arena Arena;
@@ -74,10 +74,10 @@ Vector *cr_std_vector_newf(Arena *arena, size_t initial_capacity);
  * @param `vector` The vector you want to add to.
  * @param `element` The element you want to add.
  *
- * @return `0` on success.
- * @return `1` on failure.
+ * @return `CR_STD_OK` on success.
+ * @return `CR_STD_FAIL` on failure.
  */
-int cr_std_vector_push_back(Arena *arena, Vector *vector, void *element);
+b8 cr_std_vector_push_back(Arena *arena, Vector *vector, void *element);
 
 /**
  * @brief Removes an element from the vector.
@@ -85,10 +85,10 @@ int cr_std_vector_push_back(Arena *arena, Vector *vector, void *element);
  * @param `vector` The vector you want to remove from.
  * @param `index` The index of the element you want to remove.
  *
- * @return `0` on success.
- * @return `1` on failure.
+ * @return `CR_STD_OK` on success.
+ * @return `CR_STD_FAIL` on failure.
  */
-int cr_std_vector_remove_element(Vector *vector, size_t index);
+b8 cr_std_vector_remove_element(Vector *vector, size_t index);
 
 /**
  * @brief Fetches an element from the vector.
@@ -108,10 +108,10 @@ void *cr_std_vector_get_element(Vector *vector, size_t index);
  * @param `dest` The destination vector to add the items too.
  * @param `src` The source vector to add the items from.
  *
- * @return `0` on success.
- * @return `1` on failure.
+ * @return `CR_STD_OK` on success.
+ * @return `CR_STD_FAIL` on failure.
  */
-int cr_std_vector_extend(Arena *arena, Vector *dest, Vector *src);
+b8 cr_std_vector_extend(Arena *arena, Vector *dest, Vector *src);
 
 /**
  * @brief Clears the vector (resets size to 0).
@@ -119,10 +119,10 @@ int cr_std_vector_extend(Arena *arena, Vector *dest, Vector *src);
  *
  * @param vector The vector to clear
  *
- * @return `0` on success.
- * @return `1` on failure.
+ * @return `CR_STD_OK` on success.
+ * @return `CR_STD_FAIL` on failure.
  */
-int cr_std_vector_clear(Vector *vector);
+b8 cr_std_vector_clear(Vector *vector);
 #ifdef __cplusplus
 }
 #endif

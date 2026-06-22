@@ -13,7 +13,7 @@ CSVFile *cr_std_csv_new(Arena *arena) {
         return NULL;
     }
 
-    CSVFile *csv = cr_std_arena_alloc(arena, sizeof(CSVFile));
+    CSVFile *csv = cr_std_arena_alloc(arena, sizeof(*csv));
     if (!csv) {
         cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR,
                           "cr_std_csv_new -> failed to allocate memory for CSVFile");
@@ -21,6 +21,11 @@ CSVFile *cr_std_csv_new(Arena *arena) {
     }
     csv->titles = cr_std_vector_new(arena);
     csv->rows = cr_std_vector_new(arena);
+
+    if (!csv->titles || !csv->rows) {
+        CR_LOG_ERROR("cr_std_csv_new -> failed to create vectors");
+        return NULL;
+    }
     return csv;
 }
 
@@ -36,27 +41,49 @@ CSVRow *cr_std_csv_row_new(Arena *arena) {
                           "cr_std_csv_row_new -> failed to allocate memory for Row");
         return NULL;
     }
+
     row->fields = cr_std_vector_new(arena);
+    if (!row->fields) {
+        CR_LOG_ERROR("cr_std_csv_row_new -> failed to create fields vector");
+        return NULL;
+    }
     return row;
 }
 
 CSVFile *cr_std_csv_parse_file(Arena *arena, const char *file_path) {
     CSVFile *csv = cr_std_csv_new(arena);
+    if (!csv) {
+        CR_LOG_ERROR("cr_std_csv_parse_file -> failed to create CSVFile");
+        return NULL;
+    }
 
     Arena *temp_arena = cr_std_arena_new(CR_STD_FILE_MAX_SIZE);
+    if (!temp_arena) {
+        CR_LOG_ERROR("cr_std_csv_parse_file -> failed to create temp arena");
+        return NULL;
+    }
+
     String *file_contents = cr_std_filesystem_read_file_as_string(temp_arena, file_path);
     if (!file_contents) {
         cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_WARNING,
                           "cr_std_csv_parse_file -> returned empty CSVFile");
-        return csv;
+        return NULL;
     }
     const char *src = file_contents->c_str;
 
-    bool in_quotes = false;
-    bool is_first_row = true;
+    b8 in_quotes = false;
+    b8 is_first_row = true;
     StringBuilder *sb = cr_std_string_builder_newc(temp_arena, "", temp_arena->capacity / 4);
+    if (!sb) {
+        CR_LOG_ERROR("cr_std_csv_parse_file -> failed to create string builder");
+        return NULL;
+    }
 
     CSVRow *row = cr_std_csv_row_new(arena);
+    if (!row) {
+        CR_LOG_ERROR("cr_std_csv_parse_file -> failed to create row");
+        return NULL;
+    }
 
     int index = 0;
     if (file_contents->length >= 3 && (unsigned char)src[0] == 0xEF &&
@@ -113,11 +140,15 @@ CSVFile *cr_std_csv_parse_file(Arena *arena, const char *file_path) {
     return csv;
 }
 
-int cr_std_csv_print_contents(CSVFile *csv) {
+b8 cr_std_csv_print_contents(CSVFile *csv) {
     if (!csv) {
         cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_ERROR,
                           "cr_std_csv_print_contents -> CSVFile struct is NULL");
-        return 1;
+        return CR_STD_FAIL;
+    }
+
+    if (!csv->rows || !csv->titles) {
+        return CR_STD_FAIL;
     }
 
     // Header
@@ -141,5 +172,5 @@ int cr_std_csv_print_contents(CSVFile *csv) {
         }
     }
 
-    return 0;
+    return CR_STD_OK;
 }

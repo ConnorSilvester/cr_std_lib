@@ -1,6 +1,7 @@
-#include "cr_std_arena.h"
+#include <dirent.h>
 #if defined(__linux__) || defined(__APPLE__)
 
+#include "cr_std_arena.h"
 #include "cr_std_filesystem.h"
 #include "cr_std_logger.h"
 #include "cr_std_string.h"
@@ -26,11 +27,11 @@ String *cr_std_filesystem_get_cwd(Arena *arena) {
     return cr_std_string_new(arena, cwd);
 }
 
-int cr_std_filesystem_make_dir(const char *dir_path, mode_t permissions) {
+b8 cr_std_filesystem_make_dir(const char *dir_path, mode_t permissions) {
     if (mkdir(dir_path, permissions) == 0) {
         cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_INFO,
                            "cr_std_filesystem_make_dir -> Directory created '%s'", dir_path);
-        return 0;
+        return CR_STD_OK;
     } else {
         if (errno == EEXIST) {
             // cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_WARNING,
@@ -50,15 +51,15 @@ int cr_std_filesystem_make_dir(const char *dir_path, mode_t permissions) {
             cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR,
                                "cr_std_filesystem_make_dir -> Failed to create directory");
         }
-        return 1;
+        return CR_STD_FAIL;
     }
 }
 
 Vector *cr_std_filesystem_get_entries(Arena *arena,
                                       const char *file_path,
-                                      bool include_files,
-                                      bool include_dirs,
-                                      bool recursive) {
+                                      b8 include_files,
+                                      b8 include_dirs,
+                                      b8 recursive) {
     if (!arena) {
         CR_LOG_ERROR("cr_std_filesystem_get_entries -> arena* was NULL");
         return NULL;
@@ -82,7 +83,12 @@ Vector *cr_std_filesystem_get_entries(Arena *arena,
 
     String *current_dir = cr_std_string_new(temp_arena, ".");
     String *parent_dir = cr_std_string_new(temp_arena, "..");
-    size_t current_mark = cr_std_arena_get_mark(temp_arena);
+    size_t current_mark;
+    if (cr_std_arena_get_mark(temp_arena, &current_mark) != CR_STD_OK) {
+        cr_std_arena_free(&temp_arena);
+        closedir(dir);
+        return vector;
+    }
 
     struct dirent *entry;
     while ((entry = readdir(dir)) != NULL) {
@@ -114,7 +120,7 @@ Vector *cr_std_filesystem_get_entries(Arena *arena,
         custom_entry->d_name = cr_std_string_make_copy(arena, file_name);
         custom_entry->d_path = cr_std_string_make_copy(arena, full_path);
         custom_entry->d_type = entry->d_type;
-        custom_entry->d_hidden = (file_name->c_str[0] == '.') ? 1 : 0;
+        custom_entry->d_hidden = (file_name->c_str[0] == '.') ? true : false;
 
         struct stat file_stat;
         if (stat(full_path->c_str, &file_stat) == 0) {
@@ -156,5 +162,13 @@ Vector *cr_std_filesystem_get_entries(Arena *arena,
     closedir(dir);
     cr_std_arena_free(&temp_arena);
     return vector;
+}
+
+b8 cr_std_filesystem_exists(const char *file_path) {
+    if (!file_path) {
+        return false;
+    }
+
+    return access(file_path, F_OK) == 0;
 }
 #endif // __linux__ __APPLE__
