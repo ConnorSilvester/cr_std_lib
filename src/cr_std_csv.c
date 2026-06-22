@@ -51,6 +51,16 @@ CSVRow *cr_std_csv_row_new(Arena *arena) {
 }
 
 CSVFile *cr_std_csv_parse_file(Arena *arena, const char *file_path) {
+    if (!arena) {
+        CR_LOG_ERROR("cr_std_csv_parse_file -> arena* was NULL");
+        return NULL;
+    }
+
+    if (!file_path) {
+        CR_LOG_ERROR("cr_std_csv_parse_file -> file_path* was NULL");
+        return NULL;
+    }
+
     CSVFile *csv = cr_std_csv_new(arena);
     if (!csv) {
         CR_LOG_ERROR("cr_std_csv_parse_file -> failed to create CSVFile");
@@ -67,6 +77,7 @@ CSVFile *cr_std_csv_parse_file(Arena *arena, const char *file_path) {
     if (!file_contents) {
         cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_WARNING,
                           "cr_std_csv_parse_file -> returned empty CSVFile");
+        cr_std_arena_free(&temp_arena);
         return NULL;
     }
     const char *src = file_contents->c_str;
@@ -76,12 +87,14 @@ CSVFile *cr_std_csv_parse_file(Arena *arena, const char *file_path) {
     StringBuilder *sb = cr_std_string_builder_newc(temp_arena, "", temp_arena->capacity / 4);
     if (!sb) {
         CR_LOG_ERROR("cr_std_csv_parse_file -> failed to create string builder");
+        cr_std_arena_free(&temp_arena);
         return NULL;
     }
 
     CSVRow *row = cr_std_csv_row_new(arena);
     if (!row) {
         CR_LOG_ERROR("cr_std_csv_parse_file -> failed to create row");
+        cr_std_arena_free(&temp_arena);
         return NULL;
     }
 
