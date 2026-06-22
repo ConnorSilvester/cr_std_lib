@@ -75,13 +75,12 @@ CSVFile *cr_std_csv_parse_file(Arena *arena, const char *file_path) {
 
     String *file_contents = cr_std_filesystem_read_file_as_string(temp_arena, file_path);
     if (!file_contents) {
-        cr_std_logger_out(CR_STD_LOGGER_LOG_TYPE_WARNING,
-                          "cr_std_csv_parse_file -> returned empty CSVFile");
+        CR_LOG_WARNING("cr_std_csv_parse_file -> returned empty CSVFile");
         cr_std_arena_free(&temp_arena);
         return NULL;
     }
-    const char *src = file_contents->c_str;
 
+    const char *src = file_contents->c_str;
     b8 in_quotes = false;
     b8 is_first_row = true;
     StringBuilder *sb = cr_std_string_builder_newc(temp_arena, "", temp_arena->capacity / 4);
@@ -98,7 +97,7 @@ CSVFile *cr_std_csv_parse_file(Arena *arena, const char *file_path) {
         return NULL;
     }
 
-    int index = 0;
+    size_t index = 0;
     if (file_contents->length >= 3 && (unsigned char)src[0] == 0xEF &&
         (unsigned char)src[1] == 0xBB && (unsigned char)src[2] == 0xBF) {
         index = 3; // Skip BOM
@@ -165,16 +164,16 @@ b8 cr_std_csv_print_contents(CSVFile *csv) {
     }
 
     // Header
-    for (int title_index = 0; title_index < csv->titles->size; title_index++) {
+    for (size_t title_index = 0; title_index < csv->titles->size; title_index++) {
         String *title = cr_std_vector_get_at(csv->titles, String, title_index);
         printf("Title : %s\n", title->c_str);
     }
 
     // Rows
-    for (int row_index = 0; row_index < csv->rows->size; row_index++) {
+    for (size_t row_index = 0; row_index < csv->rows->size; row_index++) {
         CSVRow *row = cr_std_vector_get_at(csv->rows, CSVRow, row_index);
         printf("Row %d:\n", row_index + 1);
-        for (int field_index = 0; field_index < row->fields->size; field_index++) {
+        for (size_t field_index = 0; field_index < row->fields->size; field_index++) {
             String *field = cr_std_vector_get_at(row->fields, String, field_index);
             if (field_index < csv->titles->size) {
                 String *title = cr_std_vector_get_at(csv->titles, String, field_index);
