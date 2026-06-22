@@ -78,7 +78,7 @@ void cr_std_logger_outfc(const char *type, int color_code, const char *formatted
  * @return `CR_STD_OK` on success.
  * @return `CR_STD_FAIL` on failure.
  */
-b8 cr_std_logger_set_log_level(int log_level);
+b8 cr_std_logger_set_log_level(u8 log_level);
 
 /**
  * @brief Used to set the flag to record logs.
