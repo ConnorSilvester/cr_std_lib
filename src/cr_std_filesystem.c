@@ -254,7 +254,7 @@ Vector *cr_std_filesystem_get_dirs_files_matching(Arena *arena,
         return NULL;
     }
 
-    for (size_t i = files->size - 1; i >= 0; i--) {
+    for (i32 i = files->size - 1; i >= 0; i--) {
         Dirent *file = cr_std_vector_get_at(files, Dirent, i);
         if (cr_std_string_compare_c_str(file->d_ext, extension) != CR_STD_STRING_EQUAL) {
             if (cr_std_vector_remove_element(files, i) != CR_STD_OK) {
@@ -290,7 +290,7 @@ Vector *cr_std_filesystem_get_dirs_files_matching_r(Arena *arena,
         return NULL;
     }
 
-    for (size_t i = files->size - 1; i >= 0; i--) {
+    for (i32 i = files->size - 1; i >= 0; i--) {
         Dirent *file = cr_std_vector_get_at(files, Dirent, i);
         if (cr_std_string_compare_c_str(file->d_ext, extension) != 1) {
             if (cr_std_vector_remove_element(files, i) != CR_STD_OK) {
