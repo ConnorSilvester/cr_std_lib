@@ -39,6 +39,11 @@ typedef enum {
 } TrimDirection;
 
 typedef enum {
+    CR_STD_STRING_PAD_LEFT = 0,
+    CR_STD_STRING_PAD_RIGHT = 1,
+} PadDirection;
+
+typedef enum {
     CR_STD_STRING_COLOR_BLACK = 30,
     CR_STD_STRING_COLOR_RED = 31,
     CR_STD_STRING_COLOR_GREEN = 32,
@@ -655,12 +660,28 @@ String *cr_std_string_repeat(Arena *arena, const char *string, size_t n);
 /**
  * @brief Reverse a string.
  *
- * @param `string` The `String` to repeat.
+ * @param `string` The `String` to reverse.
  *
  * @return `CR_STD_OK` on success
  * @return `CR_STD_FAIL` on failure
  */
 b8 cr_std_string_reverse(String *string);
+
+/**
+ * @brief Pad a string.
+ *
+ * @param `arena` The arena to allocate to.
+ * @param `string` The `String` to pad.
+ * @param `direction` Which dir you want to pad.
+ * @param `n` new length of the string
+ *
+ * Defined as `CR_STD_STRING_PAD_LEFT`
+ * Defined as `CR_STD_STRING_PAD_RIGHT`
+ *
+ * @return `CR_STD_OK` on success
+ * @return `CR_STD_FAIL` on failure
+ */
+b8 cr_std_string_pad(Arena *arena, String *string, PadDirection direction, size_t n);
 
 #ifdef __cplusplus
 }

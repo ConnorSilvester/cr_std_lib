@@ -1406,3 +1406,41 @@ b8 cr_std_string_reverse(String *string) {
 
     return CR_STD_OK;
 }
+
+b8 cr_std_string_pad(Arena *arena, String *string, PadDirection direction, size_t n) {
+    if (!arena) {
+        CR_LOG_ERROR("cr_std_string_pad -> arena* is NULL");
+        return CR_STD_FAIL;
+    }
+    if (!string || !string->c_str) {
+        CR_LOG_ERROR("cr_std_string_pad -> string* is NULL");
+        return CR_STD_FAIL;
+    }
+    if (n <= string->length) {
+        CR_LOG_WARNING("cr_std_string_pad -> n <= string length");
+        return CR_STD_FAIL;
+    }
+
+    char *c_str = cr_std_arena_alloc(arena, n + 1);
+    if (!c_str) {
+        CR_LOG_ERROR("cr_std_string_pad -> c_str alloc failed");
+        return CR_STD_FAIL;
+    }
+
+    if (direction == CR_STD_STRING_PAD_LEFT) {
+        size_t padding = n - string->length;
+        memset(c_str, ' ', padding);
+        memcpy(c_str + padding, string->c_str, string->length);
+    }
+
+    if (direction == CR_STD_STRING_PAD_RIGHT) {
+        size_t padding = n - string->length;
+        memcpy(c_str, string->c_str, string->length);
+        memset(c_str + string->length, ' ', padding);
+    }
+
+    c_str[n] = '\0';
+    string->c_str = c_str;
+    string->length = n;
+    return CR_STD_OK;
+}
