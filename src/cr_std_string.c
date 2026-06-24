@@ -1386,3 +1386,23 @@ String *cr_std_string_repeat(Arena *arena, const char *string, size_t n) {
     result->length = total_len;
     return result;
 }
+
+b8 cr_std_string_reverse(String *string) {
+    if (!string || !string->c_str) {
+        CR_LOG_ERROR("cr_std_string_reverse -> string* is NULL");
+        return CR_STD_FAIL;
+    }
+
+    size_t left = 0;
+    size_t right = string->length - 1;
+
+    while (left < right) {
+        char temp = string->c_str[left];
+        string->c_str[left] = string->c_str[right];
+        string->c_str[right] = temp;
+        left++;
+        right--;
+    }
+
+    return CR_STD_OK;
+}

@@ -652,6 +652,16 @@ b8 cr_std_string_color_strip(String *string);
  */
 String *cr_std_string_repeat(Arena *arena, const char *string, size_t n);
 
+/**
+ * @brief Reverse a string.
+ *
+ * @param `string` The `String` to repeat.
+ *
+ * @return `CR_STD_OK` on success
+ * @return `CR_STD_FAIL` on failure
+ */
+b8 cr_std_string_reverse(String *string);
+
 #ifdef __cplusplus
 }
 #endif

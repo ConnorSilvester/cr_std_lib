@@ -157,6 +157,9 @@ b8 cr_std_string_test_repeat();
 b8 cr_std_string_test_repeat_0();
 b8 cr_std_string_test_repeat_negative();
 
+b8 cr_std_string_test_reverse();
+b8 cr_std_string_test_reverse_null();
+
 /**
  * String Builder Tests Below
  */

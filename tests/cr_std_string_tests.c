@@ -167,6 +167,10 @@ void cr_std_string_test_all() {
     cr_std_vector_push_back(g_string_testing_arena, tests, cr_std_testing_new_test(g_string_testing_arena, "Repeat String -> Negative", cr_std_string_test_repeat_negative));
     cr_std_vector_push_back(g_string_testing_arena, tests, cr_std_testing_new_test(g_string_testing_arena, "Repeat String -> 0", cr_std_string_test_repeat_0));
 
+    // Reverse
+    cr_std_vector_push_back(g_string_testing_arena, tests, cr_std_testing_new_test(g_string_testing_arena, "Reverse String -> Normal", cr_std_string_test_reverse));
+    cr_std_vector_push_back(g_string_testing_arena, tests, cr_std_testing_new_test(g_string_testing_arena, "Reverse String -> Null", cr_std_string_test_reverse_null));
+
     /**
      * String Builder Tests Below
      */
@@ -1150,6 +1154,23 @@ b8 cr_std_string_test_repeat_negative() {
     string_expected != NULL && string != NULL && compare_result == expected_compare_result;
 
     return result;
+}
+
+b8 cr_std_string_test_reverse() {
+    String *string = cr_std_string_new(g_string_testing_arena, "Test");
+    cr_std_string_reverse(string);
+    String *string_expected = cr_std_string_new(g_string_testing_arena, "tseT");
+
+    int compare_result = cr_std_string_compare(string, string_expected);
+    int expected_compare_result = CR_STD_STRING_EQUAL;
+    int result =
+    string_expected != NULL && string != NULL && compare_result == expected_compare_result;
+
+    return result;
+}
+
+b8 cr_std_string_test_reverse_null() {
+    return cr_std_string_reverse(NULL) == CR_STD_FAIL;
 }
 
 /**
