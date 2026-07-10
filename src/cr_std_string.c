@@ -1169,30 +1169,55 @@ b8 cr_std_string_to_int(String *string, i32 *number) {
         return CR_STD_FAIL;
     }
 
-    i32 result = 0;
-    b8 found_digit = false;
-
-    for (size_t i = 0; i < string->length; i++) {
-        char c = string->c_str[i];
-
-        if (isdigit((unsigned char)c)) {
-            i32 digit = c - '0';
-
-            if (result > (INT32_MAX - digit) / 10) {
-                CR_LOG_ERROR("cr_std_string_to_int -> overflow");
-                return CR_STD_FAIL;
-            }
-
-            result = result * 10 + digit;
-            found_digit = true;
-        }
-    }
-
-    if (!found_digit) {
+    if (!number) {
+        CR_LOG_ERROR("cr_std_string_to_int -> number pointer is NULL");
         return CR_STD_FAIL;
     }
 
-    *number = result;
+    cr_std_string_trim(string, CR_STD_STRING_TRIM_BOTH);
+    size_t i = 0;
+    while (i < string->length && !isdigit((unsigned char)string->c_str[i]) &&
+           string->c_str[i] != '-' && string->c_str[i] != '+') {
+        i++;
+    }
+
+    if (i >= string->length) {
+        return CR_STD_FAIL;
+    }
+
+    // sign
+    i32 sign = 1;
+    if (string->c_str[i] == '-') {
+        sign = -1;
+        i++;
+    } else if (string->c_str[i] == '+') {
+        i++;
+    }
+
+    i32 result = 0;
+    b8 found_digit = false;
+
+    while (i < string->length) {
+        char c = string->c_str[i];
+        if (c == ',') {
+            i++;
+            continue;
+        }
+        if (!isdigit((unsigned char)c)) {
+            break;
+        }
+        i32 digit = (i32)(c - '0');
+        result = result * 10 + digit;
+        found_digit = true;
+        i++;
+    }
+
+    if (!found_digit) {
+        CR_LOG_ERROR("cr_std_string_to_int -> no digits found");
+        return CR_STD_FAIL;
+    }
+
+    *number = result * sign;
     return CR_STD_OK;
 }
 
@@ -1216,6 +1241,80 @@ String *cr_std_string_from_int(Arena *arena, i32 number) {
         return cr_std_string_new(arena, "0");
     }
     return string;
+}
+
+b8 cr_std_string_to_float(String *string, f32 *number) {
+    if (!string) {
+        CR_LOG_ERROR("cr_std_string_to_float -> string pointer is NULL");
+        return CR_STD_FAIL;
+    }
+
+    if (!number) {
+        CR_LOG_ERROR("cr_std_string_to_float -> number pointer is NULL");
+        return CR_STD_FAIL;
+    }
+
+    cr_std_string_trim(string, CR_STD_STRING_TRIM_BOTH);
+    size_t i = 0;
+    while (i < string->length && !isdigit((unsigned char)string->c_str[i]) &&
+           string->c_str[i] != '-' && string->c_str[i] != '+') {
+        i++;
+    }
+
+    if (i >= string->length) {
+        return CR_STD_FAIL;
+    }
+
+    // sign
+    f32 sign = 1.0f;
+    if (string->c_str[i] == '-') {
+        sign = -1.0f;
+        i++;
+    } else if (string->c_str[i] == '+') {
+        i++;
+    }
+
+    f32 result = 0.0f;
+    b8 found_digit = false;
+
+    while (i < string->length) {
+        char c = string->c_str[i];
+        if (c == ',') {
+            i++;
+            continue;
+        }
+        if (!isdigit((unsigned char)c)) {
+            break;
+        }
+        f32 digit = (f32)(c - '0');
+        result = result * 10.0f + digit;
+        found_digit = true;
+        i++;
+    }
+
+    if (i < string->length && string->c_str[i] == '.') {
+        i++;
+        f32 fraction = 0.0f;
+        f32 divisor = 10.0f;
+
+        while (i < string->length && isdigit((unsigned char)string->c_str[i])) {
+            f32 digit = (f32)(string->c_str[i] - '0');
+            fraction += digit / divisor;
+            divisor *= 10.0f;
+            found_digit = true;
+            i++;
+        }
+
+        result += fraction;
+    }
+
+    if (!found_digit) {
+        CR_LOG_ERROR("cr_std_string_to_float -> no digits found");
+        return CR_STD_FAIL;
+    }
+
+    *number = result * sign;
+    return CR_STD_OK;
 }
 
 String *

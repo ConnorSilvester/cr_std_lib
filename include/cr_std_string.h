@@ -595,6 +595,17 @@ b8 cr_std_string_to_int(String *string, i32 *number);
 String *cr_std_string_from_int(Arena *arena, i32 number);
 
 /**
+ * @brief Returns the numerical representation of a string as a float
+ *
+ * @param `string` The `String` to work on.
+ * @param `number` The result.
+ *
+ * @return `CR_STD_OK` on success.
+ * @return `CR_STD_FAIL` on failure.
+ */
+b8 cr_std_string_to_float(String *string, f32 *number);
+
+/**
  * @brief Returns a sub-string of a given string and index.
  *
  * @param `arena` The arena to store the memory in

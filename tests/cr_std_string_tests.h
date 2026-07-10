@@ -137,9 +137,19 @@ b8 cr_std_string_test_remove_numeric_null();
 
 // To Int
 b8 cr_std_string_test_to_int();
+b8 cr_std_string_test_to_int_positive();
+b8 cr_std_string_test_to_int_negative();
 b8 cr_std_string_test_to_int_mixed_string();
 b8 cr_std_string_test_to_int_empty();
 b8 cr_std_string_test_to_int_null();
+
+// To Float
+b8 cr_std_string_test_to_float();
+b8 cr_std_string_test_to_float_positive();
+b8 cr_std_string_test_to_float_negative();
+b8 cr_std_string_test_to_float_mixed_string();
+b8 cr_std_string_test_to_float_empty();
+b8 cr_std_string_test_to_float_null();
 
 // From Int
 b8 cr_std_string_test_from_int();

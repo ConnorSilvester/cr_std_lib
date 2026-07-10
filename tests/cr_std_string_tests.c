@@ -147,9 +147,19 @@ void cr_std_string_test_all() {
 
     // To Int
     cr_std_vector_push_back(g_string_testing_arena, tests, cr_std_testing_new_test(g_string_testing_arena, "To Int -> Normal", cr_std_string_test_to_int));
+    cr_std_vector_push_back(g_string_testing_arena, tests, cr_std_testing_new_test(g_string_testing_arena, "To Int -> Positive", cr_std_string_test_to_int_positive));
+    cr_std_vector_push_back(g_string_testing_arena, tests, cr_std_testing_new_test(g_string_testing_arena, "To Int -> Negative", cr_std_string_test_to_int_negative));
     cr_std_vector_push_back(g_string_testing_arena, tests, cr_std_testing_new_test(g_string_testing_arena, "To Int -> Mixed String", cr_std_string_test_to_int_mixed_string));
     cr_std_vector_push_back(g_string_testing_arena, tests, cr_std_testing_new_test(g_string_testing_arena, "To Int -> Empty", cr_std_string_test_to_int_empty));
     cr_std_vector_push_back(g_string_testing_arena, tests, cr_std_testing_new_test(g_string_testing_arena, "To Int -> NULL Value", cr_std_string_test_to_int_null));
+
+    // To Float
+    cr_std_vector_push_back(g_string_testing_arena, tests, cr_std_testing_new_test(g_string_testing_arena, "To Float -> Normal", cr_std_string_test_to_float));
+    cr_std_vector_push_back(g_string_testing_arena, tests, cr_std_testing_new_test(g_string_testing_arena, "To Float -> Positive", cr_std_string_test_to_float_positive));
+    cr_std_vector_push_back(g_string_testing_arena, tests, cr_std_testing_new_test(g_string_testing_arena, "To Float -> Negative", cr_std_string_test_to_float_negative));
+    cr_std_vector_push_back(g_string_testing_arena, tests, cr_std_testing_new_test(g_string_testing_arena, "To Float -> Mixed String", cr_std_string_test_to_float_mixed_string));
+    cr_std_vector_push_back(g_string_testing_arena, tests, cr_std_testing_new_test(g_string_testing_arena, "To Float -> Empty", cr_std_string_test_to_float_empty));
+    cr_std_vector_push_back(g_string_testing_arena, tests, cr_std_testing_new_test(g_string_testing_arena, "To Float -> NULL Value", cr_std_string_test_to_float_null));
 
     // From Int
     cr_std_vector_push_back(g_string_testing_arena, tests, cr_std_testing_new_test(g_string_testing_arena, "From Int -> Normal", cr_std_string_test_from_int));
@@ -995,10 +1005,28 @@ b8 cr_std_string_test_remove_numeric_null() {
 }
 
 b8 cr_std_string_test_to_int() {
-    String *string = cr_std_string_new(g_string_testing_arena, "555666");
+    String *string = cr_std_string_new(g_string_testing_arena, "555,666,000");
     int function_result;
     cr_std_string_to_int(string, &function_result);
-    int expected_function_result = 555666;
+    int expected_function_result = 555666000;
+    int result = string != NULL && function_result == expected_function_result;
+    return result;
+}
+
+b8 cr_std_string_test_to_int_positive() {
+    String *string = cr_std_string_new(g_string_testing_arena, "+4478");
+    int function_result;
+    cr_std_string_to_int(string, &function_result);
+    int expected_function_result = 4478;
+    int result = string != NULL && function_result == expected_function_result;
+    return result;
+}
+
+b8 cr_std_string_test_to_int_negative() {
+    String *string = cr_std_string_new(g_string_testing_arena, "-555");
+    int function_result;
+    cr_std_string_to_int(string, &function_result);
+    int expected_function_result = -555;
     int result = string != NULL && function_result == expected_function_result;
     return result;
 }
@@ -1007,7 +1035,7 @@ b8 cr_std_string_test_to_int_mixed_string() {
     String *string = cr_std_string_new(g_string_testing_arena, "Hello555, Hello 666World");
     int function_result;
     cr_std_string_to_int(string, &function_result);
-    int expected_function_result = 555666;
+    int expected_function_result = 555;
     int result = string != NULL && function_result == expected_function_result;
     return result;
 }
@@ -1026,6 +1054,60 @@ b8 cr_std_string_test_to_int_null() {
     int function_result;
     cr_std_string_to_int(string, &function_result);
     int expected_function_result = 0;
+    int result = function_result == expected_function_result;
+    return result;
+}
+
+b8 cr_std_string_test_to_float() {
+    String *string = cr_std_string_new(g_string_testing_arena, "666,000.45");
+    f32 function_result;
+    cr_std_string_to_float(string, &function_result);
+    f32 expected_function_result = 666000.45;
+    int result = string != NULL && function_result == expected_function_result;
+    return result;
+}
+
+b8 cr_std_string_test_to_float_positive() {
+    String *string = cr_std_string_new(g_string_testing_arena, "+4478.67");
+    f32 function_result;
+    cr_std_string_to_float(string, &function_result);
+    f32 expected_function_result = 4478.67;
+    int result = string != NULL && function_result == expected_function_result;
+    return result;
+}
+
+b8 cr_std_string_test_to_float_negative() {
+    String *string = cr_std_string_new(g_string_testing_arena, "-555,888.78");
+    f32 function_result;
+    cr_std_string_to_float(string, &function_result);
+    f32 expected_function_result = -555888.78;
+    int result = string != NULL && function_result == expected_function_result;
+    return result;
+}
+
+b8 cr_std_string_test_to_float_mixed_string() {
+    String *string = cr_std_string_new(g_string_testing_arena, "Hello555.98, Hello 666World");
+    f32 function_result;
+    cr_std_string_to_float(string, &function_result);
+    f32 expected_function_result = 555.98;
+    int result = string != NULL && function_result == expected_function_result;
+    return result;
+}
+
+b8 cr_std_string_test_to_float_empty() {
+    String *string = cr_std_string_new(g_string_testing_arena, "");
+    f32 function_result;
+    cr_std_string_to_float(string, &function_result);
+    f32 expected_function_result = 0;
+    int result = string != NULL && function_result == expected_function_result;
+    return result;
+}
+
+b8 cr_std_string_test_to_float_null() {
+    String *string = NULL;
+    f32 function_result;
+    cr_std_string_to_float(string, &function_result);
+    f32 expected_function_result = 0;
     int result = function_result == expected_function_result;
     return result;
 }
