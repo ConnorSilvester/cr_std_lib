@@ -32,27 +32,38 @@ typedef struct StringBuilder {
     size_t capacity;
 } StringBuilder;
 
-#define CR_STD_STRING_TRIM_LEFT -1
-#define CR_STD_STRING_TRIM_BOTH 0
-#define CR_STD_STRING_TRIM_RIGHT 1
+typedef enum {
+    CR_STD_STRING_TRIM_LEFT = 0,
+    CR_STD_STRING_TRIM_RIGHT = 1,
+    CR_STD_STRING_TRIM_BOTH = 2
+} TrimDirection;
 
-#define CR_STD_STRING_EQUAL 1
-#define CR_STD_STRING_DIFFERENT 0
-#define CR_STD_STRING_ARG_LONGER -1
-#define CR_STD_STRING_ARG1_LONGER -2
-#define CR_STD_STRING_COMPARE_ERROR -3
+typedef enum {
+    CR_STD_STRING_PAD_LEFT = 0,
+    CR_STD_STRING_PAD_RIGHT = 1,
+} PadDirection;
+
+typedef enum {
+    CR_STD_STRING_COLOR_BLACK = 30,
+    CR_STD_STRING_COLOR_RED = 31,
+    CR_STD_STRING_COLOR_GREEN = 32,
+    CR_STD_STRING_COLOR_YELLOW = 33,
+    CR_STD_STRING_COLOR_BLUE = 34,
+    CR_STD_STRING_COLOR_MAGENTA = 35,
+    CR_STD_STRING_COLOR_CYAN = 36,
+    CR_STD_STRING_COLOR_WHITE = 37,
+    CR_STD_STRING_COLOR_NONE = 39
+} StringColor;
+
+typedef enum {
+    CR_STD_STRING_COMPARE_ERROR = -3,
+    CR_STD_STRING_ARG1_LONGER = -2,
+    CR_STD_STRING_ARG_LONGER = -1,
+    CR_STD_STRING_DIFFERENT = 0,
+    CR_STD_STRING_EQUAL = 1
+} StringCompareResult;
 
 #define CR_STD_STRING_BUILDER_DEFAULT_CAP 256
-
-#define CR_STD_STRING_COLOR_BLACK 30
-#define CR_STD_STRING_COLOR_RED 31
-#define CR_STD_STRING_COLOR_GREEN 32
-#define CR_STD_STRING_COLOR_YELLOW 33
-#define CR_STD_STRING_COLOR_BLUE 34
-#define CR_STD_STRING_COLOR_MAGENTA 35
-#define CR_STD_STRING_COLOR_CYAN 36
-#define CR_STD_STRING_COLOR_WHITE 37
-#define CR_STD_STRING_COLOR_NONE 39
 
 /**
  * @brief Creates a new `StringBuilder` struct with the provided string.
@@ -284,7 +295,7 @@ b8 cr_std_string_concat_null_terminated(Arena *arena, String *string, ...);
  * @return `CR_STD_STRING_ARG1_LONGER` if the second string is longer.
  * @return `CR_STD_STRING_COMPARE_ERROR` in case of errors.
  */
-i32 cr_std_string_compare(String *arg, String *arg1);
+StringCompareResult cr_std_string_compare(String *arg, String *arg1);
 
 /**
  * @brief Compares String and a c str.
@@ -298,7 +309,7 @@ i32 cr_std_string_compare(String *arg, String *arg1);
  * @return `CR_STD_STRING_ARG1_LONGER` if the second string is longer.
  * @return `CR_STD_STRING_COMPARE_ERROR` in case of errors.
  */
-i32 cr_std_string_compare_c_str(String *arg, const char *arg1);
+StringCompareResult cr_std_string_compare_c_str(String *arg, const char *arg1);
 
 /**
  * @brief Trims a string of white space in both directions of the string.
@@ -313,7 +324,7 @@ i32 cr_std_string_compare_c_str(String *arg, const char *arg1);
  * @return `CR_STD_OK` if the string is trimmed successfully.
  * @return `CR_STD_FAIL` if the string failed to be trimmed.
  */
-b8 cr_std_string_trim(String *string, int direction);
+b8 cr_std_string_trim(String *string, TrimDirection direction);
 
 /**
  * @brief Finds the first index of a character in a given string.
@@ -336,7 +347,7 @@ i32 cr_std_string_find_char(String *string, char ch);
  * @return The index of the n character in the string.
  * @return `-1` if the character is not found.
  */
-i32 cr_std_string_find_char_n(String *string, char ch, int n);
+i32 cr_std_string_find_char_n(String *string, char ch, size_t n);
 
 /**
  * @brief Finds the last index of a character in a given string.
@@ -370,7 +381,7 @@ i32 cr_std_string_find_string(String *string, const char *phrase);
  * @return The index of the n phrase in the string.
  * @return `-1` if the phrase is not found.
  */
-i32 cr_std_string_find_string_n(String *string, const char *phrase, int n);
+i32 cr_std_string_find_string_n(String *string, const char *phrase, size_t n);
 
 /**
  * @brief Finds the last index of a string in a given string.
@@ -458,7 +469,7 @@ b8 cr_std_string_ends_with_char(String *string, char suffix);
  * @return `char` char at index
  * @return ' ' if error
  */
-char cr_std_string_char_at(String *string, int index);
+char cr_std_string_char_at(String *string, size_t index);
 
 /**
  * @brief Calculate the hash code of a string.
@@ -581,7 +592,18 @@ b8 cr_std_string_to_int(String *string, i32 *number);
  *
  * @return `String` A pointer to a `String` struct representing the number.
  */
-String *cr_std_string_from_int(Arena *arena, int number);
+String *cr_std_string_from_int(Arena *arena, i32 number);
+
+/**
+ * @brief Returns the numerical representation of a string as a float
+ *
+ * @param `string` The `String` to work on.
+ * @param `number` The result.
+ *
+ * @return `CR_STD_OK` on success.
+ * @return `CR_STD_FAIL` on failure.
+ */
+b8 cr_std_string_to_float(String *string, f32 *number);
 
 /**
  * @brief Returns a sub-string of a given string and index.
@@ -593,19 +615,20 @@ String *cr_std_string_from_int(Arena *arena, int number);
  *
  * @return `String` A pointer to a `String` struct representing the sub-string.
  */
-String *cr_std_string_sub_string(Arena *arena, String *string, int start_index, int end_index);
+String *
+cr_std_string_sub_string(Arena *arena, String *string, size_t start_index, size_t end_index);
 
 /**
  * @brief Colors an entire string to one color
  *
  * @param `arena` The arena to store the memory in
  * @param `string` The `String` to work from.
- * @param `color_code` The color code from ANSI escape codes, see `CR_STD_STRING_COLOR`.
+ * @param `StringColor` The color code from the StringColor Enum
  *
  * @return `String` A pointer to the new colored string.
  * @return `NULL` If something failed.
  */
-String *cr_std_string_color_string(Arena *arena, String *string, int color_code);
+String *cr_std_string_color_string(Arena *arena, String *string, StringColor color_code);
 
 /**
  * @brief Colors a specific phrase within a string
@@ -613,13 +636,15 @@ String *cr_std_string_color_string(Arena *arena, String *string, int color_code)
  * @param `arena` The arena to store the memory in
  * @param `string` The `String` to work from.
  * @param `phrase` The phrase to color
- * @param `color_code` The color code from ANSI escape codes, see `CR_STD_STRING_COLOR`.
+ * @param `StringColor` The color code from the StringColor Enum
  *
  * @return `String` A pointer to the new colored string.
  * @return `NULL` If something failed.
  */
-String *
-cr_std_string_color_phrase(Arena *arena, String *string, const char *phrase, int color_code);
+String *cr_std_string_color_phrase(Arena *arena,
+                                   String *string,
+                                   const char *phrase,
+                                   StringColor color_code);
 
 /**
  * @brief Strips the colors from a string
@@ -642,6 +667,32 @@ b8 cr_std_string_color_strip(String *string);
  * @return `String` A pointer to an empty string.
  */
 String *cr_std_string_repeat(Arena *arena, const char *string, size_t n);
+
+/**
+ * @brief Reverse a string.
+ *
+ * @param `string` The `String` to reverse.
+ *
+ * @return `CR_STD_OK` on success
+ * @return `CR_STD_FAIL` on failure
+ */
+b8 cr_std_string_reverse(String *string);
+
+/**
+ * @brief Pad a string.
+ *
+ * @param `arena` The arena to allocate to.
+ * @param `string` The `String` to pad.
+ * @param `direction` Which dir you want to pad.
+ * @param `n` new length of the string
+ *
+ * Defined as `CR_STD_STRING_PAD_LEFT`
+ * Defined as `CR_STD_STRING_PAD_RIGHT`
+ *
+ * @return `CR_STD_OK` on success
+ * @return `CR_STD_FAIL` on failure
+ */
+b8 cr_std_string_pad(Arena *arena, String *string, PadDirection direction, size_t n);
 
 #ifdef __cplusplus
 }

@@ -9,7 +9,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-static int cr_std_logger_current_log_level = CR_STD_LOGGER_LOG_LEVEL_ALL;
+static u8 cr_std_logger_current_log_level = CR_STD_LOGGER_LOG_LEVEL_ALL;
 static b8 cr_std_logger_record_log_flag = false;
 static Vector *g_log_history = NULL;
 static Arena *g_log_arena = NULL;
@@ -168,11 +168,7 @@ void cr_std_logger_outfc(const char *type, int color_code, const char *formatted
     free(result);
 }
 
-b8 cr_std_logger_set_log_level(int log_level) {
-    if (log_level < 0) {
-        return CR_STD_FAIL;
-    }
-
+b8 cr_std_logger_set_log_level(u8 log_level) {
     if (log_level > CR_STD_LOGGER_LOG_LEVEL_NONE) {
         return CR_STD_FAIL;
     }
@@ -213,7 +209,7 @@ b8 cr_std_logger_write_history_to_file(const char *filepath) {
 
     if (g_log_history->size > 0) {
         StringBuilder *sb = cr_std_string_builder_new(g_log_arena, "");
-        for (int i = 0; i < g_log_history->size; i++) {
+        for (size_t i = 0; i < g_log_history->size; i++) {
             String *current_log = cr_std_vector_get_at(g_log_history, String, i);
             cr_std_string_builder_append_string(g_log_arena, sb, current_log->c_str);
         }

@@ -31,7 +31,7 @@ typedef uint64_t u64;
 typedef float f32;
 typedef double f64;
 
-typedef i8 b8;
+typedef u8 b8;
 
 #ifndef true
 #define true 1

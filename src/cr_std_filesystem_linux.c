@@ -28,28 +28,26 @@ String *cr_std_filesystem_get_cwd(Arena *arena) {
 }
 
 b8 cr_std_filesystem_make_dir(const char *dir_path, mode_t permissions) {
+    if (!dir_path) {
+        CR_LOG_ERROR("cr_std_filesystem_make_dir -> dir_path* was NULL");
+        return CR_STD_FAIL;
+    }
+
     if (mkdir(dir_path, permissions) == 0) {
         cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_INFO,
                            "cr_std_filesystem_make_dir -> Directory created '%s'", dir_path);
         return CR_STD_OK;
     } else {
-        if (errno == EEXIST) {
-            // cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_WARNING,
-            //                    "cr_std_filesystem_make_dir -> Directory already exists '%s'",
-            //                    dir_path);
-        } else if (errno == EACCES) {
-            cr_std_logger_outf(
-            CR_STD_LOGGER_LOG_TYPE_ERROR,
+        if (errno == EACCES) {
+            CR_LOG_ERROR_FMT(
             "cr_std_filesystem_make_dir -> Permission denied could not create directory '%s'",
             dir_path);
         } else if (errno == ENOENT) {
-            cr_std_logger_outf(
-            CR_STD_LOGGER_LOG_TYPE_ERROR,
+            CR_LOG_ERROR_FMT(
             "cr_std_filesystem_make_dir -> Part of the directory could not be found '%s'",
             dir_path);
         } else {
-            cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR,
-                               "cr_std_filesystem_make_dir -> Failed to create directory");
+            CR_LOG_ERROR("cr_std_filesystem_make_dir -> Failed to create directory");
         }
         return CR_STD_FAIL;
     }
@@ -65,14 +63,22 @@ Vector *cr_std_filesystem_get_entries(Arena *arena,
         return NULL;
     }
 
+    if (!file_path) {
+        CR_LOG_ERROR("cr_std_filesystem_get_entries -> file_path* was NULL");
+        return NULL;
+    }
+
     DIR *dir = opendir(file_path);
     if (!dir) {
-        cr_std_logger_outf(CR_STD_LOGGER_LOG_TYPE_ERROR,
-                           "cr_std_filesystem_get_entries -> failed to open dir -> %s", file_path);
+        CR_LOG_ERROR_FMT("cr_std_filesystem_get_entries -> failed to open dir -> %s", file_path);
         return NULL;
     }
 
     Vector *vector = cr_std_vector_new(arena);
+    if (!vector) {
+        CR_LOG_ERROR("cr_std_filesystem_get_entries -> failed to create vector");
+        return NULL;
+    }
 
     Arena *temp_arena = cr_std_arena_new(16 * CR_STD_KB);
     if (!temp_arena) {
@@ -102,8 +108,7 @@ Vector *cr_std_filesystem_get_entries(Arena *arena,
 
         String *full_path = cr_std_string_newf(temp_arena, "%s/%s", file_path, file_name->c_str);
         if (!full_path) {
-            cr_std_logger_outf(
-            CR_STD_LOGGER_LOG_TYPE_ERROR,
+            CR_LOG_ERROR_FMT(
             "cr_std_filesystem_get_entries -> memory allocation failed for path -> %s/%s",
             file_path, file_name->c_str);
             continue;
@@ -111,9 +116,7 @@ Vector *cr_std_filesystem_get_entries(Arena *arena,
 
         Dirent *custom_entry = cr_std_arena_alloc(arena, sizeof(*custom_entry));
         if (!custom_entry) {
-            cr_std_logger_outf(
-            CR_STD_LOGGER_LOG_TYPE_ERROR,
-            "cr_std_filesystem_get_entries -> memory allocation failed for Dirent");
+            CR_LOG_ERROR("cr_std_filesystem_get_entries -> memory allocation failed for Dirent");
             continue;
         }
 

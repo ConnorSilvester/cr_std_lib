@@ -44,7 +44,9 @@ b8 cr_std_vector_push_back(Arena *arena, Vector *vector, void *element) {
 
     if (vector->size >= vector->capacity) {
         size_t new_capacity = vector->capacity * 2;
-        if (new_capacity == 0) new_capacity = CR_STD_VECTOR_DEFAULT_SIZE;
+        if (new_capacity == 0) {
+            new_capacity = CR_STD_VECTOR_DEFAULT_SIZE;
+        }
 
         void **new_elements = cr_std_arena_alloc(arena, new_capacity * sizeof(void *));
         if (!new_elements) {
@@ -113,7 +115,7 @@ b8 cr_std_vector_extend(Arena *arena, Vector *dest, Vector *src) {
 
     for (size_t i = 0; i < src->size; i++) {
         void *element = cr_std_vector_get_element(src, i);
-        if (cr_std_vector_push_back(arena, dest, element) != 0) {
+        if (cr_std_vector_push_back(arena, dest, element) != CR_STD_OK) {
             CR_LOG_ERROR("cr_std_vector_extend -> failed to push element");
             return CR_STD_FAIL;
         }
