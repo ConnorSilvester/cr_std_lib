@@ -55,6 +55,31 @@ CSVFile *cr_std_csv_parse_file(Arena *arena, const char *file_path);
  */
 b8 cr_std_csv_print_contents(CSVFile *csv);
 
+/**
+ * @brief Finds the first index of a given title
+ *
+ * @param `csv` The CSVFile struct to print.
+ * @param `title` The title to search for
+ * @param `out` The index of the title if found, -1 if not found
+ *
+ * @return `CR_STD_OK` on success.
+ * @return `CR_STD_FAIL` on failure.
+ */
+b8 cr_std_csv_find_title_index(CSVFile *csv, const char *title, i32 *out);
+
+/**
+ * @brief Finds the first index of a given title
+ *
+ * @param `csv` The CSVFile struct to print.
+ * @param `title` The title to search for
+ * @param `arena` Arena to allocate memory in the event the vector expands
+ * @param `out` The vector to add indexs to, they are added as *i32
+ *
+ * @return `CR_STD_OK` on success.
+ * @return `CR_STD_FAIL` on failure.
+ */
+b8 cr_std_csv_find_title_indexs(CSVFile *csv, const char *title, Arena *arena, Vector *out);
+
 #ifdef __cplusplus
 }
 #endif

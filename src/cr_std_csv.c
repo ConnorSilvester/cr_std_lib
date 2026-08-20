@@ -186,3 +186,76 @@ b8 cr_std_csv_print_contents(CSVFile *csv) {
 
     return CR_STD_OK;
 }
+
+b8 cr_std_csv_find_title_index(CSVFile *csv, const char *title, i32 *out) {
+    if (!out) {
+        CR_LOG_ERROR("cr_std_csv_find_title_index -> out* is NULL");
+        return CR_STD_FAIL;
+    }
+
+    *out = -1;
+    if (!csv) {
+        CR_LOG_ERROR("cr_std_csv_find_title_index -> CSVFile struct is NULL");
+        return CR_STD_FAIL;
+    }
+
+    if (!title) {
+        CR_LOG_ERROR("cr_std_csv_find_title_index -> title* is NULL");
+        return CR_STD_FAIL;
+    }
+
+    if (!csv->rows || !csv->titles) {
+        CR_LOG_ERROR("cr_std_csv_find_title_index -> invalid csv format");
+        return CR_STD_FAIL;
+    }
+
+    // Headers
+    for (size_t title_index = 0; title_index < csv->titles->size; title_index++) {
+        String *current_title = cr_std_vector_get_at(csv->titles, String, title_index);
+        if (cr_std_string_compare_c_str(current_title, title) == CR_STD_STRING_EQUAL) {
+            *out = title_index;
+            return CR_STD_OK;
+        }
+    }
+
+    return CR_STD_OK;
+}
+
+b8 cr_std_csv_find_title_indexs(CSVFile *csv, const char *title, Arena *arena, Vector *out) {
+    if (!csv) {
+        CR_LOG_ERROR("cr_std_csv_find_title_indexs -> CSVFile struct is NULL");
+        return CR_STD_FAIL;
+    }
+
+    if (!title) {
+        CR_LOG_ERROR("cr_std_csv_find_title_indexs -> title* is NULL");
+        return CR_STD_FAIL;
+    }
+
+    if (!arena) {
+        CR_LOG_ERROR("cr_std_csv_find_title_indexs -> arena* is NULL");
+        return CR_STD_FAIL;
+    }
+
+    if (!out) {
+        CR_LOG_ERROR("cr_std_csv_find_title_indexs -> out* is NULL");
+        return CR_STD_FAIL;
+    }
+
+    if (!csv->rows || !csv->titles) {
+        CR_LOG_ERROR("cr_std_csv_find_title_indexs -> invalid csv format");
+        return CR_STD_FAIL;
+    }
+
+    // Headers
+    for (size_t title_index = 0; title_index < csv->titles->size; title_index++) {
+        String *current_title = cr_std_vector_get_at(csv->titles, String, title_index);
+        if (cr_std_string_compare_c_str(current_title, title) == CR_STD_STRING_EQUAL) {
+            i32 *index = cr_std_arena_alloc(arena, sizeof(i32));
+            *index = title_index;
+            cr_std_vector_push_back(arena, out, index);
+        }
+    }
+
+    return CR_STD_OK;
+}
