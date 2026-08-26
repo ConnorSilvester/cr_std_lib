@@ -1,14 +1,5 @@
-#include "cr_std_arena.h"
-#include "cr_std_cli.h"
-#include "cr_std_csv.h"
-#include "cr_std_filesystem.h"
-#include "cr_std_logger.h"
-#include "cr_std_string.h"
-#include "cr_std_testing.h"
-#include "cr_std_utils.h"
-#include "cr_std_vector.h"
+#include "cr_std.h"
 #include <stdio.h>
-#include <stdlib.h>
 
 // If you want to test the library see the end of the README.md file
 int main(int argc, char **argv) {
