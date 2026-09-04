@@ -1,10 +1,5 @@
 #ifdef _WIN32
-#include "cr_std_arena.h"
-#include "cr_std_filesystem.h"
-#include "cr_std_logger.h"
-#include "cr_std_string.h"
-#include "cr_std_utils.h"
-#include "cr_std_vector.h"
+#include "cr_std.h"
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>

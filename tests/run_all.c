@@ -1,7 +1,6 @@
 #include "cr_std_arena_tests.h"
 #include "cr_std_cli_tests.h"
 #include "cr_std_csv_tests.h"
-#include "cr_std_logger.h"
 #include "cr_std_string_tests.h"
 #include "cr_std_vector_tests.h"
 

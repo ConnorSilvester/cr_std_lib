@@ -1,5 +1,4 @@
-#include "cr_std_arena.h"
-#include "cr_std_logger.h"
+#include "cr_std.h"
 #include <stdlib.h>
 
 Arena *cr_std_arena_new(size_t capacity) {

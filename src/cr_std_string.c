@@ -1,15 +1,10 @@
-#include "cr_std_string.h"
-#include "cr_std_arena.h"
-#include "cr_std_logger.h"
-#include "cr_std_utils.h"
-#include "cr_std_vector.h"
+#include "cr_std.h"
 #include <ctype.h>
 #include <stdarg.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <wctype.h>
 
 #define CR_STD_STRING_ANSI_COLOR_ESCAPE_SEQ "\033[%dm%s\033[0m"
 
