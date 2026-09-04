@@ -1,10 +1,6 @@
 #include "cr_std_cli_tests.h"
-#include "cr_std_arena.h"
-#include "cr_std_cli.h"
-#include "cr_std_string.h"
-#include "cr_std_testing.h"
-#include "cr_std_utils.h"
-#include "cr_std_vector.h"
+#include "cr_std.h"
+#include "cr_std/cr_std_testing.h"
 #include <stdio.h>
 #include <stdlib.h>
 

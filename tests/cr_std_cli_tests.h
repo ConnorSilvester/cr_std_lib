@@ -1,6 +1,6 @@
 #ifndef CR_STD_CLI_TESTS_H
 #define CR_STD_CLI_TESTS_H
-#include "cr_std_utils.h"
+#include "cr_std.h"
 
 // Test functions for all functions in cr_std_cli
 void cr_std_cli_test_all();

@@ -56,10 +56,4 @@ endif()
 
 # Install rules (for library and headers)
 install(TARGETS ${LIB_NAME} DESTINATION ${LIB_DEST_DIR})
-
-# Main header goes directly into the include dir
-install(FILES ${INC_DIR}/cr_std.h DESTINATION ${INCLUDE_DEST_DIR})
-
-# All other headers go into a folder named after the library
-list(REMOVE_ITEM HEADERS "${INC_DIR}/cr_std.h")
-install(FILES ${HEADERS} DESTINATION ${INCLUDE_DEST_DIR}/${LIB_NAME})
+install(DIRECTORY ${INC_DIR}/ DESTINATION ${INCLUDE_DEST_DIR} FILES_MATCHING PATTERN "*.h")
